@@ -64,6 +64,27 @@ void RenderManager::RenderComponents()
 void RenderManager::Render()
 {
 	//
+	// Center camera on local player if present
+	//
+	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->GetPlayerId() != 0)
+	{
+		uint32_t localPlayerId = NetworkManagerClient::sInstance->GetPlayerId();
+		const auto& gameObjects = World::sInstance->GetGameObjects();
+		for (const auto& goPtr : gameObjects)
+		{
+			RoboCat* cat = goPtr->GetAsCat();
+			if (cat && cat->GetPlayerId() == localPlayerId)
+			{
+				Vector3 loc = cat->GetLocation();
+				view.setCenter(loc.mX, loc.mY);
+
+				WindowManager::sInstance->setView(view);
+				break;
+			}
+		}
+	}
+
+	//
 	// Clear the back buffer
 	//
 	WindowManager::sInstance->clear(sf::Color(100, 149, 237, 255));
