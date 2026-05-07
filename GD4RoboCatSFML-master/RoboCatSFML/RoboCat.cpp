@@ -20,7 +20,14 @@ RoboCat::RoboCat() :
 	mIsShooting(false),
 	mHealth(10)
 {
-	SetCollisionRadius(60.f);
+	// Set scale based on original sprite size
+	const float originalHalfHeight = 1010.f / 2.f;
+	const float originalHalfWidth = 424.f / 2.f;
+	const float desiredVisualRadius = 60.f;
+	const float scale = desiredVisualRadius / originalHalfHeight;
+	SetScale(scale);
+	const float widthBasedRadius = originalHalfWidth * scale * 0.95f;
+	SetCollisionRadius(widthBasedRadius);
 }
 
 void RoboCat::ProcessInput(float inDeltaTime, const InputState& inInputState)

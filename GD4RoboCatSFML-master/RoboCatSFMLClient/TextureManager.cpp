@@ -10,6 +10,7 @@ void TextureManager::StaticInit()
 TextureManager::TextureManager()
 {
 	CacheTexture("cat", "../Assets/cat.png");
+	CacheTexture("car", "../Assets/car.png"); // Darren Meidl - D00255479 - New car sprite
 	CacheTexture("mouse", "../Assets/mouse.png");
 	CacheTexture("yarn", "../Assets/yarn.png");
 }
