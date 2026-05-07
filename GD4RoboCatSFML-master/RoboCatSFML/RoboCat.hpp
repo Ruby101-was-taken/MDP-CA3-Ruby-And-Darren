@@ -49,6 +49,9 @@ private:
 
 	float				mMaxLinearSpeed;
 	float				mMaxRotationSpeed;
+	float				mAcceleration;
+	float				mLinearDrag;
+	float				mGrip;	
 
 	//bounce fraction when hitting various things
 	float				mWallRestitution;

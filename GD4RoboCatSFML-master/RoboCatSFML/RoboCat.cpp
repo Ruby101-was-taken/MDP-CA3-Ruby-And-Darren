@@ -5,8 +5,12 @@ const float WORLD_WIDTH = 1280.f;
 
 RoboCat::RoboCat() :
 	GameObject(),
-	mMaxRotationSpeed(100.f),
-	mMaxLinearSpeed(5000.f),
+	// tuned for small, quick car-like behavior
+	mMaxRotationSpeed(300.f),	// stronger turning
+	mMaxLinearSpeed(800.f),		// top speed
+	mAcceleration(2200.f),		// acceleration
+	mLinearDrag(1.8f),			// drag when coasting
+	mGrip(0.08f),				// low grip -> easy to oversteer
 	mVelocity(Vector3::Zero),
 	mWallRestitution(0.1f),
 	mCatRestitution(0.1f),
@@ -20,34 +24,68 @@ RoboCat::RoboCat() :
 
 void RoboCat::ProcessInput(float inDeltaTime, const InputState& inInputState)
 {
-	//process our input....
+	// Turning:
+	// Keep rotation very responsive (small, quick car). We rotate the car sprite immediately,
+	// but velocity direction is only slowly aligned to heading (grip), producing oversteer/drift.
+	float desiredHorizontal = inInputState.GetDesiredHorizontalDelta();
 
-	//turning...
-	float newRotation = GetRotation() + inInputState.GetDesiredHorizontalDelta() * mMaxRotationSpeed * inDeltaTime;
+	// Apply rotation. Rotation responsiveness is independent of throttle here to make it twitchy.
+	float rotationDelta = desiredHorizontal * mMaxRotationSpeed * inDeltaTime;
+	float newRotation = GetRotation() + rotationDelta;
 	SetRotation(newRotation);
 
-	//moving...
+	// Movement/throttle input (-1 .. 1)
 	float inputForwardDelta = inInputState.GetDesiredVerticalDelta();
 	mThrustDir = inputForwardDelta;
 
-
 	mIsShooting = inInputState.IsShooting();
-
 }
-
+// Darren Meidl - D00255479 - Apply acceleration, drag, and grip to velocity based on current throttle and heading
 void RoboCat::AdjustVelocityByThrust(float inDeltaTime)
 {
-	//just set the velocity based on the thrust direction -- no thrust will lead to 0 velocity
-	//simulating acceleration makes the client prediction a bit more complex
-	Vector3 forwardVector = GetForwardVector();
-	mVelocity = forwardVector * (mThrustDir * inDeltaTime * mMaxLinearSpeed);
+	Vector3 forwardVector = GetForwardVector(); // Vector forward
+	// Apply acceleration/braking along forward vector
+	if (mThrustDir != 0.f) {
+		// Positive thrust accelerates forward; negative thrust brakes / reverses
+		mVelocity += forwardVector * (mAcceleration * mThrustDir * inDeltaTime);
+	}
+	else {
+		// No throttle: apply linear drag to gradually slow down
+		// Use a stable multiplier rather than direct subtraction
+		float dragFactor = 1.f / (1.f + mLinearDrag * inDeltaTime);
+		mVelocity *= dragFactor;
+	}
+
+	// Clamp speed to max
+	float speedSq = mVelocity.LengthSq2D();
+	float maxSpeedSq = mMaxLinearSpeed * mMaxLinearSpeed;
+	if (speedSq > maxSpeedSq)
+	{
+		float speed = sqrtf(speedSq);
+		mVelocity = mVelocity * (mMaxLinearSpeed / speed);
+	}
+
+	// Grip: reduce lateral velocity relative to forward direction to simulate tire grip.
+	// Lower mGrip => less lateral friction => easier to oversteer.
+	// Separate velocity into forward and lateral components
+	Vector3 vel = mVelocity;
+	// project velocity onto forward
+	float forwardSpeed = Dot2D(vel, forwardVector);
+	Vector3 forwardVel = forwardVector * forwardSpeed;
+	Vector3 lateralVel = vel - forwardVel;
+
+	// Reduce lateral velocity by grip factor (1 - grip) per second
+	// Keep forward velocity untouched except for drag above
+	lateralVel *= (1.f - mGrip);
+
+	mVelocity = forwardVel + lateralVel;
 }
 
 void RoboCat::SimulateMovement(float inDeltaTime)
 {
 	//simulate us...
 	AdjustVelocityByThrust(inDeltaTime);
-	
+    
 	SetLocation(GetLocation() + mVelocity * inDeltaTime);
 
 	ProcessCollisions();

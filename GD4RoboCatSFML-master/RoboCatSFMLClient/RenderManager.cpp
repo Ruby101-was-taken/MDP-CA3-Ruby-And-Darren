@@ -64,6 +64,7 @@ void RenderManager::RenderComponents()
 void RenderManager::Render()
 {
 	//
+	// Darren Meidl - D00255479
 	// Center camera on local player if present
 	//
 	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->GetPlayerId() != 0)
