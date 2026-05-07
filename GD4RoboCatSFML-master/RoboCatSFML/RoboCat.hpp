@@ -50,6 +50,7 @@ private:
 	float				mMaxLinearSpeed;
 	float				mMaxRotationSpeed;
 	float				mAcceleration;
+	float				mReverseAccelScale;
 	float				mLinearDrag;
 	float				mGrip;	
 

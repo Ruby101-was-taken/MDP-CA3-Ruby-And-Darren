@@ -7,8 +7,9 @@ RoboCat::RoboCat() :
 	GameObject(),
 	// tuned for small, quick car-like behavior
 	mMaxRotationSpeed(300.f),	// stronger turning
-	mMaxLinearSpeed(800.f),		// top speed
-	mAcceleration(2200.f),		// acceleration
+	mMaxLinearSpeed(1200.f),		// top speed
+	mAcceleration(1000.f),		// acceleration
+	mReverseAccelScale(0.4f), // reverse is weaker than forward
 	mLinearDrag(1.8f),			// drag when coasting
 	mGrip(0.08f),				// low grip -> easy to oversteer
 	mVelocity(Vector3::Zero),
@@ -35,8 +36,11 @@ void RoboCat::ProcessInput(float inDeltaTime, const InputState& inInputState)
 	SetRotation(newRotation);
 
 	// Movement/throttle input (-1 .. 1)
-	float inputForwardDelta = inInputState.GetDesiredVerticalDelta();
-	mThrustDir = inputForwardDelta;
+	float inputForwardDelta = inInputState.GetDesiredVerticalDelta();	
+	if (inputForwardDelta >= 0.f)
+		mThrustDir = inputForwardDelta;
+	else
+		mThrustDir = inputForwardDelta * mReverseAccelScale; // Reduce reverse power
 
 	mIsShooting = inInputState.IsShooting();
 }
