@@ -5,6 +5,51 @@ CheckpointClient::CheckpointClient()
 	mSpriteComponent.reset(new SpriteComponent(this));
 	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint"));
 	mPassed = false;
+	mIsNext = false;
+}
+
+static void UpdateAllCheckpointVisualsForLocalPlayer(RoboCat* inCat)
+{
+	if (!inCat)
+		return;
+
+	// Derive total checkpoints from world objects (client-side)
+	int totalCheckpoints = 0;
+	const auto& gameObjects = World::sInstance->GetGameObjects();
+	for (const auto& goPtr : gameObjects)
+	{
+		if (dynamic_cast<CheckpointClient*>(goPtr.get()))
+		{
+			++totalCheckpoints;
+		}
+	}
+
+	if (totalCheckpoints == 0)
+		return;
+
+	int currentCpIndex = inCat->GetCurrentCheckpointIndex();
+	int expectedIndex = (currentCpIndex >= 0) ? ((currentCpIndex + 1) % totalCheckpoints) : 0;
+
+	for (const auto& goPtr : gameObjects)
+	{
+		CheckpointClient* cp = dynamic_cast<CheckpointClient*>(goPtr.get());
+		if (!cp) continue;
+
+		int idx = cp->GetIndex();
+
+		// Passed if its index == current checkpoint (and current >= 0)
+		if (currentCpIndex >= 0 && idx == currentCpIndex)
+		{
+			cp->SetPassed(true);
+			cp->SetNext(false);
+		}
+		else
+		{
+			cp->SetPassed(false);
+			// Mark next only for the expected index
+			cp->SetNext(idx == expectedIndex);
+		}
+	}
 }
 
 bool CheckpointClient::HandleCollisionWithCat(RoboCat* inCat)
@@ -23,30 +68,15 @@ bool CheckpointClient::HandleCollisionWithCat(RoboCat* inCat)
 	bool isLocalPlayer = (inCat && inCat->GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId());
 	if (isLocalPlayer)
 	{
-		if (lapAdvanced)
-		{
-			// Reset all checkpoint visuals on this client for the new lap
-			const auto& gameObjects = World::sInstance->GetGameObjects();
-			for (const auto& goPtr : gameObjects)
-			{
-				CheckpointClient* cp = dynamic_cast<CheckpointClient*>(goPtr.get());
-				if (cp)
-				{
-					cp->SetPassed(false);
-				}
-			}
-		}
-		else
-		{
-			// Normal pass: mark this checkpoint as passed (only locally)
-			SetPassed(true);
-		}
+		// Recompute visuals for all checkpoints based on the (validated) RoboCat current checkpoint.
+		// This prevents invalid checkpoint collisions from turning other checkpoints green
+		// because RoboCat::OnCheckpointPassed already enforces the expected index.
+		UpdateAllCheckpointVisualsForLocalPlayer(inCat);
 
 		// Update HUD for local player with current checkpoint / lap info
 		int currentCpIndex = inCat->GetCurrentCheckpointIndex();
 		int currentLap = inCat->GetCurrentLap();
 
-		// Derive total checkpoints from world objects (client-side)
 		int totalCheckpoints = 0;
 		const auto& gameObjects = World::sInstance->GetGameObjects();
 		for (const auto& goPtr : gameObjects)
@@ -74,12 +104,35 @@ void CheckpointClient::SetPassed(bool inPassed)
 		return;
 
 	mPassed = inPassed;
+
+	// If passed, always use passed texture. If not passed, rely on mIsNext to choose
 	if (mPassed)
 	{
 		mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint_passed"));
 	}
 	else
 	{
-		mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint"));
+		// choose next texture if flagged, otherwise default
+		if (mIsNext)
+			mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint_next"));
+		else
+			mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint"));
+	}
+}
+
+void CheckpointClient::SetNext(bool inIsNext)
+{
+	if (mIsNext == inIsNext)
+		return;
+
+	mIsNext = inIsNext;
+
+	// Only change texture when not already passed
+	if (!mPassed)
+	{
+		if (mIsNext)
+			mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint_next"));
+		else
+			mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint"));
 	}
 }
