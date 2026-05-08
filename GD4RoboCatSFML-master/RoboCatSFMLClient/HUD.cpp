@@ -26,12 +26,19 @@ void HUD::StaticInit()
 
 void HUD::Render()
 {
+	// Save current view (world view), switch to default (screen) view so HUD is drawn in screen coordinates
+	sf::View previousView = WindowManager::sInstance->getView();
+	WindowManager::sInstance->setView(WindowManager::sInstance->getDefaultView());
+
 	RenderGameOver();
 	RenderBandWidth();
 	RenderRoundTripTime();
 	RenderScoreBoard();
 	RenderHealth();
 	RenderRaceInfo();
+
+	// Restore world view for any further world rendering / display
+	WindowManager::sInstance->setView(previousView);
 }
 
 void HUD::RenderHealth()
@@ -87,7 +94,7 @@ void HUD::RenderGameOver()
 		return;
 
 	// show Winner and up to top 3
-	Vector3 origin(400.f, 30.f, 0.f); // top-center-ish; tweak as needed
+	Vector3 origin(700.f, 100.f, 0.f);
 	int idx = 0;
 	for (uint32_t pid : winners)
 	{
