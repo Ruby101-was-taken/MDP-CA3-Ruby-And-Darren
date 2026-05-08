@@ -21,7 +21,6 @@ private:
 	void RenderBandWidth();
 	void RenderRoundTripTime();
 	void RenderScoreBoard();
-	void RenderHealth();
 	void RenderRaceInfo();
 	void RenderGameOver();
 
@@ -31,7 +30,6 @@ private:
 	Vector3	mRoundTripTimeOrigin;
 	Vector3	mScoreBoardOrigin;
 	Vector3	mScoreOffset;
-	Vector3	mHealthOffset;
 	Vector3	mRaceInfoOrigin;
 
 	int	mHealth;

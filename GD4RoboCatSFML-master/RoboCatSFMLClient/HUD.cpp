@@ -8,8 +8,7 @@ HUD::HUD() :
 	mBandwidthOrigin(50.f, 10.f, 0.0f),
 	mRoundTripTimeOrigin(580.f, 10.f, 0.0f),
 	mScoreOffset(0.f, 50.f, 0.0f),
-	mHealthOffset(1000, 10.f, 0.0f),
-	mRaceInfoOrigin(50.f, 110.f, 0.0f),
+	mRaceInfoOrigin(900.f, 60.f, 0.0f),
 	mHealth(0),
 	mPlayerCurrentCheckpointIndex(-1),
 	mPlayerTotalCheckpoints(0),
@@ -34,20 +33,10 @@ void HUD::Render()
 	RenderBandWidth();
 	RenderRoundTripTime();
 	RenderScoreBoard();
-	RenderHealth();
 	RenderRaceInfo();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
-}
-
-void HUD::RenderHealth()
-{
-	if (mHealth > 0)
-	{
-		string healthString = StringUtils::Sprintf("Health %d", mHealth);
-		RenderText(healthString, mHealthOffset, Colors::Red);
-	}
 }
 
 void HUD::RenderBandWidth()
