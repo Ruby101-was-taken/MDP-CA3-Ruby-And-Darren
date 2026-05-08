@@ -7,20 +7,16 @@ void CheckpointServer::HandleDying() {
 	NetworkManagerServer::sInstance->UnregisterGameObject(this);
 }
 bool CheckpointServer::HandleCollisionWithCat(RoboCat* inCat) {
-	// Notify the server-side cat so it can update laps/checkpoints.
+	// Notify the server-side PlayerCar so it can update laps/checkpoints
 	if (inCat) {
 		inCat->OnCheckpointPassed(static_cast<Checkpoint*>(this));
 
-		// If the cat finished the race, disconnect the client so you can test lap/checkpoint progression.
+		// If the car finished the race, mark game over and compute winners
 		if (inCat->IsRaceFinished()) {
-			ClientProxyPtr client = NetworkManagerServer::sInstance->GetClientProxy(inCat->GetPlayerId());
-			if (client) {
-				LOG("Player %d finished race. Forcing server-side disconnect for test.", inCat->GetPlayerId());
-				// TODO: Find cleaner way to do this & move this function back to private
-				NetworkManagerServer::sInstance->HandleClientDisconnected(client); // Remove the client on the server
-			}
+			LOG("Player %d finished race. Setting game over and computing winners.", inCat->GetPlayerId());
+			ScoreBoardManager::sInstance->SetRaceWinners(3); // compute top 3 winners (by progress) and mark game over
+			NetworkManagerServer::sInstance->UpdateAllClients(); // immediately push a state update to all clients so they know about game over
 		}
 	}
-	// Prevent physical collision response (we only want the notification).
-	return false;
+	return false; // Prevent physical collision response
 }

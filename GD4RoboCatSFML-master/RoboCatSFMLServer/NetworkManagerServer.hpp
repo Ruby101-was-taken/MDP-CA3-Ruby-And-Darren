@@ -20,8 +20,7 @@ public:
 
 	ClientProxyPtr	GetClientProxy(int inPlayerId) const;
 
-	void	HandleClientDisconnected(ClientProxyPtr inClientProxy);
-
+	void	UpdateAllClients();
 private:
 	NetworkManagerServer();
 
@@ -29,7 +28,7 @@ private:
 	void	ProcessPacket(ClientProxyPtr inClientProxy, InputMemoryBitStream& inInputStream);
 
 	void	SendWelcomePacket(ClientProxyPtr inClientProxy);
-	void	UpdateAllClients();
+	void	HandleClientDisconnected(ClientProxyPtr inClientProxy);
 
 	void	AddWorldStateToPacket(OutputMemoryBitStream& inOutputStream);
 	void	AddScoreBoardStateToPacket(OutputMemoryBitStream& inOutputStream);

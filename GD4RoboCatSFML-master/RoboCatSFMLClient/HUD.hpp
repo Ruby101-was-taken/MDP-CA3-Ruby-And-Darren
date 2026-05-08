@@ -23,6 +23,7 @@ private:
 	void RenderScoreBoard();
 	void RenderHealth();
 	void RenderRaceInfo();
+	void RenderGameOver();
 
 	void RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
 

@@ -26,6 +26,7 @@ void HUD::StaticInit()
 
 void HUD::Render()
 {
+	RenderGameOver();
 	RenderBandWidth();
 	RenderRoundTripTime();
 	RenderScoreBoard();
@@ -71,6 +72,47 @@ void HUD::RenderScoreBoard()
 	}
 
 }
+
+// Darren Meidl - D00255479 - Render game over and winners if game is over
+void HUD::RenderGameOver()
+{
+	if (!ScoreBoardManager::sInstance)
+		return;
+
+	if (!ScoreBoardManager::sInstance->GetIsGameOver())
+		return;
+
+	const vector<uint32_t>& winners = ScoreBoardManager::sInstance->GetWinners();
+	if (winners.empty())
+		return;
+
+	// show Winner and up to top 3
+	Vector3 origin(400.f, 30.f, 0.f); // top-center-ish; tweak as needed
+	int idx = 0;
+	for (uint32_t pid : winners)
+	{
+		const auto* entry = ScoreBoardManager::sInstance->GetEntry(pid);
+		string text;
+		if (idx == 0)
+		{
+			string name = entry ? entry->GetPlayerName() : StringUtils::Sprintf("Player %u", pid);
+			text = StringUtils::Sprintf("Winner: %s", name.c_str());
+			RenderText(text, origin, Colors::White);
+		}
+		else
+		{
+			string name = entry ? entry->GetPlayerName() : StringUtils::Sprintf("Player %u", pid);
+			text = StringUtils::Sprintf("%d: %s", idx + 1, name.c_str());
+			Vector3 subOrigin = origin;
+			subOrigin.mY += 40.f * idx;
+			RenderText(text, subOrigin, Colors::White);
+		}
+		++idx;
+		// only show up to top 3
+		if (idx >= 3) break;
+	}
+}
+
 // Darren Meidl - D00255479 - Update local player's checkpoint and lap progress for HUD display
 void HUD::SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpoints, int inCurrentLap, int inLapsToWin)
 {

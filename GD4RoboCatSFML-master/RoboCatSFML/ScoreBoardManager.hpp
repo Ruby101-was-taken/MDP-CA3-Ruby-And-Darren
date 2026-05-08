@@ -39,6 +39,13 @@ public:
 	void	AddEntry(uint32_t inPlayerId, const string& inPlayerName);
 	void	IncScore(uint32_t inPlayerId, int inAmount);
 
+	// Darren Meidl - D00255479 - Game over / winners support
+	void	SetRaceWinners(int inTopN);
+	void	SetGameOver(bool inGameOver) { mGameOver = inGameOver; if (!mGameOver) mWinners.clear(); }
+	bool	GetIsGameOver() const { return mGameOver; }
+	const vector<uint32_t>& GetWinners() const { return mWinners; }
+	void	SetWinners(const vector<uint32_t>& inWinners) { mWinners = inWinners; mGameOver = !mWinners.empty(); }
+
 	bool	Write(OutputMemoryBitStream& inOutputStream) const;
 	bool	Read(InputMemoryBitStream& inInputStream);
 
@@ -51,5 +58,9 @@ private:
 	vector< Entry >	mEntries;
 
 	vector< Vector3 >	mDefaultColors;
+
+	// game over state
+	bool mGameOver = false;
+	vector<uint32_t> mWinners;
 };
 

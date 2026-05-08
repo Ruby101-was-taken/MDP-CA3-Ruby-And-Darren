@@ -80,6 +80,49 @@ void ScoreBoardManager::IncScore(uint32_t inPlayerId, int inAmount)
 }
 
 
+// Darren Meidl - D00255479 - Determine race winners
+void ScoreBoardManager::SetRaceWinners(int inTopN)
+{
+	mWinners.clear();
+	mGameOver = false;
+
+	if (inTopN <= 0)
+		return;
+
+	// gather (progress, playerId)
+	std::vector<std::pair<int, uint32_t>> progressList;
+
+	const auto& gameObjects = World::sInstance->GetGameObjects();
+	for (const auto& goPtr : gameObjects)
+	{
+		RoboCat* cat = goPtr->GetAsCat();
+		if (cat)
+		{
+			int lap = cat->GetCurrentLap();
+			int cpIndex = cat->GetCurrentCheckpointIndex();
+			if (cpIndex < 0) cpIndex = 0;
+			int progress = lap * 10000 + cpIndex;
+			progressList.emplace_back(progress, cat->GetPlayerId());
+		}
+	}
+
+	// sort descending by progress
+	std::sort(progressList.begin(), progressList.end(), [](const auto& a, const auto& b) {
+		return a.first > b.first;
+	});
+
+	int count = std::min(static_cast<int>(progressList.size()), inTopN);
+	for (int i = 0; i < count; ++i)
+	{
+		mWinners.push_back(progressList[i].second);
+	}
+
+	if (!mWinners.empty())
+	{
+		mGameOver = true;
+	}
+}
+
 
 bool ScoreBoardManager::Write(OutputMemoryBitStream& inOutputStream) const
 {
@@ -91,6 +134,15 @@ bool ScoreBoardManager::Write(OutputMemoryBitStream& inOutputStream) const
 	for (const Entry& entry : mEntries)
 	{
 		entry.Write(inOutputStream);
+	}
+	// Darren Meidl - D00255479 - Write game-over flag and winners
+	inOutputStream.Write(mGameOver);
+	if (mGameOver)
+	{
+		int winnerCount = static_cast<int>(mWinners.size());
+		inOutputStream.Write(winnerCount);
+		for (uint32_t pid : mWinners)
+			inOutputStream.Write(pid);
 	}
 
 	return true;
@@ -107,6 +159,22 @@ bool ScoreBoardManager::Read(InputMemoryBitStream& inInputStream)
 	for (Entry& entry : mEntries)
 	{
 		entry.Read(inInputStream);
+	}
+	// Darren Meidl - D00255479 - Read game-over state and winners
+	bool gameOver = false;
+	inInputStream.Read(gameOver);
+	mGameOver = gameOver;
+	mWinners.clear();
+	if (mGameOver)
+	{
+		int winnerCount = 0;
+		inInputStream.Read(winnerCount);
+		for (int i = 0; i < winnerCount; ++i)
+		{
+			uint32_t pid = 0;
+			inInputStream.Read(pid);
+			mWinners.push_back(pid);
+		}
 	}
 
 	return true;
