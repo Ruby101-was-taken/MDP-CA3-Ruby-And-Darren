@@ -21,7 +21,7 @@ bool Client::StaticInit()
 
 Client::Client()
 {
-	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAT', RoboCatClient::StaticCreate);
+	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAT', PlayerCarClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('MOUS', MouseClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('YARN', YarnClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointClient::StaticCreate);

@@ -29,7 +29,7 @@ public:
 
 	virtual void Update() override;
 
-	virtual bool HandleCollisionWithCat(RoboCat* inCat) override;
+	virtual bool HandleCollisionWithCat(PlayerCar* inCat) override;
 
 protected:
 	Yarn();

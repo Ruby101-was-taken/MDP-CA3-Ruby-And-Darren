@@ -73,7 +73,7 @@ void RenderManager::Render()
 		const auto& gameObjects = World::sInstance->GetGameObjects();
 		for (const auto& goPtr : gameObjects)
 		{
-			RoboCat* cat = goPtr->GetAsCat();
+			PlayerCar* cat = goPtr->GetAsCar();
 			if (cat && cat->GetPlayerId() == localPlayerId)
 			{
 				Vector3 loc = cat->GetLocation();

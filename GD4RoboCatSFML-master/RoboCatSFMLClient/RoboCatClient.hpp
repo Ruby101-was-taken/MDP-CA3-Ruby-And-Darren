@@ -1,7 +1,7 @@
-class RoboCatClient : public RoboCat
+class PlayerCarClient : public PlayerCar
 {
 public:
-	static	GameObjectPtr	StaticCreate() { return GameObjectPtr(new RoboCatClient()); }
+	static	GameObjectPtr	StaticCreate() { return GameObjectPtr(new PlayerCarClient()); }
 
 	virtual void Update();
 	virtual void	HandleDying() override;
@@ -12,7 +12,7 @@ public:
 	void DoClientSidePredictionAfterReplicationForRemoteCat(uint32_t inReadState);
 
 protected:
-	RoboCatClient();
+	PlayerCarClient();
 
 
 private:

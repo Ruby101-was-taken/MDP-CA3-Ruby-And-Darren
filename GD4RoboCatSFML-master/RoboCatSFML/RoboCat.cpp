@@ -3,7 +3,7 @@
 const float WORLD_HEIGHT = 2160.f;
 const float WORLD_WIDTH = 3840.f;
 
-RoboCat::RoboCat() :
+PlayerCar::PlayerCar() :
 	GameObject(),
 	mMaxRotationSpeed(300.f),	// stronger turning
 	mMaxLinearSpeed(1200.f),		// top speed
@@ -35,7 +35,7 @@ RoboCat::RoboCat() :
 	SetCollisionRadius(widthBasedRadius);
 }
 
-void RoboCat::ProcessInput(float inDeltaTime, const InputState& inInputState)
+void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState)
 {
 	// Turning:
 	// Keep rotation very responsive (small, quick car). We rotate the car sprite immediately,
@@ -57,7 +57,7 @@ void RoboCat::ProcessInput(float inDeltaTime, const InputState& inInputState)
 	mIsShooting = inInputState.IsShooting();
 }
 // Darren Meidl - D00255479 - Apply acceleration, drag, and grip to velocity based on current throttle and heading
-void RoboCat::AdjustVelocityByThrust(float inDeltaTime)
+void PlayerCar::AdjustVelocityByThrust(float inDeltaTime)
 {
 	Vector3 forwardVector = GetForwardVector(); // Vector forward
 	// Apply acceleration/braking along forward vector
@@ -97,7 +97,7 @@ void RoboCat::AdjustVelocityByThrust(float inDeltaTime)
 	mVelocity = forwardVel + lateralVel;
 }
 
-void RoboCat::SimulateMovement(float inDeltaTime)
+void PlayerCar::SimulateMovement(float inDeltaTime)
 {
 	//simulate us...
 	AdjustVelocityByThrust(inDeltaTime);
@@ -107,12 +107,12 @@ void RoboCat::SimulateMovement(float inDeltaTime)
 	ProcessCollisions();
 }
 
-void RoboCat::Update()
+void PlayerCar::Update()
 {
 
 }
 
-void RoboCat::ProcessCollisions()
+void PlayerCar::ProcessCollisions()
 {
 	//right now just bounce off the sides..
 	ProcessCollisionsWithScreenWalls();
@@ -141,7 +141,7 @@ void RoboCat::ProcessCollisions()
 			{
 				//first, tell the other guy there was a collision with a cat, so it can do something...
 
-				if (target->HandleCollisionWithCat(this))
+				if (target->HandleCollisionWithCar(this))
 				{
 					//okay, you hit something!
 					//so, project your location far enough that you're not colliding
@@ -155,7 +155,7 @@ void RoboCat::ProcessCollisions()
 					Vector3 relVel = mVelocity;
 
 					//if other object is a cat, it might have velocity, so there might be relative velocity...
-					RoboCat* targetCat = target->GetAsCat();
+					PlayerCar* targetCat = target->GetAsCar();
 					if (targetCat)
 					{
 						relVel -= targetCat->mVelocity;
@@ -188,7 +188,7 @@ void RoboCat::ProcessCollisions()
 
 }
 
-void RoboCat::ProcessCollisionsWithScreenWalls()
+void PlayerCar::ProcessCollisionsWithScreenWalls()
 {
 	Vector3 location = GetLocation();
 	float x = location.mX;
@@ -227,7 +227,7 @@ void RoboCat::ProcessCollisionsWithScreenWalls()
 	}
 }
 
-uint32_t RoboCat::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const
+uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const
 {
 	uint32_t writtenState = 0;
 
@@ -305,7 +305,7 @@ uint32_t RoboCat::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyS
 
 }
 // Darren Meidl - D00255479 - Handle checkpoint collision
-void RoboCat::OnCheckpointPassed(Checkpoint* inCheckpoint)
+void PlayerCar::OnCheckpointPassed(Checkpoint* inCheckpoint)
 {
 	if (!inCheckpoint || mRaceFinished || mTotalCheckpoints <= 0)
 		return;
@@ -330,7 +330,7 @@ void RoboCat::OnCheckpointPassed(Checkpoint* inCheckpoint)
 	}
 }
 // Darren Meidl - D00255479 - Reset lap and checkpoint progress
-void RoboCat::ResetRaceProgress()
+void PlayerCar::ResetRaceProgress()
 {
 	mCurrentLap = 0;
 	mCurrentCheckpointIndex = -1;

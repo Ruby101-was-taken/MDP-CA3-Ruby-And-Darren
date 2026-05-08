@@ -1,19 +1,19 @@
 #include "RoboCatServerPCH.hpp"
 
-RoboCatServer::RoboCatServer() :
-	mCatControlType(ESCT_Human),
+PlayerCarServer::PlayerCarServer() :
+	mCarControlType(ESCT_Human),
 	mTimeOfNextShot(0.f),
 	mTimeBetweenShots(0.2f)
 {}
 
-void RoboCatServer::HandleDying()
+void PlayerCarServer::HandleDying()
 {
 	NetworkManagerServer::sInstance->UnregisterGameObject(this);
 }
 
-void RoboCatServer::Update()
+void PlayerCarServer::Update()
 {
-	RoboCat::Update();
+	PlayerCar::Update();
 
 	Vector3 oldLocation = GetLocation();
 	Vector3 oldVelocity = GetVelocity();
@@ -21,7 +21,7 @@ void RoboCatServer::Update()
 
 	//are you controlled by a player?
 	//if so, is there a move we haven't processed yet?
-	if (mCatControlType == ESCT_Human)
+	if (mCarControlType == ESCT_Human)
 	{
 		ClientProxyPtr client = NetworkManagerServer::sInstance->GetClientProxy(GetPlayerId());
 		if (client)
@@ -60,7 +60,7 @@ void RoboCatServer::Update()
 	}
 }
 
-void RoboCatServer::HandleShooting()
+void PlayerCarServer::HandleShooting()
 {
 	float time = Timing::sInstance.GetFrameStartTime();
 	if (mIsShooting && Timing::sInstance.GetFrameStartTime() > mTimeOfNextShot)
@@ -74,7 +74,7 @@ void RoboCatServer::HandleShooting()
 	}
 }
 
-void RoboCatServer::TakeDamage(int inDamagingPlayerId)
+void PlayerCarServer::TakeDamage(int inDamagingPlayerId)
 {
 	mHealth--;
 	if (mHealth <= 0.f)
@@ -85,11 +85,11 @@ void RoboCatServer::TakeDamage(int inDamagingPlayerId)
 		//and you want to die
 		SetDoesWantToDie(true);
 
-		//tell the client proxy to make you a new cat
+		//tell the client proxy to make you a new car
 		ClientProxyPtr clientProxy = NetworkManagerServer::sInstance->GetClientProxy(GetPlayerId());
 		if (clientProxy)
 		{
-			clientProxy->HandleCatDied();
+			clientProxy->HandleCarDied();
 		}
 	}
 

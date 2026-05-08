@@ -66,7 +66,7 @@ uint32_t Yarn::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyStat
 
 
 
-bool Yarn::HandleCollisionWithCat(RoboCat* inCat)
+bool Yarn::HandleCollisionWithCat(PlayerCar* inCat)
 {
 	(void)inCat;
 
@@ -75,7 +75,7 @@ bool Yarn::HandleCollisionWithCat(RoboCat* inCat)
 }
 
 
-void Yarn::InitFromShooter(RoboCat* inShooter)
+void Yarn::InitFromShooter(PlayerCar* inShooter)
 {
 	SetColor(inShooter->GetColor());
 	SetPlayerId(inShooter->GetPlayerId());

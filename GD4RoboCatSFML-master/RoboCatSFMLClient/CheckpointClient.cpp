@@ -28,7 +28,7 @@ CheckpointClient::CheckpointClient()
 	}
 }
 
-static void UpdateAllCheckpointVisualsForLocalPlayer(RoboCat* inCat)
+static void UpdateAllCheckpointVisualsForLocalPlayer(PlayerCar* inCat)
 {
 	if (!inCat)
 		return;
@@ -72,13 +72,13 @@ static void UpdateAllCheckpointVisualsForLocalPlayer(RoboCat* inCat)
 	}
 }
 
-bool CheckpointClient::HandleCollisionWithCat(RoboCat* inCat)
+bool CheckpointClient::HandleCollisionWithCat(PlayerCar* inCat)
 {
 	// record lap before informing the base class (which calls inCat->OnCheckpointPassed)
 	int oldLap = inCat ? inCat->GetCurrentLap() : -1;
 
 	// Call base implementation to preserve game logic on client-side simulation
-	bool result = Checkpoint::HandleCollisionWithCat(inCat);
+	bool result = Checkpoint::HandleCollisionWithCar(inCat);
 
 	// Determine whether a lap advanced as a result of this pass
 	int newLap = inCat ? inCat->GetCurrentLap() : -1;

@@ -1,6 +1,6 @@
 #include "RoboCatClientPCH.hpp"
 
-RoboCatClient::RoboCatClient() :
+PlayerCarClient::PlayerCarClient() :
 	mTimeLocationBecameOutOfSync(0.f),
 	mTimeVelocityBecameOutOfSync(0.f)
 {
@@ -8,9 +8,9 @@ RoboCatClient::RoboCatClient() :
 	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("car")); // Darren Meidl - D00255479 - New car sprite
 }
 
-void RoboCatClient::HandleDying()
+void PlayerCarClient::HandleDying()
 {
-	RoboCat::HandleDying();
+	PlayerCar::HandleDying();
 
 	//and if we're local, tell the hud so our health goes away!
 	if (GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId())
@@ -20,7 +20,7 @@ void RoboCatClient::HandleDying()
 }
 
 
-void RoboCatClient::Update()
+void PlayerCarClient::Update()
 {
 	//is this the cat owned by us?
 	if (GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId())
@@ -54,7 +54,7 @@ void RoboCatClient::Update()
 	}
 }
 
-void RoboCatClient::Read(InputMemoryBitStream& inInputStream)
+void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
 {
 	bool stateBit;
 
@@ -153,7 +153,7 @@ void RoboCatClient::Read(InputMemoryBitStream& inInputStream)
 	}
 }
 
-void RoboCatClient::DoClientSidePredictionAfterReplicationForLocalCat(uint32_t inReadState)
+void PlayerCarClient::DoClientSidePredictionAfterReplicationForLocalCat(uint32_t inReadState)
 {
 	if ((inReadState & ECRS_Pose) != 0)
 	{
@@ -175,7 +175,7 @@ void RoboCatClient::DoClientSidePredictionAfterReplicationForLocalCat(uint32_t i
 }
 
 
-void RoboCatClient::InterpolateClientSidePrediction(float inOldRotation, const Vector3 & inOldLocation, const Vector3 & inOldVelocity, bool inIsForRemoteCat)
+void PlayerCarClient::InterpolateClientSidePrediction(float inOldRotation, const Vector3 & inOldLocation, const Vector3 & inOldVelocity, bool inIsForRemoteCat)
 {
 	if (inOldRotation != GetRotation() && !inIsForRemoteCat)
 	{
@@ -239,7 +239,7 @@ void RoboCatClient::InterpolateClientSidePrediction(float inOldRotation, const V
 
 //so what do we want to do here? need to do some kind of interpolation...
 
-void RoboCatClient::DoClientSidePredictionAfterReplicationForRemoteCat(uint32_t inReadState)
+void PlayerCarClient::DoClientSidePredictionAfterReplicationForRemoteCat(uint32_t inReadState)
 {
 	if ((inReadState & ECRS_Pose) != 0)
 	{

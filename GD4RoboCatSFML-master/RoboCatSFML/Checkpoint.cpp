@@ -1,7 +1,7 @@
 #include "RoboCatPCH.hpp"
 
 // Darren Meidl - D00255479 - Entire class
-bool Checkpoint::HandleCollisionWithCat(RoboCat* inCat) {
+bool Checkpoint::HandleCollisionWithCar(PlayerCar* inCat) {
 	if (inCat) {
 		inCat->OnCheckpointPassed(this);
 	}

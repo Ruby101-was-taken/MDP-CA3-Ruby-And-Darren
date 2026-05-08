@@ -1,29 +1,29 @@
-enum ECatControlType
+enum ECarControlType
 {
 	ESCT_Human,
 	ESCT_AI
 };
 
-class RoboCatServer : public RoboCat
+class PlayerCarServer : public PlayerCar
 {
 public:
-	static GameObjectPtr	StaticCreate() { return NetworkManagerServer::sInstance->RegisterAndReturn(new RoboCatServer()); }
+	static GameObjectPtr	StaticCreate() { return NetworkManagerServer::sInstance->RegisterAndReturn(new PlayerCarServer()); }
 	virtual void HandleDying() override;
 
 	virtual void Update() override;
 
-	void SetCatControlType(ECatControlType inCatControlType) { mCatControlType = inCatControlType; }
+	void SetCatControlType(ECarControlType inCarControlType) { mCarControlType = inCarControlType; }
 
 	void TakeDamage(int inDamagingPlayerId);
 
 protected:
-	RoboCatServer();
+	PlayerCarServer();
 
 private:
 
 	void HandleShooting();
 
-	ECatControlType	mCatControlType;
+	ECarControlType	mCarControlType;
 
 
 	float		mTimeOfNextShot;

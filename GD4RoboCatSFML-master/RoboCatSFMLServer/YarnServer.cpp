@@ -24,14 +24,14 @@ void YarnServer::Update()
 
 }
 
-bool YarnServer::HandleCollisionWithCat(RoboCat* inCat)
+bool YarnServer::HandleCollisionWithCat(PlayerCar* inCat)
 {
 	if (inCat->GetPlayerId() != GetPlayerId())
 	{
 		//kill yourself!
 		SetDoesWantToDie(true);
 
-		static_cast<RoboCatServer*>(inCat)->TakeDamage(GetPlayerId());
+		static_cast<PlayerCarServer*>(inCat)->TakeDamage(GetPlayerId());
 
 	}
 

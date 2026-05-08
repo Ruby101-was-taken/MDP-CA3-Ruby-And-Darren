@@ -95,7 +95,7 @@ void ScoreBoardManager::SetRaceWinners(int inTopN)
 	const auto& gameObjects = World::sInstance->GetGameObjects();
 	for (const auto& goPtr : gameObjects)
 	{
-		RoboCat* cat = goPtr->GetAsCat();
+		PlayerCar* cat = goPtr->GetAsCar();
 		if (cat)
 		{
 			int lap = cat->GetCurrentLap();

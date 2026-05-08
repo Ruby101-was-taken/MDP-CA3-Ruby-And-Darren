@@ -13,7 +13,7 @@ public:
 
 	// When a cat collides with a checkpoint, notify the cat.
 	// Return false to skip the physics collision response (no bounce).
-	virtual bool HandleCollisionWithCat(RoboCat* inCat) override;
+	virtual bool HandleCollisionWithCar(PlayerCar* inCat) override;
 
 	// replication
 	enum ECheckpointReplicationState

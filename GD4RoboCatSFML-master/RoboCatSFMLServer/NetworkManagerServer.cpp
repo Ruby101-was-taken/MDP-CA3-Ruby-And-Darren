@@ -124,7 +124,7 @@ void NetworkManagerServer::RespawnCats()
 	{
 		ClientProxyPtr clientProxy = it->second;
 
-		clientProxy->RespawnCatIfNecessary();
+		clientProxy->RespawnCarIfNecessary();
 	}
 }
 

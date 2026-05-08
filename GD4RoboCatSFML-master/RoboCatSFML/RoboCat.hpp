@@ -1,10 +1,10 @@
 class Checkpoint;
-class RoboCat : public GameObject
+class PlayerCar : public GameObject
 {
 public:
-	CLASS_IDENTIFICATION('RCAT', GameObject)
+	CLASS_IDENTIFICATION('RCAR', GameObject)
 
-	enum ECatReplicationState
+	enum ECarReplicationState
 	{
 		ECRS_Pose = 1 << 0,
 		ECRS_Color = 1 << 1,
@@ -15,11 +15,11 @@ public:
 	};
 
 
-	static	GameObject* StaticCreate() { return new RoboCat(); }
+	static	GameObject* StaticCreate() { return new PlayerCar(); }
 
 	virtual uint32_t GetAllStateMask()	const override { return ECRS_AllState; }
 
-	virtual	RoboCat* GetAsCat() override { return this; }
+	virtual	PlayerCar* GetAsCar() override { return this; }
 
 	virtual void Update() override;
 
@@ -48,7 +48,7 @@ public:
 	int GetLapsToWin() const { return mLapsToWin; }
 
 protected:
-	RoboCat();
+	PlayerCar();
 
 private:
 
@@ -91,4 +91,4 @@ private:
 	bool				mRaceFinished;
 };
 
-typedef shared_ptr< RoboCat >	RoboCatPtr;
+typedef shared_ptr< PlayerCar >	PlayerCarPtr;
