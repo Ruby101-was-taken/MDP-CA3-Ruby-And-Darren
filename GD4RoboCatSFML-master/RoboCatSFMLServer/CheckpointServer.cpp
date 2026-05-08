@@ -1,5 +1,5 @@
 #include "RoboCatServerPCH.hpp"
-
+// Darren Meidl - D000255479 - Entire class
 CheckpointServer::CheckpointServer() {
 }
 
@@ -16,7 +16,7 @@ bool CheckpointServer::HandleCollisionWithCat(RoboCat* inCat) {
 			ClientProxyPtr client = NetworkManagerServer::sInstance->GetClientProxy(inCat->GetPlayerId());
 			if (client) {
 				LOG("Player %d finished race. Forcing server-side disconnect for test.", inCat->GetPlayerId());
-				// TODO: Find cleaner way to do this
+				// TODO: Find cleaner way to do this & move this function back to private
 				NetworkManagerServer::sInstance->HandleClientDisconnected(client); // Remove the client on the server
 			}
 		}

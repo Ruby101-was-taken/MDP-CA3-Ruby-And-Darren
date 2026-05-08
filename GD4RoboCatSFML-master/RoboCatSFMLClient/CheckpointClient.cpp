@@ -1,5 +1,5 @@
 #include "RoboCatClientPCH.hpp"
-
+// Darren Meidl - D000255479 - Entire class
 CheckpointClient::CheckpointClient() 
 {
 	mSpriteComponent.reset(new SpriteComponent(this));

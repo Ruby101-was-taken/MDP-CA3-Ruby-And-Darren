@@ -1,3 +1,4 @@
+// Darren Meidl - D000255479 - Entire class
 class CheckpointClient : public Checkpoint 
 {
 public:
