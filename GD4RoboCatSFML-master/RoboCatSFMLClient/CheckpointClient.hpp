@@ -6,7 +6,7 @@ public:
 
 protected:
 	CheckpointClient();
-	virtual bool HandleCollisionWithCat(PlayerCar* inCat) override;
+	virtual bool HandleCollisionWithCar(PlayerCar* inCar) override;
 
 public:
 	void SetPassed(bool inPassed);

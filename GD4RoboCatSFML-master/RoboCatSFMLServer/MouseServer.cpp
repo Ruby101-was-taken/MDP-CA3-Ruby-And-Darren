@@ -9,7 +9,7 @@ void MouseServer::HandleDying()
 	NetworkManagerServer::sInstance->UnregisterGameObject(this);
 }
 
-bool MouseServer::HandleCollisionWithCat(PlayerCar* inCat)
+bool MouseServer::HandleCollisionWithCar(PlayerCar* inCat)
 {
 	//kill yourself!
 	SetDoesWantToDie(true);

@@ -24,7 +24,7 @@ void YarnServer::Update()
 
 }
 
-bool YarnServer::HandleCollisionWithCat(PlayerCar* inCat)
+bool YarnServer::HandleCollisionWithCar(PlayerCar* inCat)
 {
 	if (inCat->GetPlayerId() != GetPlayerId())
 	{

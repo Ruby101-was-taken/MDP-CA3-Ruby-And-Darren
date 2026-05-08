@@ -66,7 +66,7 @@ uint32_t Yarn::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyStat
 
 
 
-bool Yarn::HandleCollisionWithCat(PlayerCar* inCat)
+bool Yarn::HandleCollisionWithCar(PlayerCar* inCat)
 {
 	(void)inCat;
 

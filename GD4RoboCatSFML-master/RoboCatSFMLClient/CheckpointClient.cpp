@@ -72,7 +72,7 @@ static void UpdateAllCheckpointVisualsForLocalPlayer(PlayerCar* inCat)
 	}
 }
 
-bool CheckpointClient::HandleCollisionWithCat(PlayerCar* inCat)
+bool CheckpointClient::HandleCollisionWithCar(PlayerCar* inCat)
 {
 	// record lap before informing the base class (which calls inCat->OnCheckpointPassed)
 	int oldLap = inCat ? inCat->GetCurrentLap() : -1;

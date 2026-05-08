@@ -7,9 +7,9 @@ Mouse::Mouse()
 }
 
 
-bool Mouse::HandleCollisionWithCat(PlayerCar* inCat)
+bool Mouse::HandleCollisionWithCar(PlayerCar* inCar)
 {
-	(void)inCat;
+	(void)inCar;
 	return false;
 }
 
