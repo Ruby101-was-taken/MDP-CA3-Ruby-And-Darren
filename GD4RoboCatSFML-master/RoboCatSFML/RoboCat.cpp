@@ -5,7 +5,6 @@ const float WORLD_WIDTH = 3840.f;
 
 RoboCat::RoboCat() :
 	GameObject(),
-	// tuned for small, quick car-like behavior
 	mMaxRotationSpeed(300.f),	// stronger turning
 	mMaxLinearSpeed(1200.f),		// top speed
 	mAcceleration(1000.f),		// acceleration
