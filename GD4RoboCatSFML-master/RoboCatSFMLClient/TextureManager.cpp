@@ -12,8 +12,10 @@ TextureManager::TextureManager()
 	CacheTexture("cat", "../Assets/cat.png");
 	CacheTexture("car", "../Assets/car.png"); // Darren Meidl - D00255479 - New car sprite
 	CacheTexture("checkpoint", "../Assets/checkpoint.png"); // Darren Meidl - D00255479 - New checkpoint sprite
+	CacheTexture("checkpoint_passed", "../Assets/checkpoint_passed.png"); // Darren Meidl - D00255479 - New checkpoint passed sprite
 	CacheTexture("mouse", "../Assets/mouse.png");
 	CacheTexture("yarn", "../Assets/yarn.png");
+	
 }
 
 TexturePtr	TextureManager::GetTexture(const string& inTextureName)

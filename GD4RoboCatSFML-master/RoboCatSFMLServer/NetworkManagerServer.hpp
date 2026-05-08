@@ -20,6 +20,8 @@ public:
 
 	ClientProxyPtr	GetClientProxy(int inPlayerId) const;
 
+	void	HandleClientDisconnected(ClientProxyPtr inClientProxy);
+
 private:
 	NetworkManagerServer();
 
@@ -37,7 +39,7 @@ private:
 
 	void	HandleInputPacket(ClientProxyPtr inClientProxy, InputMemoryBitStream& inInputStream);
 
-	void	HandleClientDisconnected(ClientProxyPtr inClientProxy);
+	
 
 	int		GetNewNetworkId();
 
