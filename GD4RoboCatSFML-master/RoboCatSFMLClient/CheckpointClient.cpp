@@ -2,10 +2,30 @@
 // Darren Meidl - D000255479 - Entire class
 CheckpointClient::CheckpointClient() 
 {
+	// Get the texture once so we can size/scale and set collision radius consistently
+	auto tex = TextureManager::sInstance->GetTexture("checkpoint");
+
 	mSpriteComponent.reset(new SpriteComponent(this));
-	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint"));
+	mSpriteComponent->SetTexture(tex);
 	mPassed = false;
 	mIsNext = false;
+
+	// Apply non-uniform scale to the sprite (overrides the uniform scale set in SpriteComponent::SetTexture)
+	mSpriteComponent->GetSprite().setScale(sf::Vector2f(visualScaleX * GetScale(), visualScaleY * GetScale()));
+	// Use texture size to compute a sensible circular collision radius based on the wider dimension.
+	if (tex)
+	{
+		auto tSize = tex->getSize();
+		const float originalHalfWidth = static_cast<float>(tSize.x) / 2.f;
+		const float originalHalfHeight = static_cast<float>(tSize.y) / 2.f;
+
+		// Use the width-based radius (since we're widening horizontally). Keep a small shrink factor like other objects.
+		const float widthBasedRadius = originalHalfWidth * visualScaleX * 0.95f * GetScale();
+		// Also compute height-based radius and take max so the circle fully covers the visual.
+		const float heightBasedRadius = originalHalfHeight * visualScaleY * 0.95f * GetScale();
+
+		SetCollisionRadius(std::max(widthBasedRadius, heightBasedRadius));
+	}
 }
 
 static void UpdateAllCheckpointVisualsForLocalPlayer(RoboCat* inCat)
@@ -118,6 +138,8 @@ void CheckpointClient::SetPassed(bool inPassed)
 		else
 			mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint"));
 	}
+	// Re-apply the non-uniform visual scale after swapping texture (SetTexture resets uniform scale)
+	mSpriteComponent->GetSprite().setScale(sf::Vector2f(visualScaleX * GetScale(), visualScaleY * GetScale()));
 }
 
 void CheckpointClient::SetNext(bool inIsNext)
@@ -134,5 +156,8 @@ void CheckpointClient::SetNext(bool inIsNext)
 			mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint_next"));
 		else
 			mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("checkpoint"));
+		
+		// Re-apply the non-uniform visual scale after swapping texture
+		mSpriteComponent->GetSprite().setScale(sf::Vector2f(visualScaleX * GetScale(), visualScaleY * GetScale()));
 	}
 }

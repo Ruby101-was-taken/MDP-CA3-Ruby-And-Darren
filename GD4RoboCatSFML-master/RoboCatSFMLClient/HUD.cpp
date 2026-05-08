@@ -94,7 +94,7 @@ void HUD::RenderGameOver()
 		return;
 
 	
-	Vector3 origin(700.f, 360.f, 0.f); // show Winner and up to top 3
+	Vector3 origin(700.f, 360.f, 0.f);
 	int idx = 0;
 	for (uint32_t pid : winners)
 	{
