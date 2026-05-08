@@ -45,6 +45,7 @@ public:
 	int GetCurrentLap() const { return mCurrentLap; }
 	int GetCurrentCheckpointIndex() const { return mCurrentCheckpointIndex; }
 	bool IsRaceFinished() const { return mRaceFinished; }
+	int GetLapsToWin() const { return mLapsToWin; }
 
 protected:
 	RoboCat();

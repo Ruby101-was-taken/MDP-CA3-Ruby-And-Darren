@@ -19,23 +19,49 @@ bool CheckpointClient::HandleCollisionWithCat(RoboCat* inCat)
 	int newLap = inCat ? inCat->GetCurrentLap() : -1;
 	bool lapAdvanced = (inCat && newLap > oldLap);
 
-	if (lapAdvanced)
+	// Only update visual state for the local player's client.
+	bool isLocalPlayer = (inCat && inCat->GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId());
+	if (isLocalPlayer)
 	{
-		// Reset all checkpoint visuals for the new lap
+		if (lapAdvanced)
+		{
+			// Reset all checkpoint visuals on this client for the new lap
+			const auto& gameObjects = World::sInstance->GetGameObjects();
+			for (const auto& goPtr : gameObjects)
+			{
+				CheckpointClient* cp = dynamic_cast<CheckpointClient*>(goPtr.get());
+				if (cp)
+				{
+					cp->SetPassed(false);
+				}
+			}
+		}
+		else
+		{
+			// Normal pass: mark this checkpoint as passed (only locally)
+			SetPassed(true);
+		}
+
+		// Update HUD for local player with current checkpoint / lap info
+		int currentCpIndex = inCat->GetCurrentCheckpointIndex();
+		int currentLap = inCat->GetCurrentLap();
+
+		// Derive total checkpoints from world objects (client-side)
+		int totalCheckpoints = 0;
 		const auto& gameObjects = World::sInstance->GetGameObjects();
 		for (const auto& goPtr : gameObjects)
 		{
-			CheckpointClient* cp = dynamic_cast<CheckpointClient*>(goPtr.get());
-			if (cp)
+			if (dynamic_cast<CheckpointClient*>(goPtr.get()))
 			{
-				cp->SetPassed(false);
+				++totalCheckpoints;
 			}
 		}
-	}
-	else
-	{
-		// Normal pass: mark this checkpoint as passed
-		SetPassed(true);
+
+		int lapsToWin = inCat->GetLapsToWin();
+		if (HUD::sInstance)
+		{
+			HUD::sInstance->SetPlayerRaceProgress(currentCpIndex, totalCheckpoints, currentLap, lapsToWin);
+		}
 	}
 
 	// Keep original return value (usually false to skip physical response)

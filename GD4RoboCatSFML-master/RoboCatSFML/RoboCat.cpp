@@ -22,7 +22,7 @@ RoboCat::RoboCat() :
 	mCurrentLap(0),
 	mCurrentCheckpointIndex(-1),
 	mLapsToWin(3),
-	mTotalCheckpoints(0),
+	mTotalCheckpoints(6),
 	mRaceFinished(false)
 {
 	// Set scale based on original sprite size

@@ -11,22 +11,34 @@ public:
 
 	void SetPlayerHealth(int inHealth) { mHealth = inHealth; }
 
+	// Race / checkpoint display for local player
+	void SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpoints, int inCurrentLap, int inLapsToWin);
+
 private:
 
 	HUD();
 
-	void	RenderBandWidth();
-	void	RenderRoundTripTime();
-	void	RenderScoreBoard();
-	void	RenderHealth();
-	void	RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
+	void RenderBandWidth();
+	void RenderRoundTripTime();
+	void RenderScoreBoard();
+	void RenderHealth();
+	void RenderRaceInfo();
 
-	Vector3										mBandwidthOrigin;
-	Vector3										mRoundTripTimeOrigin;
-	Vector3										mScoreBoardOrigin;
-	Vector3										mScoreOffset;
-	Vector3										mHealthOffset;
-	int											mHealth;
+	void RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
+
+	Vector3	mBandwidthOrigin;
+	Vector3	mRoundTripTimeOrigin;
+	Vector3	mScoreBoardOrigin;
+	Vector3	mScoreOffset;
+	Vector3	mHealthOffset;
+	Vector3	mRaceInfoOrigin;
+
+	int	mHealth;
+	// Darren Meidl - D00255479 - local player's race progress
+	int	mPlayerCurrentCheckpointIndex;
+	int	mPlayerTotalCheckpoints;
+	int	mPlayerCurrentLap;
+	int	mPlayerLapsToWin;
 };
 
 
