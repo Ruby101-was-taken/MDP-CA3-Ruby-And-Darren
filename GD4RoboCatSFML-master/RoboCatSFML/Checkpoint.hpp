@@ -1,5 +1,3 @@
-#pragma once
-#include "GameObject.hpp"
 // Darren Meidl - D00255479 - Entire class
 class Checkpoint : public GameObject {
 public:

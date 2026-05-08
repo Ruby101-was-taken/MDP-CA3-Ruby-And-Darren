@@ -17,7 +17,13 @@ RoboCat::RoboCat() :
 	mThrustDir(0.f),
 	mPlayerId(0),
 	mIsShooting(false),
-	mHealth(10)
+	mHealth(10),
+	// checkpoint / lap defaults
+	mCurrentLap(0),
+	mCurrentCheckpointIndex(-1),
+	mLapsToWin(3),
+	mTotalCheckpoints(0),
+	mRaceFinished(false)
 {
 	// Set scale based on original sprite size
 	const float originalHalfHeight = 1010.f / 2.f;
@@ -297,6 +303,38 @@ uint32_t RoboCat::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyS
 	return writtenState;
 
 
+}
+// Darren Meidl - D00255479 - Handle checkpoint collision
+void RoboCat::OnCheckpointPassed(Checkpoint* inCheckpoint)
+{
+	if (!inCheckpoint || mRaceFinished || mTotalCheckpoints <= 0)
+		return;
+
+	int cpIndex = inCheckpoint->GetIndex();
+	int expectedIndex = (mCurrentCheckpointIndex + 1) % mTotalCheckpoints; // expected next index
+
+	if (cpIndex != expectedIndex) {
+		// Not the checkpoint we expect next (ignore)
+		return;
+	}
+	
+	int prevIndex = mCurrentCheckpointIndex; // Advance checkpoint
+	mCurrentCheckpointIndex = cpIndex;
+
+	// If we wrapped from last checkpoint to index 0, we completed a lap
+	if (prevIndex == (mTotalCheckpoints - 1) && cpIndex == 0)
+	{
+		mCurrentLap++;
+		if (mCurrentLap >= mLapsToWin)
+			mRaceFinished = true;
+	}
+}
+// Darren Meidl - D00255479 - Reset lap and checkpoint progress
+void RoboCat::ResetRaceProgress()
+{
+	mCurrentLap = 0;
+	mCurrentCheckpointIndex = -1;
+	mRaceFinished = false;
 }
 
 

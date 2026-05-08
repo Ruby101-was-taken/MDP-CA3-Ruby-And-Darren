@@ -86,6 +86,7 @@ class GameObject;
 #include "Yarn.hpp"
 #include "StringUtils.hpp"
 #include "ScoreBoardManager.hpp"
+#include "Checkpoint.hpp"
 
 #include "WeightedTimedMovingAverage.hpp"
 #include "ReplicationCommand.hpp"

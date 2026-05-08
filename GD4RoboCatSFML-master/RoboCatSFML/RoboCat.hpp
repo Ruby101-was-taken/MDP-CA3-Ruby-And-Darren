@@ -1,3 +1,4 @@
+class Checkpoint;
 class RoboCat : public GameObject
 {
 public:
@@ -36,11 +37,19 @@ public:
 
 	virtual uint32_t	Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const override;
 
+	// Darren Meidl - D000255479 - Checkpoint + lap logic
+	void OnCheckpointPassed(Checkpoint* inCheckpoint);
+	void ResetRaceProgress();
+	void SetTotalCheckpoints(int inTotal) { mTotalCheckpoints = inTotal; }
+	void SetLapsToWin(int inLaps) { mLapsToWin = inLaps; }
+	int GetCurrentLap() const { return mCurrentLap; }
+	int GetCurrentCheckpointIndex() const { return mCurrentCheckpointIndex; }
+	bool IsRaceFinished() const { return mRaceFinished; }
+
 protected:
 	RoboCat();
 
 private:
-
 
 	void	AdjustVelocityByThrust(float inDeltaTime);
 
@@ -71,7 +80,14 @@ protected:
 	int					mHealth;
 
 	bool				mIsShooting;
+
+private:
+	// checkpoint & lap tracking
+	int					mCurrentLap;
+	int					mCurrentCheckpointIndex; // -1 == none yet
+	int					mLapsToWin;
+	int					mTotalCheckpoints;
+	bool				mRaceFinished;
 };
 
 typedef shared_ptr< RoboCat >	RoboCatPtr;
-

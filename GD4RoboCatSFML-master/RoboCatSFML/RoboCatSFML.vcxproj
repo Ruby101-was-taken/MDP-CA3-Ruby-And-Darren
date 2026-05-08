@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="AckRange.hpp" />
     <ClInclude Include="ByteSwap.hpp" />
+    <ClInclude Include="Checkpoint.hpp" />
     <ClInclude Include="DeliveryNotificationManager.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="GameObject.hpp" />
@@ -186,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AckRange.cpp" />
+    <ClCompile Include="Checkpoint.cpp" />
     <ClCompile Include="DeliveryNotificationManager.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
