@@ -10,4 +10,4 @@
 #include "RoboCatServer.hpp"
 #include "MouseServer.hpp"
 #include "YarnServer.hpp"
-
+#include "CheckpointServer.hpp"

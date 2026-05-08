@@ -1,9 +1,6 @@
 #include "RoboCatServerPCH.hpp"
 #include <iostream>
-
-
-
-//uncomment this when you begin working on the server
+#include <cmath>
 
 bool Server::StaticInit()
 {
@@ -18,6 +15,7 @@ Server::Server()
 	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAT', RoboCatServer::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('MOUS', MouseServer::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('YARN', YarnServer::StaticCreate);
+	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointServer::StaticCreate);
 
 	InitNetworkManager();
 
@@ -50,6 +48,8 @@ bool Server::InitNetworkManager()
 
 namespace
 {
+	const int kNumCheckpoints = 6;
+	const float kCheckpointRadius = 40.f;
 
 	void CreateRandomMice(int inMouseCount)
 	{
@@ -66,7 +66,36 @@ namespace
 		}
 	}
 
+	void CreateCheckpoints(int inCount)
+	{
+		// Layout checkpoints in a straight horizontal line centered in the level.
+		// This makes it easy to run through them in order.
+		Vector3 center(600.f, 400.f, 0.f);
 
+		// Total span of the checkpoints along X. Adjust if you want them more/less spread out.
+		const float totalSpan = 600.f;
+
+		// If only one checkpoint, place it exactly at center.
+		float startX = center.mX;
+		float spacing = 0.f;
+		if (inCount > 1)
+		{
+			startX = center.mX - totalSpan * 0.5f;
+			spacing = totalSpan / float(inCount - 1);
+		}
+
+		for (int i = 0; i < inCount; ++i)
+		{
+			GameObjectPtr go = GameObjectRegistry::sInstance->CreateGameObject('CHKP');
+			Vector3 loc(startX + spacing * float(i), center.mY, 0.f);
+			go->SetLocation(loc);
+			go->SetCollisionRadius(kCheckpointRadius);
+
+			// set index on checkpoint
+			std::shared_ptr<Checkpoint> cp = std::static_pointer_cast<Checkpoint>(go);
+			cp->SetIndex(i);
+		}
+	}
 }
 
 
@@ -74,6 +103,9 @@ void Server::SetupWorld()
 {
 	//spawn some random mice
 	CreateRandomMice(10);
+
+	// spawn checkpoints for the race
+	CreateCheckpoints(kNumCheckpoints);
 
 	//spawn more random mice!
 	//CreateRandomMice(10);
@@ -109,6 +141,11 @@ void Server::SpawnCatForPlayer(int inPlayerId)
 	cat->SetPlayerId(inPlayerId);
 	//gotta pick a better spawn location than this...
 	cat->SetLocation(Vector3(600.f - static_cast<float>(inPlayerId), 400.f, 0.f));
+
+	// inform cat of checkpoint count and race length
+	cat->SetTotalCheckpoints(kNumCheckpoints);
+	cat->SetLapsToWin(3);
+	cat->ResetRaceProgress();
 }
 
 void Server::HandleLostClient(ClientProxyPtr inClientProxy)

@@ -13,6 +13,7 @@
 #include "RoboCatClient.hpp"
 #include "MouseClient.hpp"
 #include "YarnClient.hpp"
+#include "CheckpointClient.hpp"
 
 #include "HUD.hpp"
 

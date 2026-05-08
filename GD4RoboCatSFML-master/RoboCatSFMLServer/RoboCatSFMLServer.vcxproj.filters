@@ -42,6 +42,9 @@
     <ClInclude Include="ReplicationManagerTransmissionData.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CheckpointServer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientProxy.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReplicationManagerTransmissionData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckpointServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

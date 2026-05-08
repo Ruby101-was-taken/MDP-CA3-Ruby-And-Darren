@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CheckpointServer.hpp" />
     <ClInclude Include="ClientProxy.hpp" />
     <ClInclude Include="MouseServer.hpp" />
     <ClInclude Include="NetworkManagerServer.hpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="YarnServer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CheckpointServer.cpp" />
     <ClCompile Include="ClientProxy.cpp" />
     <ClCompile Include="MouseServer.cpp" />
     <ClCompile Include="NetworkManagerServer.cpp" />

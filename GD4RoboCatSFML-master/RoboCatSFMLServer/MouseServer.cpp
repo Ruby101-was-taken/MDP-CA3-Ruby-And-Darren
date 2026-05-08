@@ -1,6 +1,5 @@
 #include "RoboCatServerPCH.hpp"
 
-
 MouseServer::MouseServer()
 {
 }
@@ -9,7 +8,6 @@ void MouseServer::HandleDying()
 {
 	NetworkManagerServer::sInstance->UnregisterGameObject(this);
 }
-
 
 bool MouseServer::HandleCollisionWithCat(RoboCat* inCat)
 {
@@ -20,9 +18,3 @@ bool MouseServer::HandleCollisionWithCat(RoboCat* inCat)
 
 	return false;
 }
-
-
-
-
-
-
