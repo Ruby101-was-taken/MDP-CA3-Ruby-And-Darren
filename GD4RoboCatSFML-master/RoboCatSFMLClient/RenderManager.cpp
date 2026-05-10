@@ -2,6 +2,7 @@
 
 std::unique_ptr< RenderManager >	RenderManager::sInstance;
 
+
 RenderManager::RenderManager()
 {
 	view.reset(sf::FloatRect(0, 0, 1280, 720));
@@ -9,8 +10,10 @@ RenderManager::RenderManager()
 }
 
 
+
 void RenderManager::StaticInit()
 {
+
 	sInstance.reset(new RenderManager());
 }
 
@@ -78,6 +81,9 @@ void RenderManager::Render()
 			{
 				Vector3 loc = cat->GetLocation();
 				view.setCenter(loc.mX, loc.mY);
+				// Ruby White - D00255322
+				float rot = cat->GetRotation();
+				view.setRotation(rot);
 
 				WindowManager::sInstance->setView(view);
 				break;
@@ -99,8 +105,9 @@ void RenderManager::Render()
 		sf::Vector2f viewSize = view.getSize();
 		sf::FloatRect visibleRect(viewCenter.x - viewSize.x * 0.5f, viewCenter.y - viewSize.y * 0.5f, viewSize.x, viewSize.y);
 
-		sf::RectangleShape ground(sf::Vector2f(visibleRect.width, visibleRect.height)); // draw ground as a rectangle covering the visible area
-		ground.setPosition(visibleRect.left, visibleRect.top);
+		sf::RectangleShape ground(sf::Vector2f(2560, 2560)); // draw ground as a rectangle covering the visible area
+									// Ruby White - D00255322
+		ground.setPosition(visibleRect.left-(visibleRect.width/2), visibleRect.top - (visibleRect.height / 2));
 		ground.setFillColor(sf::Color(80, 80, 90, 255));
 		
 		const float GRID_SIZE = 128.f; // Grid overlay
