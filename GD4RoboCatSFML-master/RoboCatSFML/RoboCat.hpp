@@ -54,41 +54,45 @@ private:
 
 	void	AdjustVelocityByThrust(float inDeltaTime);
 
-	Vector3				mVelocity;
+	Vector3	mVelocity;
 
 
-	float				mMaxLinearSpeed;
-	float				mMaxRotationSpeed;
-	float				mAcceleration;
-	float				mReverseAccelScale;
-	float				mLinearDrag;
-	float				mGrip;	
+	float mMaxLinearSpeed;
+	float mMaxRotationSpeed;
+	float mAcceleration;
+	float mReverseAccelScale;
+	float mLinearDrag;
+	float mGrip;
+
+	// Steering smoothing + speed-based steering scale
+	float mCurrentSteer;	// current applied steering (-1..1)
+	float mMinSteerScale;	// minimum steering scale at top speed (0..1)
 
 	//bounce fraction when hitting various things
-	float				mWallRestitution;
-	float				mCatRestitution;
+	float mWallRestitution;
+	float mCarRestitution;
 
 
-	uint32_t			mPlayerId;
+	uint32_t mPlayerId;
 
 protected:
 
 	///move down here for padding reasons...
 
-	float				mLastMoveTimestamp;
+	float mLastMoveTimestamp;
 
-	float				mThrustDir;
-	int					mHealth;
+	float mThrustDir;
+	int mHealth;
 
-	bool				mIsShooting;
+	bool mIsShooting;
 
 private:
 	// checkpoint & lap tracking
-	int					mCurrentLap;
-	int					mCurrentCheckpointIndex; // -1 == none yet
-	int					mLapsToWin;
-	int					mTotalCheckpoints;
-	bool				mRaceFinished;
+	int mCurrentLap;
+	int mCurrentCheckpointIndex; // -1 == none yet
+	int mLapsToWin;
+	int mTotalCheckpoints;
+	bool mRaceFinished;
 };
 
 typedef shared_ptr< PlayerCar >	PlayerCarPtr;

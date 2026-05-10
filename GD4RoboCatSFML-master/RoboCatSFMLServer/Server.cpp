@@ -6,6 +6,9 @@ bool Server::StaticInit()
 {
 	s_instance.reset(new Server());
 
+	// initialize RaceManager before handling clients
+	RaceManager::StaticInit();
+
 	return true;
 }
 
@@ -132,6 +135,12 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 
 	ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
 	SpawnCatForPlayer(playerId);
+
+	// Register player with RaceManager
+	if (RaceManager::sInstance)
+	{
+		RaceManager::sInstance->AddPlayer(playerId);
+	}
 }
 
 void Server::SpawnCatForPlayer(int inPlayerId)
@@ -159,6 +168,12 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
 	if (cat)
 	{
 		cat->SetDoesWantToDie(true);
+	}
+
+	// Unregister from RaceManager
+	if (RaceManager::sInstance)
+	{
+		RaceManager::sInstance->RemovePlayer(playerId);
 	}
 }
 
