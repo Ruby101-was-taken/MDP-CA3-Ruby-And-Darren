@@ -12,8 +12,10 @@ PlayerCar::PlayerCar() :
 	mLinearDrag(1.8f),			// drag when coasting
 	mGrip(0.08f),				// low grip -> easy to oversteer
 	mVelocity(Vector3::Zero),
+	mCurrentSteer(0.f),
+	mMinSteerScale(0.35f),		// reduce steering to 35% at top speed
 	mWallRestitution(0.1f),
-	mCatRestitution(0.1f),
+	mCarRestitution(0.1f),
 	mThrustDir(0.f),
 	mPlayerId(0),
 	mIsShooting(false),
@@ -42,8 +44,21 @@ void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState)
 	// but velocity direction is only slowly aligned to heading (grip), producing oversteer/drift.
 	float desiredHorizontal = inInputState.GetDesiredHorizontalDelta();
 
-	// Apply rotation. Rotation responsiveness is independent of throttle here to make it twitchy.
-	float rotationDelta = desiredHorizontal * mMaxRotationSpeed * inDeltaTime;
+	// Compute speed-based steering scale (1.0 at rest, mMinSteerScale at max speed)
+	float speed = mVelocity.Length2D();
+	float speedRatio = 0.f;
+	if (mMaxLinearSpeed > 0.f)
+	{
+		speedRatio = speed / mMaxLinearSpeed;
+		if (speedRatio > 1.f) speedRatio = 1.f;
+	}
+	float steerScale = 1.f - speedRatio * (1.f - mMinSteerScale); // linear lerp(1, mMinSteerScale, speedRatio)
+	
+	mCurrentSteer = desiredHorizontal; // Immediate steering (no gradual increase) for responsiveness
+
+	// Apply rotation scaled by speed-based steering limit
+	float effectiveSteer = mCurrentSteer * steerScale;
+	float rotationDelta = effectiveSteer * mMaxRotationSpeed * inDeltaTime;
 	float newRotation = GetRotation() + rotationDelta;
 	SetRotation(newRotation);
 
@@ -172,7 +187,7 @@ void PlayerCar::ProcessCollisions()
 						if (targetCat)
 						{
 							mVelocity -= impulse;
-							mVelocity *= mCatRestitution;
+							mVelocity *= mCarRestitution;
 						}
 						else
 						{
