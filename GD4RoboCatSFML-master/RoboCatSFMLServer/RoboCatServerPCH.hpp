@@ -11,3 +11,4 @@
 #include "MouseServer.hpp"
 #include "YarnServer.hpp"
 #include "CheckpointServer.hpp"
+#include "RaceManager.hpp"
