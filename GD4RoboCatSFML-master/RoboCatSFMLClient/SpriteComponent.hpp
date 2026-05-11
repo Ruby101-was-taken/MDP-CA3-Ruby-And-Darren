@@ -12,11 +12,15 @@ public:
 	void SetTexture(TexturePtr inTexture);
 	virtual sf::Sprite& GetSprite();
 	
+	void SetActive(bool is_active);
 
+	bool IsActive();
 
 protected:
 
 	sf::Sprite m_sprite;
+
+	bool is_active_;
 
 	//don't want circular reference...
 	GameObject* mGameObject;

@@ -9,12 +9,16 @@ void MouseServer::HandleDying()
 	NetworkManagerServer::sInstance->UnregisterGameObject(this);
 }
 
-bool MouseServer::HandleCollisionWithCar(PlayerCar* inCat)
+bool MouseServer::HandleCollisionWithCar(PlayerCar* inCar)
 {
-	//kill yourself!
-	SetDoesWantToDie(true);
+    if (!IsActive()) {
+        return false;
+    }
 
-	ScoreBoardManager::sInstance->IncScore(inCat->GetPlayerId(), 1);
+    SetActive(false);
+    ResetTimer();
 
-	return false;
+    ScoreBoardManager::sInstance->IncScore(inCar->GetPlayerId(), 1);
+
+    return false;
 }

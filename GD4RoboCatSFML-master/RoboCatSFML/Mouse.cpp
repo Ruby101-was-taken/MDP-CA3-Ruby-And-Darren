@@ -1,6 +1,9 @@
 #include "RoboCatPCH.hpp"
+#include <fstream>
 
-Mouse::Mouse()
+Mouse::Mouse() : 
+	is_collectable_(true),
+	time_until_respawn_(0.f)
 {
 	SetScale(GetScale() * 0.5f);
 	SetCollisionRadius(20.f);
@@ -9,14 +12,49 @@ Mouse::Mouse()
 
 bool Mouse::HandleCollisionWithCar(PlayerCar* inCar)
 {
+	if (!is_collectable_) {
+		return false;
+	}
+
 	(void)inCar;
 	return false;
+}
+
+void Mouse::SetActive(bool can_collect) {
+	is_collectable_ = can_collect;
+}
+
+void Mouse::ResetTimer() {
+	time_until_respawn_ = default_time_until_respawn_;
+}
+
+void Mouse::Update() {
+	GameObject::Update();
+
+	if (!is_collectable_) {
+		time_until_respawn_ -= Timing::sInstance.GetDeltaTime();
+
+		//if (time_until_respawn_ <= 0.f) {
+		//	is_collectable_ = true;
+		//}
+	}
 }
 
 
 uint32_t Mouse::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const
 {
 	uint32_t writtenState = 0;
+
+	if (inDirtyState & EMRS_Active) {
+		inOutputStream.Write(true);
+		inOutputStream.Write(is_collectable_);
+;
+		writtenState |= EMRS_Active;
+	}
+	else {
+		inOutputStream.Write(false);
+	}
+
 
 	if (inDirtyState & EMRS_Pose)
 	{
@@ -35,18 +73,6 @@ uint32_t Mouse::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtySta
 		inOutputStream.Write((bool)false);
 	}
 
-	if (inDirtyState & EMRS_Color)
-	{
-		inOutputStream.Write((bool)true);
-
-		inOutputStream.Write(GetColor());
-
-		writtenState |= EMRS_Color;
-	}
-	else
-	{
-		inOutputStream.Write((bool)false);
-	}
 
 
 	return writtenState;
@@ -55,6 +81,15 @@ uint32_t Mouse::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtySta
 void Mouse::Read(InputMemoryBitStream& inInputStream)
 {
 	bool stateBit;
+
+	inInputStream.Read(stateBit);
+	if (stateBit) {
+		bool can_collect;
+		inInputStream.Read(can_collect);
+
+		SetActive(can_collect);
+
+	}
 
 	inInputStream.Read(stateBit);
 	if (stateBit)
@@ -67,16 +102,11 @@ void Mouse::Read(InputMemoryBitStream& inInputStream)
 		float rotation;
 		inInputStream.Read(rotation);
 		SetRotation(rotation);
+		std::ofstream log("net_debug.txt", std::ios::app);
+		log << "Position: " << is_collectable_ << "\n";
 	}
 
 
-	inInputStream.Read(stateBit);
-	if (stateBit)
-	{
-		Vector3 color;
-		inInputStream.Read(color);
-		SetColor(color);
-	}
 }
 
 

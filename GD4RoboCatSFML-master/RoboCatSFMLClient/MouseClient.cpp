@@ -1,7 +1,19 @@
 #include "RoboCatClientPCH.hpp"
 
+void MouseClient::Update() {
+	Mouse::Update();
+	if (IsActive())
+		SetRotation(GetRotation()+1);
+
+
+	if (sprite_component_->IsActive() != IsActive()) {
+		sprite_component_->SetActive(IsActive());
+	}
+		
+}
+
 MouseClient::MouseClient()
 {
-	mSpriteComponent.reset(new SpriteComponent(this));
-	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("mouse"));
+	sprite_component_.reset(new SpriteComponent(this));
+	sprite_component_->SetTexture(TextureManager::sInstance->GetTexture("mouse"));
 }

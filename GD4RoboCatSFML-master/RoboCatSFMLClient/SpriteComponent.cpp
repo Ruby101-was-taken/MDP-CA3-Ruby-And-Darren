@@ -2,7 +2,8 @@
 
 
 SpriteComponent::SpriteComponent(GameObject* inGameObject) :
-	mGameObject(inGameObject)
+	mGameObject(inGameObject),
+	is_active_(true)
 {
 	//and add yourself to the rendermanager...
 	RenderManager::sInstance->AddComponent(this);
@@ -31,5 +32,13 @@ sf::Sprite& SpriteComponent::GetSprite()
 	m_sprite.setRotation(rot);
 
 	return m_sprite;
+}
+
+void SpriteComponent::SetActive(bool is_active) {
+	is_active_ = is_active;
+}
+
+bool SpriteComponent::IsActive() {
+	return is_active_;
 }
 

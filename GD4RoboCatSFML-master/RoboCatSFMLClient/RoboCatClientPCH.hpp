@@ -22,4 +22,5 @@
 #include "NetworkManagerClient.hpp"
 #include "Client.hpp"
 
-
+#include <iostream>
+#include <fstream>
