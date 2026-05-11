@@ -5,7 +5,7 @@ void MouseClient::Update() {
 	if (IsActive())
 		SetRotation(GetRotation()+1);
 
-
+	sprite_component_->SetActive(false);
 	if (sprite_component_->IsActive() != IsActive()) {
 		sprite_component_->SetActive(IsActive());
 	}

@@ -34,9 +34,9 @@ void Mouse::Update() {
 	if (!is_collectable_) {
 		time_until_respawn_ -= Timing::sInstance.GetDeltaTime();
 
-		//if (time_until_respawn_ <= 0.f) {
-		//	is_collectable_ = true;
-		//}
+		if (time_until_respawn_ <= 0.f) {
+			is_collectable_ = true;
+		}
 	}
 }
 
