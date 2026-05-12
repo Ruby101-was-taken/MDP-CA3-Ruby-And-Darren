@@ -20,8 +20,8 @@ private:
 
 	bool InitNetworkManager();
 	void SetupWorld();
-	// Darren Meidl - D00255479
-	float mTimeOfGameOver = 0.f; // time when the server observed game-over (0 == not set)
-	float mLobbyReturnDelay = 3.0f; // seconds to wait showing winners before returning to lobby
+
+	float mLobbyOpenStartTime = 0.f; // 0 == lobby not currently opened by round-end
+	float mLobbyDuration = 5.0f;     // lobby open window in seconds (5s as requested)
 };
 

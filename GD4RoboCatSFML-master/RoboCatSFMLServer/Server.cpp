@@ -13,8 +13,8 @@ bool Server::StaticInit()
 }
 
 Server::Server() :
-	mTimeOfGameOver(0.f),
-	mLobbyReturnDelay(3.0f)
+	mLobbyOpenStartTime(0.f),
+	mLobbyDuration(5.0f)
 {
 
 	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAR', PlayerCarServer::StaticCreate);
@@ -127,25 +127,36 @@ void Server::DoFrame()
 	Engine::DoFrame();
 
 	NetworkManagerServer::sInstance->SendOutgoingPackets();
+	// Darren Meidl - D00255479 - Lobby handling triggered by round end
+	// When a round finishes we open the lobby for mLobbyDuration seconds to allow joins
+	// After that window the lobby is closed and the next round starts (no joins allowed mid-game)
+	if (!NetworkManagerServer::sInstance)
+		return;
 
-	// Darren Meidl - D00255479 - return to lobby when the game finishes with configurable delay
-	if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
+	// If game-over detected, ensure lobby opens (once) and start timer
+	if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
 	{
-		if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
-		{
-			float now = Timing::sInstance.GetFrameStartTime();
-			// mark the time the game ended the first time we notice it
-			if (mTimeOfGameOver == 0.f)
-				mTimeOfGameOver = now;
+		float now = Timing::sInstance.GetFrameStartTime();
 
-			// wait until configured delay has elapsed before returning to lobby
-			if ((now - mTimeOfGameOver) >= mLobbyReturnDelay)
+		// Open lobby when we first notice game-over.
+		if (mLobbyOpenStartTime == 0.f)
+		{
+			NetworkManagerServer::sInstance->SetIsInLobby(true); // allow joins
+			mLobbyOpenStartTime = now;
+		}
+		else
+		{
+			// If lobby window expired, close lobby and start next round.
+			if ((now - mLobbyOpenStartTime) >= mLobbyDuration)
 			{
-				NetworkManagerServer::sInstance->SetIsInLobby(true); // flip back to lobby
+				// Close lobby to prevent mid-game joins
+				NetworkManagerServer::sInstance->SetIsInLobby(false);
+
 				// Reset per-round state so the next race can start cleanly.
 				if (RaceManager::sInstance)
 				{
 					RaceManager::sInstance->Reset();
+
 					// repopulate active players in the race manager
 					std::vector<int> connected = NetworkManagerServer::sInstance->GetConnectedPlayerIds();
 					for (int pid : connected)
@@ -159,21 +170,21 @@ void Server::DoFrame()
 							SpawnCarForPlayer(pid);
 					}
 				}
-				// clear the timestamp so we can detect the next game-over later
-				mTimeOfGameOver = 0.f;
+
+				// clear lobby timer so we can detect next round's game-over anew
+				mLobbyOpenStartTime = 0.f;
 			}
 		}
-		else
-		{
-			// game-over is not active: make sure timestamp is cleared
-			mTimeOfGameOver = 0.f;
-		}
+	}
+	else
+	{
+		// no game-over; ensure lobby timer cleared
+		mLobbyOpenStartTime = 0.f;
 	}
 }
 
 void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 {
-
 	int playerId = inClientProxy->GetPlayerId();
 
 	ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
@@ -185,14 +196,7 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 		RaceManager::sInstance->AddPlayer(playerId);
 	}
 
-	// When the first player joins, consider the server leaving the lobby and entering a game.
-	// This prevents further players from joining mid-game.
-	if (NetworkManagerServer::sInstance && NetworkManagerServer::sInstance->IsInLobby())
-	{
-		NetworkManagerServer::sInstance->SetIsInLobby(false);
-		// clear any previous game-over timestamp so the next game is tracked fresh
-		mTimeOfGameOver = 0.f;
-	}
+	// IMPORTANT: do NOT close the lobby here. Lobby closes automatically after the configured window expires.
 }
 
 void Server::SpawnCarForPlayer(int inPlayerId)
@@ -203,7 +207,7 @@ void Server::SpawnCarForPlayer(int inPlayerId)
 	//gotta pick a better spawn location than this...
 	cat->SetLocation(Vector3(600.f - static_cast<float>(inPlayerId), 400.f, 0.f));
 
-	// inform cat of checkpoint count and race length
+	// inform car of checkpoint count and race length
 	cat->SetTotalCheckpoints(kNumCheckpoints);
 	cat->SetLapsToWin(3);
 	cat->ResetRaceProgress();
@@ -211,7 +215,7 @@ void Server::SpawnCarForPlayer(int inPlayerId)
 
 void Server::HandleLostClient(ClientProxyPtr inClientProxy)
 {
-	//kill client's cat
+	//kill client's car
 	//remove client from scoreboard
 	int playerId = inClientProxy->GetPlayerId();
 
@@ -236,8 +240,8 @@ PlayerCarPtr Server::GetCarForPlayer(int inPlayerId)
 	for (int i = 0, c = gameObjects.size(); i < c; ++i)
 	{
 		GameObjectPtr go = gameObjects[i];
-		PlayerCar* cat = go->GetAsCar();
-		if (cat && cat->GetPlayerId() == inPlayerId)
+		PlayerCar* car = go->GetAsCar();
+		if (car && car->GetPlayerId() == inPlayerId)
 		{
 			return std::static_pointer_cast<PlayerCar>(go);
 		}
