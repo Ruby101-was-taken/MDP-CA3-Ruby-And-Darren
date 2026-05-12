@@ -7,8 +7,7 @@ public:
 
 	virtual void ProcessPacket(InputMemoryBitStream& inInputStream, const SocketAddress& inFromAddress) override;
 	virtual void HandleConnectionReset(const SocketAddress& inFromAddress) override;
-
-	// Lobby / game state control:
+	// Darren Meidl - D00255479 - Lobby / game state control
 	// When true, server accepts new joining players (lobby). When false, reject new joins (game in progress).
 	void SetIsInLobby(bool inIsInLobby) { mIsInLobby = inIsInLobby; }
 	bool IsInLobby() const { return mIsInLobby; }

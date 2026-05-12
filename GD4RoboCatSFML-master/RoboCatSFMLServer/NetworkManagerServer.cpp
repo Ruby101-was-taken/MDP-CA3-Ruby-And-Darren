@@ -9,6 +9,8 @@ NetworkManagerServer::NetworkManagerServer() :
 	mTimeBetweenStatePackets(0.033f),
 	mClientDisconnectTimeout(3.f)
 {
+	// start in lobby so players can join
+	mIsInLobby = true;
 }
 
 bool NetworkManagerServer::StaticInit(uint16_t inPort)
@@ -78,6 +80,14 @@ void NetworkManagerServer::HandlePacketFromNewClient(InputMemoryBitStream& inInp
 	inInputStream.Read(packetType);
 	if (packetType == kHelloCC)
 	{
+		// Darren Meidl - D00255479
+		// If we're currently in a game, reject new join attempts.
+		if (!mIsInLobby)
+		{
+			LOG("Rejecting join from %s - game in progress", inFromAddress.ToString().c_str());
+			return; // simply ignore the hello; client will retry or time out.
+		}
+
 		//read the name
 		string name;
 		inInputStream.Read(name);
@@ -323,5 +333,3 @@ void NetworkManagerServer::SetStateDirty(int inNetworkId, uint32_t inDirtyState)
 		pair.second->GetReplicationManagerServer().SetStateDirty(inNetworkId, inDirtyState);
 	}
 }
-
-
