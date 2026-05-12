@@ -11,8 +11,8 @@ public:
 	void HandleNewClient(ClientProxyPtr inClientProxy);
 	void HandleLostClient(ClientProxyPtr inClientProxy);
 
-	PlayerCarPtr	GetCatForPlayer(int inPlayerId);
-	void	SpawnCatForPlayer(int inPlayerId);
+	PlayerCarPtr	GetCarForPlayer(int inPlayerId);
+	void	SpawnCarForPlayer(int inPlayerId);
 
 
 private:

@@ -57,3 +57,19 @@ bool RaceManager::AreAllPlayersFinished() const
     }
     return true;
 }
+
+void RaceManager::Reset()
+{
+    // Clear finish order so a new race can begin.
+    mFinishOrder.clear();
+
+    // Clear game-over state on the scoreboard so clients see lobby again.
+    if (ScoreBoardManager::sInstance)
+    {
+        ScoreBoardManager::sInstance->SetGameOver(false);
+    }
+
+    // NOTE: we intentionally do not clear mActivePlayers here because
+    // it represents currently-registered/connected players. Keeping that
+    // set means connected players remain registered for the next round.
+}

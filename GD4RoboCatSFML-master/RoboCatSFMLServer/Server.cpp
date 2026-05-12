@@ -126,6 +126,18 @@ void Server::DoFrame()
 
 	NetworkManagerServer::sInstance->SendOutgoingPackets();
 
+	// Darren Meidl - D00255479 - return to lobby when the game finishes
+	if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
+	{
+		if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
+		{
+			NetworkManagerServer::sInstance->SetIsInLobby(true);
+			if (RaceManager::sInstance)
+			{
+				RaceManager::sInstance->Reset(); // Reset per-round state so the next race can start cleanly
+			}
+		}
+	}
 }
 
 void Server::HandleNewClient(ClientProxyPtr inClientProxy)
@@ -134,16 +146,22 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 	int playerId = inClientProxy->GetPlayerId();
 
 	ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
-	SpawnCatForPlayer(playerId);
+	SpawnCarForPlayer(playerId);
 
 	// Register player with RaceManager
 	if (RaceManager::sInstance)
 	{
 		RaceManager::sInstance->AddPlayer(playerId);
 	}
+	// When the first player joins, consider the server leaving the lobby and entering a game.
+	// This prevents further players from joining mid-game.
+	if (NetworkManagerServer::sInstance && NetworkManagerServer::sInstance->IsInLobby())
+	{
+		NetworkManagerServer::sInstance->SetIsInLobby(false);
+	}
 }
 
-void Server::SpawnCatForPlayer(int inPlayerId)
+void Server::SpawnCarForPlayer(int inPlayerId)
 {
 	PlayerCarPtr cat = std::static_pointer_cast<PlayerCar>(GameObjectRegistry::sInstance->CreateGameObject('RCAR'));
 	cat->SetColor(ScoreBoardManager::sInstance->GetEntry(inPlayerId)->GetColor());
@@ -164,7 +182,7 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
 	int playerId = inClientProxy->GetPlayerId();
 
 	ScoreBoardManager::sInstance->RemoveEntry(playerId);
-	PlayerCarPtr cat = GetCatForPlayer(playerId);
+	PlayerCarPtr cat = GetCarForPlayer(playerId);
 	if (cat)
 	{
 		cat->SetDoesWantToDie(true);
@@ -177,7 +195,7 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
 	}
 }
 
-PlayerCarPtr Server::GetCatForPlayer(int inPlayerId)
+PlayerCarPtr Server::GetCarForPlayer(int inPlayerId)
 {
 	//run through the objects till we find the cat...
 	//it would be nice if we kept a pointer to the cat on the clientproxy
