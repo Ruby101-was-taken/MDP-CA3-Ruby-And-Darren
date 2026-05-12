@@ -7,10 +7,9 @@ NetworkManagerServer::NetworkManagerServer() :
 	mNewPlayerId(1),
 	mNewNetworkId(1),
 	mTimeBetweenStatePackets(0.033f),
-	mClientDisconnectTimeout(3.f)
+	mClientDisconnectTimeout(3.f),
+	mIsInLobby(true)
 {
-	// start in lobby so players can join
-	mIsInLobby = true;
 }
 
 bool NetworkManagerServer::StaticInit(uint16_t inPort)
@@ -56,14 +55,41 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 	switch (packetType)
 	{
 	case kHelloCC:
-		//need to resend welcome. to be extra safe we should check the name is the one we expect from this address,
-		//otherwise something weird is going on...
+		//need to resend welcome...
 		SendWelcomePacket(inClientProxy);
 		break;
 	case kInputCC:
 		if (inClientProxy->GetDeliveryNotificationManager().ReadAndProcessState(inInputStream))
 		{
 			HandleInputPacket(inClientProxy, inInputStream);
+		}
+		break;
+	case kStartRaceCC:
+		// Only allow player 1 (host) to start the race.
+		if (inClientProxy->GetPlayerId() == 1)
+		{
+			if (mIsInLobby)
+			{
+				mIsInLobby = false;
+				// Reset race state, repopulate players and spawn cars immediately
+				if (RaceManager::sInstance)
+				{
+					RaceManager::sInstance->Reset();
+					std::vector<int> connected = GetConnectedPlayerIds();
+					for (int pid : connected)
+					{
+						RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
+					}
+					for (int pid : connected)
+					{
+						static_cast<Server*>(Engine::s_instance.get())->SpawnCarForPlayer(pid);
+					}
+				}
+			}
+		}
+		else
+		{
+			LOG("Non-host attempted to start race (player %d) - ignored", inClientProxy->GetPlayerId());
 		}
 		break;
 	default:
@@ -174,6 +200,9 @@ void NetworkManagerServer::SendStatePacketToClient(ClientProxyPtr inClientProxy)
 	InFlightPacket* ifp = inClientProxy->GetDeliveryNotificationManager().WriteState(statePacket);
 
 	WriteLastMoveTimestampIfDirty(statePacket, inClientProxy);
+
+	// Write lobby flag so client and server packet layouts match
+	statePacket.Write(mIsInLobby);
 
 	AddScoreBoardStateToPacket(statePacket);
 

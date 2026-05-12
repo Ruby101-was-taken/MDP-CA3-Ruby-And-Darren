@@ -56,6 +56,23 @@ void Client::HandleEvent(sf::Event& p_event)
 	switch (p_event.type)
 	{
 	case sf::Event::KeyPressed:
+		// Darren Meidl - D00255479
+		if (p_event.key.code == sf::Keyboard::S) // Detect 'S' (start-race) key
+		{
+			if (NetworkManagerClient::sInstance)
+            {
+                bool lobby = NetworkManagerClient::sInstance->IsLobbyOpen();
+                int pid = NetworkManagerClient::sInstance->GetPlayerId();
+                LOG("S pressed: IsLobbyOpen=%d, PlayerId=%d", lobby ? 1 : 0, pid);
+
+                if (lobby)
+                {
+					// only host (player id 1) should be able to hit start
+                    if (pid == 1) 
+                        NetworkManagerClient::sInstance->SendStartRacePacket();
+                }
+            }
+		}
 		InputManager::sInstance->HandleInput(EIA_Pressed, p_event.key.code);
 		break;
 	case sf::Event::KeyReleased:

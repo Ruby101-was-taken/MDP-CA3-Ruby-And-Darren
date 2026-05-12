@@ -29,6 +29,17 @@ void HUD::Render()
 	sf::View previousView = WindowManager::sInstance->getView();
 	WindowManager::sInstance->setView(WindowManager::sInstance->getDefaultView());
 
+	// Show lobby start prompt if server says lobby is open and we're the host
+	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen())
+	{
+		// only the host (player 1) sees the start prompt
+		if (NetworkManagerClient::sInstance->GetPlayerId() == 1)
+		{
+			Vector3 startOrigin(250.f, 350.f, 0.f);
+			RenderText("Press 'S' to START RACE (Host Only)", startOrigin, Colors::White);
+		}
+	}
+
 	RenderGameOver();
 	RenderBandWidth();
 	RenderRoundTripTime();

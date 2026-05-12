@@ -107,8 +107,12 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 	{
 		ReadLastMoveProcessedOnServerTimestamp(inInputStream);
 
-		//old
-		//HandleGameObjectState( inPacketBuffer );
+		// Read lobby flag (server writes this after timestamp)
+		bool lobbyOpen = false;
+		inInputStream.Read(lobbyOpen);
+		mIsLobbyOpen = lobbyOpen;
+
+		// Scoreboard and rest
 		HandleScoreBoardState(inInputStream);
 
 		//tell the replication manager to handle the rest...
@@ -235,4 +239,15 @@ void NetworkManagerClient::SendInputPacket()
 
 		SendPacket(inputPacket, mServerAddress);
 	}
+}
+
+// Darren Meidl - D00255479 - Send a start-race packet to the server (host only)
+void NetworkManagerClient::SendStartRacePacket()
+{
+	if (mState != NCS_Welcomed)
+		return;
+
+	OutputMemoryBitStream packet;
+	packet.Write(kStartRaceCC);
+	SendPacket(packet, mServerAddress);
 }

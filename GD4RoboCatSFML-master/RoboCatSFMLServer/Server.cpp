@@ -186,17 +186,22 @@ void Server::DoFrame()
 void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 {
 	int playerId = inClientProxy->GetPlayerId();
-
 	ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
-	SpawnCarForPlayer(playerId);
 
+	// If lobby is open, delay car spawning until the race starts
+	if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
+	{
+		SpawnCarForPlayer(playerId);
+	}
+	else
+	{
+		LOG("Player %d joined during lobby; delaying car spawn until race start", playerId);
+	}
 	// Register player with RaceManager
 	if (RaceManager::sInstance)
 	{
 		RaceManager::sInstance->AddPlayer(playerId);
 	}
-
-	// IMPORTANT: do NOT close the lobby here. Lobby closes automatically after the configured window expires.
 }
 
 void Server::SpawnCarForPlayer(int inPlayerId)
