@@ -12,7 +12,9 @@ bool Server::StaticInit()
 	return true;
 }
 
-Server::Server()
+Server::Server() :
+	mTimeOfGameOver(0.f),
+	mLobbyReturnDelay(3.0f)
 {
 
 	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAR', PlayerCarServer::StaticCreate);
@@ -126,32 +128,45 @@ void Server::DoFrame()
 
 	NetworkManagerServer::sInstance->SendOutgoingPackets();
 
-	// Darren Meidl - D00255479 - return to lobby when the game finishes
+	// Darren Meidl - D00255479 - return to lobby when the game finishes with configurable delay
 	if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
 	{
 		if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
 		{
-			// flip back to lobby
-			NetworkManagerServer::sInstance->SetIsInLobby(true);
+			float now = Timing::sInstance.GetFrameStartTime();
+			// mark the time the game ended the first time we notice it
+			if (mTimeOfGameOver == 0.f)
+				mTimeOfGameOver = now;
 
-			// Reset per-round state so the next race can start cleanly.
-			if (RaceManager::sInstance)
+			// wait until configured delay has elapsed before returning to lobby
+			if ((now - mTimeOfGameOver) >= mLobbyReturnDelay)
 			{
-				RaceManager::sInstance->Reset();
-
-				// repopulate active players in the race manager
-				std::vector<int> connected = NetworkManagerServer::sInstance->GetConnectedPlayerIds();
-				for (int pid : connected)
+				NetworkManagerServer::sInstance->SetIsInLobby(true); // flip back to lobby
+				// Reset per-round state so the next race can start cleanly.
+				if (RaceManager::sInstance)
 				{
-					RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
+					RaceManager::sInstance->Reset();
+					// repopulate active players in the race manager
+					std::vector<int> connected = NetworkManagerServer::sInstance->GetConnectedPlayerIds();
+					for (int pid : connected)
+					{
+						RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
+					}
+					// Spawn a car for any connected player that doesn't currently have one
+					for (int pid : connected)
+					{
+						if (!GetCarForPlayer(pid))
+							SpawnCarForPlayer(pid);
+					}
 				}
-				// Spawn a car for any connected player that doesn't currently have one.
-				for (int pid : connected)
-				{
-					if (!GetCarForPlayer(pid))
-						SpawnCarForPlayer(pid);
-				}
+				// clear the timestamp so we can detect the next game-over later
+				mTimeOfGameOver = 0.f;
 			}
+		}
+		else
+		{
+			// game-over is not active: make sure timestamp is cleared
+			mTimeOfGameOver = 0.f;
 		}
 	}
 }
@@ -169,11 +184,14 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 	{
 		RaceManager::sInstance->AddPlayer(playerId);
 	}
+
 	// When the first player joins, consider the server leaving the lobby and entering a game.
 	// This prevents further players from joining mid-game.
 	if (NetworkManagerServer::sInstance && NetworkManagerServer::sInstance->IsInLobby())
 	{
 		NetworkManagerServer::sInstance->SetIsInLobby(false);
+		// clear any previous game-over timestamp so the next game is tracked fresh
+		mTimeOfGameOver = 0.f;
 	}
 }
 
@@ -213,10 +231,7 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
 
 PlayerCarPtr Server::GetCarForPlayer(int inPlayerId)
 {
-	//run through the objects till we find the cat...
-	//it would be nice if we kept a pointer to the cat on the clientproxy
-	//but then we'd have to clean it up when the cat died, etc.
-	//this will work for now until it's a perf issue
+	//run through the objects till we find the car...
 	const auto& gameObjects = World::sInstance->GetGameObjects();
 	for (int i = 0, c = gameObjects.size(); i < c; ++i)
 	{
