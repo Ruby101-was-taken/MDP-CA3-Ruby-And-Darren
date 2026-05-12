@@ -138,11 +138,18 @@ void Server::DoFrame()
 			if (RaceManager::sInstance)
 			{
 				RaceManager::sInstance->Reset();
+
 				// repopulate active players in the race manager
 				std::vector<int> connected = NetworkManagerServer::sInstance->GetConnectedPlayerIds();
 				for (int pid : connected)
 				{
 					RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
+				}
+				// Spawn a car for any connected player that doesn't currently have one.
+				for (int pid : connected)
+				{
+					if (!GetCarForPlayer(pid))
+						SpawnCarForPlayer(pid);
 				}
 			}
 		}
