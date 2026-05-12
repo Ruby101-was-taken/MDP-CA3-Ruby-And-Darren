@@ -333,3 +333,14 @@ void NetworkManagerServer::SetStateDirty(int inNetworkId, uint32_t inDirtyState)
 		pair.second->GetReplicationManagerServer().SetStateDirty(inNetworkId, inDirtyState);
 	}
 }
+
+std::vector<int> NetworkManagerServer::GetConnectedPlayerIds() const
+{
+	std::vector<int> ids;
+	ids.reserve(mPlayerIdToClientMap.size());
+	for (const auto& pair : mPlayerIdToClientMap)
+	{
+		ids.push_back(pair.first);
+	}
+	return ids;
+}

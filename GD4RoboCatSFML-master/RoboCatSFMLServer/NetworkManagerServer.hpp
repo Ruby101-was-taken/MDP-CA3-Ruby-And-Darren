@@ -14,6 +14,8 @@ public:
 
 	void SendOutgoingPackets();
 	void CheckForDisconnects();
+	// Get list of currently connected player IDs
+	std::vector<int> GetConnectedPlayerIds() const;
 
 	void RegisterGameObject(GameObjectPtr inGameObject);
 	inline GameObjectPtr RegisterAndReturn(GameObject* inGameObject);

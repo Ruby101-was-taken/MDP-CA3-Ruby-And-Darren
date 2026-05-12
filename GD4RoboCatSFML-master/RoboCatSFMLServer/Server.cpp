@@ -131,10 +131,19 @@ void Server::DoFrame()
 	{
 		if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
 		{
+			// flip back to lobby
 			NetworkManagerServer::sInstance->SetIsInLobby(true);
+
+			// Reset per-round state so the next race can start cleanly.
 			if (RaceManager::sInstance)
 			{
-				RaceManager::sInstance->Reset(); // Reset per-round state so the next race can start cleanly
+				RaceManager::sInstance->Reset();
+				// repopulate active players in the race manager
+				std::vector<int> connected = NetworkManagerServer::sInstance->GetConnectedPlayerIds();
+				for (int pid : connected)
+				{
+					RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
+				}
 			}
 		}
 	}
