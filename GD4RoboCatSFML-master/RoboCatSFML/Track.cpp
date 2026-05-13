@@ -1,5 +1,5 @@
 #include "RoboCatPCH.hpp"
 
 Track::Track() {
-	SetScale(GetScale() * 10.f);
+	SetScale(GetScale() * 5.f);
 }

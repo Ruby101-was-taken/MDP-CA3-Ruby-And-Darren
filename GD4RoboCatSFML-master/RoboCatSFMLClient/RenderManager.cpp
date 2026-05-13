@@ -89,7 +89,7 @@ void RenderManager::Render()
 			PlayerCar* cat = goPtr->GetAsCar();
 			if (cat && cat->GetPlayerId() == localPlayerId)
 			{
-				Vector3 loc = cat->GetLocation();
+				Vector3 loc = cat->GetLocation() + cat->GetForwardVector()*250;
 				view.setCenter(loc.mX, loc.mY);
 				// Ruby White - D00255322
 				float rot = cat->GetRotation();

@@ -133,7 +133,7 @@ void PlayerCar::Update()
 void PlayerCar::ProcessCollisions()
 {
 	//right now just bounce off the sides..
-	ProcessCollisionsWithScreenWalls();
+	//ProcessCollisionsWithScreenWalls();
 
 	float sourceRadius = GetCollisionRadius();
 	Vector3 sourceLocation = GetLocation();
