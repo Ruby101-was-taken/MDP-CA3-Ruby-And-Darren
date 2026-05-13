@@ -10,11 +10,13 @@ void MouseServer::HandleDying()
 }
 
 void MouseServer::Respawn() {
-    SetLocation(Vector3(old_x_position_, 0, 0));
+    Logging::Log("MouseServer", "Respawn Method: " + std::to_string(old_x_position_));
+    SetLocation(Vector3(old_x_position_, GetLocation().mY, GetLocation().mZ));
     NetworkManagerServer::sInstance->SetStateDirty(
         GetNetworkId(),
-        EMRS_Active
+        EMRS_Pose
     );
+    Logging::Log("MouseServer", "Respawn Method: " + std::to_string(GetLocation().mX));
 }
 
 bool MouseServer::HandleCollisionWithCar(PlayerCar* inCar)
@@ -29,7 +31,7 @@ bool MouseServer::HandleCollisionWithCar(PlayerCar* inCar)
     ScoreBoardManager::sInstance->IncScore(inCar->GetPlayerId(), 1);
 
     SetOldXPosition();
-    SetLocation(Vector3(100000, 0, 0));
+    SetLocation(Vector3(100000, GetLocation().mY, GetLocation().mZ));
     NetworkManagerServer::sInstance->SetStateDirty(
         GetNetworkId(),
         EMRS_Pose

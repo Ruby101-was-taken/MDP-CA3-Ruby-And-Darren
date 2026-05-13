@@ -13,6 +13,7 @@ void Mouse::SetOldXPosition() {
 	old_x_position_ = GetLocation().mX;
 }
 void Mouse::Respawn() {
+	Logging::Log("Mouse", "Respawn Method");
 
 }
 
@@ -43,6 +44,7 @@ void Mouse::Update() {
 
 		//respawn
 		if (time_until_respawn_ <= 0.f) {
+			Respawn();
 			Logging::Log("Mouse", "Respawn");
 			is_collectable_ = true;
 		}
