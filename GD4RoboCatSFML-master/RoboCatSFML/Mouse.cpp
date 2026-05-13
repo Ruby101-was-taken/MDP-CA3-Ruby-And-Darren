@@ -9,6 +9,7 @@ Mouse::Mouse() :
 	SetCollisionRadius(40.f);
 }
 
+// Ruby White - D00255322
 void Mouse::SetOldXPosition() {
 	old_x_position_ = GetLocation().mX;
 }

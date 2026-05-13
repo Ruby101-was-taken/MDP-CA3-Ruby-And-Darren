@@ -400,3 +400,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 GD4RoboCatSFML-master/Log.txt
+GD4RoboCatSFML-master/RoboCatSFMLClient/net_debug.txt
