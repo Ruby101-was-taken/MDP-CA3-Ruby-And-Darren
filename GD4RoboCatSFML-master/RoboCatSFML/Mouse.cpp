@@ -43,6 +43,7 @@ void Mouse::Update() {
 
 		//respawn
 		if (time_until_respawn_ <= 0.f) {
+			Logging::Log("Mouse", "Respawn");
 			is_collectable_ = true;
 		}
 	}

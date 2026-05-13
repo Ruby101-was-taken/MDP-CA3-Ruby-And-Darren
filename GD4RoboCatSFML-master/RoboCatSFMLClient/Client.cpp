@@ -16,6 +16,10 @@ bool Client::StaticInit()
 
 	s_instance.reset(client);
 
+
+	Logging::LogInit();
+	Logging::Log("Client", "Log Initialised");
+
 	return true;
 }
 

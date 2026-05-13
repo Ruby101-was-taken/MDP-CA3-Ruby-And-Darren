@@ -37,6 +37,9 @@ int Server::Run()
 {
 	SetupWorld();
 
+	Logging::LogInit();
+	Logging::Log("Server", "Log Initialised");
+
 	return Engine::Run();
 }
 

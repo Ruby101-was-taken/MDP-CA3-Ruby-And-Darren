@@ -93,3 +93,5 @@ class GameObject;
 #include "ReplicationCommand.hpp"
 #include "NetworkManager.hpp"
 #include "Engine.hpp"
+
+#include "Logging.hpp"
