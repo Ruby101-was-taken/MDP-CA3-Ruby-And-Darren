@@ -66,6 +66,11 @@ void PlayerCarServer::Update()
 	//{
 	//	NetworkManagerServer::sInstance->SetStateDirty(GetNetworkId(), ECRS_Pose);
 	//}
+
+	NetworkManagerServer::sInstance->SetStateDirty(
+		GetNetworkId(),
+		ECRS_Pose
+	);
 }
 
 void PlayerCarServer::HandleShooting()
