@@ -3,7 +3,8 @@
 
 SpriteComponent::SpriteComponent(GameObject* inGameObject) :
 	mGameObject(inGameObject),
-	is_active_(true)
+	is_active_(true),
+	rotate_with_camera_(false)
 {
 	//and add yourself to the rendermanager...
 	RenderManager::sInstance->AddComponent(this);
@@ -34,11 +35,20 @@ sf::Sprite& SpriteComponent::GetSprite()
 	return m_sprite;
 }
 
+// Ruby White - D00255322
 void SpriteComponent::SetActive(bool is_active) {
 	is_active_ = is_active;
 }
 
 bool SpriteComponent::IsActive() {
 	return is_active_;
+}
+
+void SpriteComponent::SetRotateWithCamera(bool set) {
+	rotate_with_camera_ = set;
+}
+
+bool SpriteComponent::RotatesWithCamera() {
+	return rotate_with_camera_;
 }
 

@@ -57,13 +57,20 @@ int RenderManager::GetComponentIndex(SpriteComponent* inComponent) const
 //render the cameras in order
 void RenderManager::RenderComponents()
 {
+	float world_rotation = WindowManager::sInstance->getView().getRotation();
 	//Get the logical viewport so we can pass this to the SpriteComponents when it's draw time
 	for (SpriteComponent* c : mComponents)
 	{	
 		// Ruby White - D00255322
 		std::cout << c->IsActive() << std::endl;
-		if(c->IsActive())
-			WindowManager::sInstance->draw(c->GetSprite());	
+		if (c->IsActive()) {
+			sf::Sprite& sprite = c->GetSprite();
+			if (c->RotatesWithCamera())
+				sprite.setRotation(world_rotation);
+			WindowManager::sInstance->draw(sprite);
+			if (c->RotatesWithCamera())
+				sprite.setRotation(-world_rotation);
+		}
 	}
 }
 
@@ -87,6 +94,8 @@ void RenderManager::Render()
 				// Ruby White - D00255322
 				float rot = cat->GetRotation();
 				view.setRotation(rot);
+
+				World::sInstance->SetAngle(rot);
 
 				WindowManager::sInstance->setView(view);
 				break;

@@ -11,16 +11,20 @@ public:
 
 	void SetTexture(TexturePtr inTexture);
 	virtual sf::Sprite& GetSprite();
-	
-	void SetActive(bool is_active);
 
+	// Ruby White - D00255322
+	void SetActive(bool is_active);
 	bool IsActive();
+	void SetRotateWithCamera(bool set);
+	bool RotatesWithCamera();
 
 protected:
 
 	sf::Sprite m_sprite;
 
+	// Ruby White - D00255322
 	bool is_active_;
+	bool rotate_with_camera_;
 
 	//don't want circular reference...
 	GameObject* mGameObject;

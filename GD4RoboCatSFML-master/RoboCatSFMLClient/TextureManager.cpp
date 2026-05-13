@@ -9,12 +9,11 @@ void TextureManager::StaticInit()
 
 TextureManager::TextureManager()
 {
-	CacheTexture("cat", "../Assets/cat.png");
-	CacheTexture("car", "../Assets/car.png"); // Darren Meidl - D00255479 - New car sprite
+	CacheTexture("car", "../Assets/Textures/Player/Car.png"); // Ruby White - D00255322 Darren Meidl - D00255479 - New car sprite
 	CacheTexture("checkpoint", "../Assets/checkpoint.png"); // Darren Meidl - D00255479 - New checkpoint sprite
 	CacheTexture("checkpoint_passed", "../Assets/checkpoint_passed.png"); // Darren Meidl - D00255479 - New checkpoint passed sprite
 	CacheTexture("checkpoint_next", "../Assets/checkpoint_next.png"); // NEW: next checkpoint sprite
-	CacheTexture("mouse", "../Assets/mouse.png");
+	CacheTexture("star", "../Assets/Textures/Item/Star.png");  // Ruby White - D00255322 - new collectable sprite
 	CacheTexture("yarn", "../Assets/yarn.png");
 	
 }

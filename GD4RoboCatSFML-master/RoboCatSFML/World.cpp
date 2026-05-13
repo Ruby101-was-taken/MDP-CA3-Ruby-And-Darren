@@ -61,3 +61,11 @@ void World::Update()
 		}
 	}
 }
+
+// Ruby White - D00255322
+float World::GetAngle() {
+	return world_angle_;
+}
+void World::SetAngle(float angle) {
+	world_angle_ = angle;
+}
