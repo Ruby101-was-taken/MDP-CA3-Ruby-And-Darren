@@ -23,5 +23,7 @@ private:
 
 	float mLobbyOpenStartTime = 0.f; // 0 == lobby not currently opened by round-end
 	float mLobbyDuration = 5.0f;     // lobby open window in seconds (5s as requested)
+
+	int checkpoint_count_;
 };
 

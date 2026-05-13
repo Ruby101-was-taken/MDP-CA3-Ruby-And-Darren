@@ -18,6 +18,7 @@ public:
 
 	// Ruby White - D00255322
 	void IncreaseTopSpeed() override;
+	void SetTotalCheckpoints(int in_total) override;
 protected:
 	PlayerCarServer();
 

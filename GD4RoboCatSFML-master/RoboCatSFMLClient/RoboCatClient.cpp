@@ -161,7 +161,14 @@ void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
 		mMaxLinearSpeed = 0;
 		inInputStream.Read(mMaxLinearSpeed);
 		readState |= ECRS_Speed;
-		Logging::Log("PlayerCarClient", std::to_string(mMaxLinearSpeed));
+	}
+
+	inInputStream.Read(stateBit);
+	if (stateBit) {
+		int total_checkpoints = 0;
+		inInputStream.Read(total_checkpoints);
+		readState |= ECRS_Checkpoints;
+		SetTotalCheckpoints(total_checkpoints);
 	}
 }
 

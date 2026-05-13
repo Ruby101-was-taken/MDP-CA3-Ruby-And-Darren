@@ -10,13 +10,11 @@ void MouseServer::HandleDying()
 }
 
 void MouseServer::Respawn() {
-    Logging::Log("MouseServer", "Respawn Method: " + std::to_string(old_x_position_));
     SetLocation(Vector3(old_x_position_, GetLocation().mY, GetLocation().mZ));
     NetworkManagerServer::sInstance->SetStateDirty(
         GetNetworkId(),
         EMRS_Pose
     );
-    Logging::Log("MouseServer", "Respawn Method: " + std::to_string(GetLocation().mX));
 }
 
 bool MouseServer::HandleCollisionWithCar(PlayerCar* inCar)

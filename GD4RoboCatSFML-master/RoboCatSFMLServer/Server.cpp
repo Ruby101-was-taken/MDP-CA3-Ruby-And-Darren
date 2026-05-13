@@ -64,14 +64,14 @@ namespace
 	// Ruby White - D00255322
 	//places for checkpoits to spawn. Z indicates rotation cuz why not
 	const vector<Vector3> checkpoints = {
-		Vector3(-2207.552246, -421.344971, 90),
+		Vector3(-2125.552246, -421.344971, 90),
 		Vector3(-1466.522827, -2102.799316, 0),
 		Vector3(51.324478, -1018.3812871, 0),
-		Vector3(1409.942139, -2102.799316, 0),
+		Vector3(1409.942139, -2075.799316, 0),
 		Vector3(2100.924805, -1308.708008, 90),
 		Vector3(318.778168, -93.539062, -30),
 		Vector3(498.528992, 750.646057, 0),
-		Vector3(2100.924805, -1559, 90),
+		Vector3(2100.924805, 1559, 90),
 	};
 
 	void CreateRandomMice(int inMouseCount)
@@ -90,7 +90,7 @@ namespace
 
 	}
 
-	void CreateCheckpoints(int inCount)
+	int CreateCheckpoints(int inCount)
 	{
 		int i = 0;
 		for (Vector3 vect : checkpoints) {
@@ -104,7 +104,10 @@ namespace
 			// set index on checkpoint
 			std::shared_ptr<CheckpointServer> cp = std::static_pointer_cast<CheckpointServer>(go);
 			cp->SetIndex(i++);
+			Logging::Log("Server", "i: " + std::to_string(i));
 		}
+
+		return checkpoints.size();
 	}
 }
 
@@ -115,10 +118,7 @@ void Server::SetupWorld()
 	CreateRandomMice(10);
 
 	// spawn checkpoints for the race
-	CreateCheckpoints(kNumCheckpoints);
-
-	//spawn more random mice!
-	//CreateRandomMice(10);
+	checkpoint_count_ = CreateCheckpoints(checkpoint_count_);
 }
 
 void Server::DoFrame()
@@ -217,11 +217,10 @@ void Server::SpawnCarForPlayer(int inPlayerId)
 
 	// Ruby White - D00255322
 	float spawn_y = -239 + (120*(inPlayerId-1));
-	Logging::Log("Server", "Player ID: " + std::to_string(spawn_y));
 	cat->SetLocation(Vector3((inPlayerId%2==0)? -2240 : -2070, spawn_y, 0.f));
 
 	// inform car of checkpoint count and race length
-	cat->SetTotalCheckpoints(kNumCheckpoints);
+	cat->SetTotalCheckpoints(checkpoint_count_);
 	cat->SetLapsToWin(3);
 	cat->ResetRaceProgress();
 }

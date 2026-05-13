@@ -8,6 +8,15 @@ void PlayerCarServer::IncreaseTopSpeed() {
 	);
 }
 
+void PlayerCarServer::SetTotalCheckpoints(int in_total) {
+	PlayerCar::SetTotalCheckpoints(in_total);
+
+	NetworkManagerServer::sInstance->SetStateDirty(
+		GetNetworkId(),
+		ECRS_Checkpoints
+	);
+}
+
 PlayerCarServer::PlayerCarServer() :
 	mCarControlType(ESCT_Human),
 	mTimeOfNextShot(0.f),

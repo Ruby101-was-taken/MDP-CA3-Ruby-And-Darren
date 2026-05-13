@@ -11,8 +11,9 @@ public:
 		ECRS_PlayerId = 1 << 2,
 		ECRS_Health = 1 << 3,
 		ECRS_Speed = 1 << 4,
+		ECRS_Checkpoints = 1 << 5,
 
-		ECRS_AllState = ECRS_Pose | ECRS_Color | ECRS_PlayerId | ECRS_Health | ECRS_Speed
+		ECRS_AllState = ECRS_Pose | ECRS_Color | ECRS_PlayerId | ECRS_Health | ECRS_Speed | ECRS_Checkpoints
 	};
 
 
@@ -41,7 +42,6 @@ public:
 	// Darren Meidl - D000255479 - Checkpoint + lap logic
 	void OnCheckpointPassed(Checkpoint* inCheckpoint);
 	void ResetRaceProgress();
-	void SetTotalCheckpoints(int inTotal) { mTotalCheckpoints = inTotal; }
 	void SetLapsToWin(int inLaps) { mLapsToWin = inLaps; }
 	int GetCurrentLap() const { return mCurrentLap; }
 	int GetCurrentCheckpointIndex() const { return mCurrentCheckpointIndex; }
@@ -49,7 +49,9 @@ public:
 	int GetLapsToWin() const { return mLapsToWin; }
 
 	// Ruby White - D00255322
+	virtual void SetTotalCheckpoints(int in_total);
 	virtual void IncreaseTopSpeed();
+	void OnCompleteLap();
 protected:
 	PlayerCar();
 
@@ -99,7 +101,7 @@ private:
 	int mCurrentLap;
 	int mCurrentCheckpointIndex; // -1 == none yet
 	int mLapsToWin;
-	int mTotalCheckpoints;
+	int total_checkpoints_;
 	bool mRaceFinished;
 };
 

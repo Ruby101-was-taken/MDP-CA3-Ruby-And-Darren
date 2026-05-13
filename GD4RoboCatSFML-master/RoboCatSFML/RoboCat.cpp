@@ -22,9 +22,9 @@ PlayerCar::PlayerCar() :
 	mHealth(10),
 	// checkpoint / lap defaults
 	mCurrentLap(0),
-	mCurrentCheckpointIndex(-1),
+	mCurrentCheckpointIndex(0),
 	mLapsToWin(3),
-	mTotalCheckpoints(6),
+	total_checkpoints_(0),
 	mRaceFinished(false),
 	star_speed_increase_(30),
 	stars_(0),
@@ -328,34 +328,44 @@ uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirt
 		inOutputStream.Write((bool)false);
 	}
 
+	if (inDirtyState & ECRS_Checkpoints) {
+		inOutputStream.Write((bool)true);
+		inOutputStream.Write(total_checkpoints_);
+
+		writtenState |= ECRS_Checkpoints;
+	}
+	else {
+		inOutputStream.Write((bool)false);
+	}
+
 	return writtenState;
 
 
 }
-// Darren Meidl - D00255479 - Handle checkpoint collision
+// Ruby White - D00255322 Darren Meidl - D00255479 - Handle checkpoint collision
 void PlayerCar::OnCheckpointPassed(Checkpoint* inCheckpoint)
 {
-	if (!inCheckpoint || mRaceFinished || mTotalCheckpoints <= 0)
+	if (!inCheckpoint || mRaceFinished)
 		return;
 
 	int cpIndex = inCheckpoint->GetIndex();
-	int expectedIndex = (mCurrentCheckpointIndex + 1) % mTotalCheckpoints; // expected next index
+	int expectedIndex = mCurrentCheckpointIndex + 1; // expected next index
 
 	if (cpIndex != expectedIndex) {
 		// Not the checkpoint we expect next (ignore)
+		/*Logging::Log("PlayerCar", "Not the checkpoint we expect next (" + std::to_string(expectedIndex) + "/" + std::to_string(total_checkpoints_) + ")");*/
 		return;
 	}
-	
-	int prevIndex = mCurrentCheckpointIndex; // Advance checkpoint
-	mCurrentCheckpointIndex = cpIndex;
-
-	// If we wrapped from last checkpoint to index 0, we completed a lap
-	if (prevIndex == (mTotalCheckpoints - 1) && cpIndex == 0)
-	{
-		mCurrentLap++;
-		if (mCurrentLap >= mLapsToWin)
-			mRaceFinished = true;
-	}
+	else {
+		if (mCurrentCheckpointIndex == -1) {
+			Logging::Log("PlayerCar", "Completed a lap");
+			OnCompleteLap();
+		}
+		mCurrentCheckpointIndex++;
+		if (mCurrentCheckpointIndex == total_checkpoints_-1) { //we have passed the last checkpoint
+			mCurrentCheckpointIndex = -1;
+		}
+	}	
 }
 // Darren Meidl - D00255479 - Reset lap and checkpoint progress
 void PlayerCar::ResetRaceProgress()
@@ -365,9 +375,24 @@ void PlayerCar::ResetRaceProgress()
 	mRaceFinished = false;
 }
 
+// Ruby White - D00255322
+void PlayerCar::SetTotalCheckpoints(int in_total) {
+	total_checkpoints_ = in_total;
+	Logging::Log("PlayerCar", "Set checkpoints: " + std::to_string(total_checkpoints_));
+}
+
+
+// Ruby White - D00255322
 void PlayerCar::IncreaseTopSpeed() {
 	stars_++;
 	if (stars_ <= max_stars_) {
 		mMaxLinearSpeed += star_speed_increase_;
 	}
+}
+
+void PlayerCar::OnCompleteLap() {
+	mCurrentLap++;
+	if (mCurrentLap >= mLapsToWin)
+		mRaceFinished = true;
+	Logging::Log("PlayerCar", "Increment Lap");
 }
