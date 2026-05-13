@@ -7,7 +7,8 @@ NetworkManagerServer::NetworkManagerServer() :
 	mNewPlayerId(1),
 	mNewNetworkId(1),
 	mTimeBetweenStatePackets(0.033f),
-	mClientDisconnectTimeout(3.f)
+	mClientDisconnectTimeout(3.f),
+	mIsInLobby(true)
 {
 }
 
@@ -54,14 +55,41 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 	switch (packetType)
 	{
 	case kHelloCC:
-		//need to resend welcome. to be extra safe we should check the name is the one we expect from this address,
-		//otherwise something weird is going on...
+		//need to resend welcome...
 		SendWelcomePacket(inClientProxy);
 		break;
 	case kInputCC:
 		if (inClientProxy->GetDeliveryNotificationManager().ReadAndProcessState(inInputStream))
 		{
 			HandleInputPacket(inClientProxy, inInputStream);
+		}
+		break;
+	case kStartRaceCC:
+		// Only allow player 1 (host) to start the race.
+		if (inClientProxy->GetPlayerId() == 1)
+		{
+			if (mIsInLobby)
+			{
+				mIsInLobby = false;
+				// Reset race state, repopulate players and spawn cars immediately
+				if (RaceManager::sInstance)
+				{
+					RaceManager::sInstance->Reset();
+					std::vector<int> connected = GetConnectedPlayerIds();
+					for (int pid : connected)
+					{
+						RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
+					}
+					for (int pid : connected)
+					{
+						static_cast<Server*>(Engine::s_instance.get())->SpawnCarForPlayer(pid);
+					}
+				}
+			}
+		}
+		else
+		{
+			LOG("Non-host attempted to start race (player %d) - ignored", inClientProxy->GetPlayerId());
 		}
 		break;
 	default:
@@ -78,6 +106,14 @@ void NetworkManagerServer::HandlePacketFromNewClient(InputMemoryBitStream& inInp
 	inInputStream.Read(packetType);
 	if (packetType == kHelloCC)
 	{
+		// Darren Meidl - D00255479
+		// If we're currently in a game, reject new join attempts.
+		if (!mIsInLobby)
+		{
+			LOG("Rejecting join from %s - game in progress", inFromAddress.ToString().c_str());
+			return; // simply ignore the hello; client will retry or time out.
+		}
+
 		//read the name
 		string name;
 		inInputStream.Read(name);
@@ -85,9 +121,7 @@ void NetworkManagerServer::HandlePacketFromNewClient(InputMemoryBitStream& inInp
 		mAddressToClientMap[inFromAddress] = newClientProxy;
 		mPlayerIdToClientMap[newClientProxy->GetPlayerId()] = newClientProxy;
 
-		//tell the server about this client, spawn a cat, etc...
-		//if we had a generic message system, this would be a good use for it...
-		//instead we'll just tell the server directly
+		//tell the server about this client, spawn a car, etc...
 		static_cast<Server*> (Engine::s_instance.get())->HandleNewClient(newClientProxy);
 
 		//and welcome the client...
@@ -166,6 +200,9 @@ void NetworkManagerServer::SendStatePacketToClient(ClientProxyPtr inClientProxy)
 	InFlightPacket* ifp = inClientProxy->GetDeliveryNotificationManager().WriteState(statePacket);
 
 	WriteLastMoveTimestampIfDirty(statePacket, inClientProxy);
+
+	// Write lobby flag so client and server packet layouts match
+	statePacket.Write(mIsInLobby);
 
 	AddScoreBoardStateToPacket(statePacket);
 
@@ -325,4 +362,13 @@ void NetworkManagerServer::SetStateDirty(int inNetworkId, uint32_t inDirtyState)
 	}
 }
 
-
+std::vector<int> NetworkManagerServer::GetConnectedPlayerIds() const
+{
+	std::vector<int> ids;
+	ids.reserve(mPlayerIdToClientMap.size());
+	for (const auto& pair : mPlayerIdToClientMap)
+	{
+		ids.push_back(pair.first);
+	}
+	return ids;
+}

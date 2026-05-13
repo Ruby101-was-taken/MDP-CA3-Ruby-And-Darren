@@ -11,15 +11,17 @@ public:
 	void HandleNewClient(ClientProxyPtr inClientProxy);
 	void HandleLostClient(ClientProxyPtr inClientProxy);
 
-	PlayerCarPtr	GetCatForPlayer(int inPlayerId);
-	void	SpawnCatForPlayer(int inPlayerId);
+	PlayerCarPtr GetCarForPlayer(int inPlayerId);
+	void SpawnCarForPlayer(int inPlayerId);
 
 
 private:
 	Server();
 
-	bool	InitNetworkManager();
-	void	SetupWorld();
+	bool InitNetworkManager();
+	void SetupWorld();
 
+	float mLobbyOpenStartTime = 0.f; // 0 == lobby not currently opened by round-end
+	float mLobbyDuration = 5.0f;     // lobby open window in seconds (5s as requested)
 };
 

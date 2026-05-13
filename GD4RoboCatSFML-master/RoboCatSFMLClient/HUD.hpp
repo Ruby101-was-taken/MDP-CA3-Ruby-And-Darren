@@ -18,6 +18,7 @@ private:
 
 	HUD();
 
+	void RenderHostStartPrompt();
 	void RenderBandWidth();
 	void RenderRoundTripTime();
 	void RenderScoreBoard();

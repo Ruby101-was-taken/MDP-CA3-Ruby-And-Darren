@@ -10,53 +10,57 @@ class NetworkManagerClient : public NetworkManager
 public:
 	static NetworkManagerClient* sInstance;
 
-	static	void	StaticInit(const SocketAddress& inServerAddress, const string& inName);
+	static void StaticInit(const SocketAddress& inServerAddress, const string& inName);
 
-	void	SendOutgoingPackets();
+	void SendOutgoingPackets();
 
-	virtual void	ProcessPacket(InputMemoryBitStream& inInputStream, const SocketAddress& inFromAddress) override;
+	virtual void ProcessPacket(InputMemoryBitStream& inInputStream, const SocketAddress& inFromAddress) override;
 
-	const	WeightedTimedMovingAverage& GetAvgRoundTripTime()	const { return mAvgRoundTripTime; }
-	float									GetRoundTripTime()		const { return mAvgRoundTripTime.GetValue(); }
-	int		GetPlayerId()											const { return mPlayerId; }
-	float	GetLastMoveProcessedByServerTimestamp()					const { return mLastMoveProcessedByServerTimestamp; }
+	const WeightedTimedMovingAverage& GetAvgRoundTripTime() const { return mAvgRoundTripTime; }
+	float GetRoundTripTime() const { return mAvgRoundTripTime.GetValue(); }
+	int GetPlayerId() const { return mPlayerId; }
+	float GetLastMoveProcessedByServerTimestamp() const { return mLastMoveProcessedByServerTimestamp; }
+
+	bool IsLobbyOpen() const { return mIsLobbyOpen; }	void SendStartRacePacket();
+
 private:
 	NetworkManagerClient();
 	void Init(const SocketAddress& inServerAddress, const string& inName);
 
-	void	UpdateSayingHello();
-	void	SendHelloPacket();
+	void UpdateSayingHello();
+	void SendHelloPacket();
 
-	void	HandleWelcomePacket(InputMemoryBitStream& inInputStream);
-	void	HandleStatePacket(InputMemoryBitStream& inInputStream);
-	void	ReadLastMoveProcessedOnServerTimestamp(InputMemoryBitStream& inInputStream);
+	void HandleWelcomePacket(InputMemoryBitStream& inInputStream);
+	void HandleStatePacket(InputMemoryBitStream& inInputStream);
+	void ReadLastMoveProcessedOnServerTimestamp(InputMemoryBitStream& inInputStream);
 
-	void	HandleGameObjectState(InputMemoryBitStream& inInputStream);
-	void	HandleScoreBoardState(InputMemoryBitStream& inInputStream);
+	void HandleGameObjectState(InputMemoryBitStream& inInputStream);
+	void HandleScoreBoardState(InputMemoryBitStream& inInputStream);
 
-	void	UpdateSendingInputPacket();
-	void	SendInputPacket();
+	void UpdateSendingInputPacket();
+	void SendInputPacket();
 
-	void	DestroyGameObjectsInMap(const IntToGameObjectMap& inObjectsToDestroy);
+	void DestroyGameObjectsInMap(const IntToGameObjectMap& inObjectsToDestroy);
 
 
 	DeliveryNotificationManager mDeliveryNotificationManager;
-	ReplicationManagerClient	mReplicationManagerClient;
+	ReplicationManagerClient mReplicationManagerClient;
 
-	SocketAddress		mServerAddress;
+	SocketAddress mServerAddress;
 
-	NetworkClientState	mState;
+	NetworkClientState mState;
 
-	float				mTimeOfLastHello;
-	float				mTimeOfLastInputPacket;
+	float mTimeOfLastHello;
+	float mTimeOfLastInputPacket;
 
-	string				mName;
-	int					mPlayerId;
+	string mName;
+	int	mPlayerId;
 
-	float				mLastMoveProcessedByServerTimestamp;
+	float mLastMoveProcessedByServerTimestamp;
 
 	WeightedTimedMovingAverage	mAvgRoundTripTime;
-	float						mLastRoundTripTime;
+	float mLastRoundTripTime;
 
+	bool mIsLobbyOpen = false;
 };
 

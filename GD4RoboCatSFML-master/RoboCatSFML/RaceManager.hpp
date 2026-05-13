@@ -19,6 +19,8 @@ public:
     const std::vector<uint32_t>& GetFinishOrder() const { return mFinishOrder; }
     bool AreAllPlayersFinished() const;
 
+    void Reset(); // Reset per-round state
+
 private:
     std::unordered_set<uint32_t> mActivePlayers; // players still racing (or registered)
     std::vector<uint32_t> mFinishOrder; // in crossing order, front = 1st

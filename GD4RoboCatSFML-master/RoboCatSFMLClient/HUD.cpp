@@ -29,6 +29,7 @@ void HUD::Render()
 	sf::View previousView = WindowManager::sInstance->getView();
 	WindowManager::sInstance->setView(WindowManager::sInstance->getDefaultView());
 
+	RenderHostStartPrompt();
 	RenderGameOver();
 	RenderBandWidth();
 	RenderRoundTripTime();
@@ -37,6 +38,34 @@ void HUD::Render()
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
+}
+// Darren Meidl - D00255479 - Render start prompt for host player when in lobby
+void HUD::RenderHostStartPrompt() {
+	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()) {
+		// only the host (player 1) sees the start prompt
+		if (NetworkManagerClient::sInstance->GetPlayerId() == 1) {
+			Vector3 startOrigin(250.f, 350.f, 0.f);
+
+			// Create full-screen black background (slightly transparent)
+			sf::View defaultView = WindowManager::sInstance->getDefaultView();
+			sf::Vector2f viewSize = defaultView.getSize();
+			sf::RectangleShape background(viewSize);
+			background.setPosition(0.f, 0.f);
+			background.setFillColor(sf::Color(0, 0, 0, 255));
+			WindowManager::sInstance->draw(background);
+
+			// Create text
+			sf::Text text;
+			const string prompt = "Press 'S' to START RACE (Host Only)";
+			text.setString(prompt);
+			text.setFillColor(sf::Color(255, 255, 255, 255));
+			text.setCharacterSize(50);
+			text.setPosition(startOrigin.mX, startOrigin.mY);
+			text.setFont(*FontManager::sInstance->GetFont("carlito"));
+
+			WindowManager::sInstance->draw(text);
+		}
+	}
 }
 
 void HUD::RenderBandWidth()
