@@ -21,9 +21,12 @@ uint32_t Checkpoint::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDir
 		inOutputStream.Write(loc.mX);
 		inOutputStream.Write(loc.mY);
 
+		// Ruby White - D00255322
 		inOutputStream.Write(GetRotation());
 
-		// rotation/scale aren't meaningful for checkpoint visuals in this project, skip unless needed <- rotation was needed, thanks Darren
+		inOutputStream.Write(GetScale());
+
+		// rotation/scale aren't meaningful for checkpoint visuals in this project, skip unless needed <- rotation and scale were needed, thanks Darren
 		writtenState |= ECRS_Pose;
 	}
 	else
@@ -56,10 +59,13 @@ void Checkpoint::Read(InputMemoryBitStream& inInputStream)
 		inInputStream.Read(x);
 		inInputStream.Read(y);
 		SetLocation(Vector3(x, y, 0.f));
+		// Ruby White - D00255322
 		float rot = 0.f;
 		inInputStream.Read(rot);
 		SetRotation(rot);
-		// ignore rotation/scale if not sent
+		float scale = 0.f;
+		inInputStream.Read(scale);
+		SetScale(scale);
 	}
 
 	bool isIndexDirty = false;

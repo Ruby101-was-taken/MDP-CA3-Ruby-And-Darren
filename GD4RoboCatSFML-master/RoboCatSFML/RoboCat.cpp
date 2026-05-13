@@ -150,7 +150,7 @@ void PlayerCar::ProcessCollisions()
 		{
 			//simple collision test for spheres- are the radii summed less than the distance?
 			Vector3 targetLocation = target->GetLocation();
-			float targetRadius = target->GetCollisionRadius();
+			float targetRadius = target->GetCollisionRadius()*target->GetScale();
 
 			Vector3 delta = targetLocation - sourceLocation;
 			float distSq = delta.LengthSq2D();

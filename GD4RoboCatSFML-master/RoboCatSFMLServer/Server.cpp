@@ -67,16 +67,11 @@ namespace
 		Vector3(-2207.552246, -421.344971, 90),
 		Vector3(-1466.522827, -2102.799316, 0),
 		Vector3(51.324478, -1018.3812871, 0),
-		Vector3(1409.942139, -2223.159668, 0),
-		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(1409.942139, -2102.799316, 0),
+		Vector3(2100.924805, -1308.708008, 90),
 		Vector3(318.778168, -93.539062, -30),
-		Vector3(498.528992, 600.646057, 0),
-		Vector3(2150.924805, -1308.708008, 90),
-		Vector3(2150.924805, -1308.708008, 90),
-		Vector3(2150.924805, -1308.708008, 90),
-		Vector3(2150.924805, -1308.708008, 90),
-		Vector3(2150.924805, -1308.708008, 90),
-		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(498.528992, 750.646057, 0),
+		Vector3(2100.924805, -1559, 90),
 	};
 
 	void CreateRandomMice(int inMouseCount)
@@ -104,6 +99,7 @@ namespace
 			go->SetLocation(vect);
 			go->SetCollisionRadius(kCheckpointRadius);
 			go->SetRotation(vect.mZ);
+			go->SetScale(5);
 
 			// set index on checkpoint
 			std::shared_ptr<CheckpointServer> cp = std::static_pointer_cast<CheckpointServer>(go);
@@ -218,8 +214,11 @@ void Server::SpawnCarForPlayer(int inPlayerId)
 	PlayerCarPtr cat = std::static_pointer_cast<PlayerCar>(GameObjectRegistry::sInstance->CreateGameObject('RCAR'));
 	cat->SetColor(ScoreBoardManager::sInstance->GetEntry(inPlayerId)->GetColor());
 	cat->SetPlayerId(inPlayerId);
-	//gotta pick a better spawn location than this...
-	cat->SetLocation(Vector3(600.f - static_cast<float>(inPlayerId), 400.f, 0.f));
+
+	// Ruby White - D00255322
+	float spawn_y = -239 + (120*(inPlayerId-1));
+	Logging::Log("Server", "Player ID: " + std::to_string(spawn_y));
+	cat->SetLocation(Vector3((inPlayerId%2==0)? -2240 : -2070, spawn_y, 0.f));
 
 	// inform car of checkpoint count and race length
 	cat->SetTotalCheckpoints(kNumCheckpoints);
