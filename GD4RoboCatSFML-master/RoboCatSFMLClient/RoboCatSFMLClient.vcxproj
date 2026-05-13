@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="CheckpointClient.hpp" />
     <ClInclude Include="Client.hpp" />
+    <ClInclude Include="ClientTrack.hpp" />
     <ClInclude Include="FontManager.hpp" />
     <ClInclude Include="HUD.hpp" />
     <ClInclude Include="InputManager.hpp" />
@@ -33,6 +34,7 @@
     <ClInclude Include="RoboCatClientPCH.hpp" />
     <ClInclude Include="SpriteComponent.hpp" />
     <ClInclude Include="TextureManager.hpp" />
+    <ClInclude Include="TrackClient.hpp" />
     <ClInclude Include="WindowManager.hpp" />
     <ClInclude Include="YarnClient.hpp" />
   </ItemGroup>
@@ -40,6 +42,7 @@
     <ClCompile Include="CheckpointClient.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientMain.cpp" />
+    <ClCompile Include="ClientTrack.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="InputManager.cpp" />

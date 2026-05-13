@@ -14,6 +14,7 @@ TextureManager::TextureManager()
 	CacheTexture("checkpoint_passed", "../Assets/checkpoint_passed.png"); // Darren Meidl - D00255479 - New checkpoint passed sprite
 	CacheTexture("checkpoint_next", "../Assets/checkpoint_next.png"); // NEW: next checkpoint sprite
 	CacheTexture("star", "../Assets/Textures/Item/Star.png");  // Ruby White - D00255322 - new collectable sprite
+	CacheTexture("track", "../Assets/Textures/Track.png");  // Ruby White - D00255322 - sprite for the track visuals
 	CacheTexture("yarn", "../Assets/yarn.png");
 	
 }

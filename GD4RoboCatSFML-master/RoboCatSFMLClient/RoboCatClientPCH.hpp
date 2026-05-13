@@ -12,6 +12,7 @@
 
 #include "RoboCatClient.hpp"
 #include "MouseClient.hpp"
+#include "ClientTrack.hpp"
 #include "YarnClient.hpp"
 #include "CheckpointClient.hpp"
 

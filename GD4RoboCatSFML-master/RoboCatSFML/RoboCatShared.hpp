@@ -83,6 +83,7 @@ class GameObject;
 #include "World.hpp"
 #include "Timing.hpp"
 #include "Mouse.hpp"
+#include "Track.hpp"
 #include "Yarn.hpp"
 #include "StringUtils.hpp"
 #include "ScoreBoardManager.hpp"

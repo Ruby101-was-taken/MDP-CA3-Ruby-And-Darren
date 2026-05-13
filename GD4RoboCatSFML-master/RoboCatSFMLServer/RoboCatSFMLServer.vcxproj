@@ -166,6 +166,7 @@
     <ClInclude Include="RoboCatServer.hpp" />
     <ClInclude Include="RoboCatServerPCH.hpp" />
     <ClInclude Include="Server.hpp" />
+    <ClInclude Include="ServerTrack.hpp" />
     <ClInclude Include="YarnServer.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +185,7 @@
     </ClCompile>
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerMain.cpp" />
+    <ClCompile Include="ServerTrack.cpp" />
     <ClCompile Include="YarnServer.cpp" />
   </ItemGroup>
   <ItemGroup>

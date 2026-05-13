@@ -9,6 +9,7 @@
 
 #include "RoboCatServer.hpp"
 #include "MouseServer.hpp"
+#include "ServerTrack.hpp"
 #include "YarnServer.hpp"
 #include "CheckpointServer.hpp"
 #include "RaceManager.hpp"

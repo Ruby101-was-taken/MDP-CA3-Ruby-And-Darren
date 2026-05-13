@@ -10,6 +10,12 @@ bool Client::StaticInit()
 	FontManager::StaticInit();
 	TextureManager::StaticInit();
 	RenderManager::StaticInit();
+
+
+	GameObjectPtr go;
+	go = GameObjectRegistry::sInstance->CreateGameObject('TRCK');
+	Vector3 track_location(0, 0, 0);
+	go->SetLocation(track_location);
 	
 
 	HUD::StaticInit();
@@ -29,6 +35,7 @@ Client::Client()
 	GameObjectRegistry::sInstance->RegisterCreationFunction('MOUS', MouseClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('YARN', YarnClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointClient::StaticCreate);
+	GameObjectRegistry::sInstance->RegisterCreationFunction('TRCK', ClientTrack::StaticCreate);
 
 	string destination = StringUtils::GetCommandLineArg(1);
 	string name = StringUtils::GetCommandLineArg(2);
@@ -36,6 +43,7 @@ Client::Client()
 	SocketAddressPtr serverAddress = SocketAddressFactory::CreateIPv4FromString(destination);
 
 	NetworkManagerClient::StaticInit(*serverAddress, name);
+
 
 	//NetworkManagerClient::sInstance->SetSimulatedLatency(0.0f);
 }

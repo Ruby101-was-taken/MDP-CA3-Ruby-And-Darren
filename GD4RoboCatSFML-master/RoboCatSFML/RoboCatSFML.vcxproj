@@ -181,6 +181,7 @@
     <ClInclude Include="StringUtils.hpp" />
     <ClInclude Include="TCPSocket.hpp" />
     <ClInclude Include="Timing.hpp" />
+    <ClInclude Include="Track.hpp" />
     <ClInclude Include="TransmissionData.hpp" />
     <ClInclude Include="UDPSocket.hpp" />
     <ClInclude Include="WeightedTimedMovingAverage.hpp" />
@@ -218,6 +219,7 @@
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TCPSocket.cpp" />
     <ClCompile Include="Timing.cpp" />
+    <ClCompile Include="Track.cpp" />
     <ClCompile Include="UDPSocket.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Yarn.cpp" />

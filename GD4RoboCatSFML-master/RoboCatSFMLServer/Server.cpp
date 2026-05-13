@@ -21,6 +21,7 @@ Server::Server() :
 	GameObjectRegistry::sInstance->RegisterCreationFunction('MOUS', MouseServer::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('YARN', YarnServer::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointServer::StaticCreate);
+	GameObjectRegistry::sInstance->RegisterCreationFunction('TRCK', ServerTrack::StaticCreate);
 
 	InitNetworkManager();
 
@@ -72,6 +73,7 @@ namespace
 			Vector3 mouseLocation = RoboMath::GetRandomVector(mouseMin, mouseMax);
 			go->SetLocation(mouseLocation);
 		}
+
 	}
 
 	void CreateCheckpoints(int inCount)
