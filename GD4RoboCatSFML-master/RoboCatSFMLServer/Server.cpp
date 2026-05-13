@@ -61,6 +61,24 @@ namespace
 	const int kNumCheckpoints = 6;
 	const float kCheckpointRadius = 40.f;
 
+	// Ruby White - D00255322
+	//places for checkpoits to spawn. Z indicates rotation cuz why not
+	const vector<Vector3> checkpoints = {
+		Vector3(-2207.552246, -421.344971, 90),
+		Vector3(-1466.522827, -2102.799316, 0),
+		Vector3(51.324478, -1018.3812871, 0),
+		Vector3(1409.942139, -2223.159668, 0),
+		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(318.778168, -93.539062, -30),
+		Vector3(498.528992, 600.646057, 0),
+		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(2150.924805, -1308.708008, 90),
+		Vector3(2150.924805, -1308.708008, 90),
+	};
+
 	void CreateRandomMice(int inMouseCount)
 	{
 		Vector3 mouseMin(100.f, 100.f, 0.f);
@@ -79,32 +97,17 @@ namespace
 
 	void CreateCheckpoints(int inCount)
 	{
-		// Layout checkpoints in a straight horizontal line centered in the level.
-		// This makes it easy to run through them in order.
-		Vector3 center(600.f, 400.f, 0.f);
+		int i = 0;
+		for (Vector3 vect : checkpoints) {
 
-		// Total span of the checkpoints along X. Adjust if you want them more/less spread out.
-		const float totalSpan = 600.f;
-
-		// If only one checkpoint, place it exactly at center.
-		float startX = center.mX;
-		float spacing = 0.f;
-		if (inCount > 1)
-		{
-			startX = center.mX - totalSpan * 0.5f;
-			spacing = totalSpan / float(inCount - 1);
-		}
-
-		for (int i = 0; i < inCount; ++i)
-		{
 			GameObjectPtr go = GameObjectRegistry::sInstance->CreateGameObject('CHKP');
-			Vector3 loc(startX + spacing * float(i), center.mY, 0.f);
-			go->SetLocation(loc);
+			go->SetLocation(vect);
 			go->SetCollisionRadius(kCheckpointRadius);
+			go->SetRotation(vect.mZ);
 
 			// set index on checkpoint
-			std::shared_ptr<Checkpoint> cp = std::static_pointer_cast<Checkpoint>(go);
-			cp->SetIndex(i);
+			std::shared_ptr<CheckpointServer> cp = std::static_pointer_cast<CheckpointServer>(go);
+			cp->SetIndex(i++);
 		}
 	}
 }

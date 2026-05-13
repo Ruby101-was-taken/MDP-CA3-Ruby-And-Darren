@@ -20,7 +20,10 @@ uint32_t Checkpoint::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDir
 		const Vector3& loc = GetLocation();
 		inOutputStream.Write(loc.mX);
 		inOutputStream.Write(loc.mY);
-		// rotation/scale aren't meaningful for checkpoint visuals in this project, skip unless needed
+
+		inOutputStream.Write(GetRotation());
+
+		// rotation/scale aren't meaningful for checkpoint visuals in this project, skip unless needed <- rotation was needed, thanks Darren
 		writtenState |= ECRS_Pose;
 	}
 	else
@@ -53,6 +56,9 @@ void Checkpoint::Read(InputMemoryBitStream& inInputStream)
 		inInputStream.Read(x);
 		inInputStream.Read(y);
 		SetLocation(Vector3(x, y, 0.f));
+		float rot = 0.f;
+		inInputStream.Read(rot);
+		SetRotation(rot);
 		// ignore rotation/scale if not sent
 	}
 

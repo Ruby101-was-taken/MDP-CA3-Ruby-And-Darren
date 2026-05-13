@@ -52,6 +52,9 @@ void PlayerCarClient::Update()
 			mTimeLocationBecameOutOfSync = 0.f;
 		}
 	}
+
+	Logging::ClearLog();
+	Logging::Log("Player Position", std::to_string(GetLocation().mX) + ", " + std::to_string(GetLocation().mY));
 }
 
 void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
