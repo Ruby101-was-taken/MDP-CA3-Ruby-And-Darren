@@ -7,4 +7,6 @@ public:
 
 protected:
 	MouseServer();
+
+	void Respawn() override;
 };

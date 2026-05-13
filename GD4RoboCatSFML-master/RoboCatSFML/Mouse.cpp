@@ -9,6 +9,13 @@ Mouse::Mouse() :
 	SetCollisionRadius(20.f);
 }
 
+void Mouse::SetOldXPosition() {
+	old_x_position_ = GetLocation().mX;
+}
+void Mouse::Respawn() {
+
+}
+
 
 bool Mouse::HandleCollisionWithCar(PlayerCar* inCar)
 {
@@ -34,6 +41,7 @@ void Mouse::Update() {
 	if (!is_collectable_) {
 		time_until_respawn_ -= Timing::sInstance.GetDeltaTime();
 
+		//respawn
 		if (time_until_respawn_ <= 0.f) {
 			is_collectable_ = true;
 		}

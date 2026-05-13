@@ -31,9 +31,16 @@ public:
 protected:
 	Mouse();
 
+	void SetOldXPosition();
+
+	virtual void Respawn();
+
 private:
 	bool is_collectable_;
 	float time_until_respawn_;
-	const float default_time_until_respawn_ = 5.f;
+	const float default_time_until_respawn_ = 2.f;
+
+protected:
+	float old_x_position_;
 };
 

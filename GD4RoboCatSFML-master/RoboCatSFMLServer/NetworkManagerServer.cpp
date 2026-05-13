@@ -202,6 +202,7 @@ void NetworkManagerServer::AddWorldStateToPacket(OutputMemoryBitStream& inOutput
 		inOutputStream.Write(gameObject->GetNetworkId());
 		inOutputStream.Write(gameObject->GetClassId());
 		gameObject->Write(inOutputStream, 0xffffffff);
+
 	}
 }
 
