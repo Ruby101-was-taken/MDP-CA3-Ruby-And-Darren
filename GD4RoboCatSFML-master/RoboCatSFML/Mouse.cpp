@@ -6,7 +6,7 @@ Mouse::Mouse() :
 	time_until_respawn_(0.f)
 {
 	SetScale(GetScale() * 0.5f);
-	SetCollisionRadius(40.f);
+	SetCollisionRadius(80.f);
 }
 
 // Ruby White - D00255322
