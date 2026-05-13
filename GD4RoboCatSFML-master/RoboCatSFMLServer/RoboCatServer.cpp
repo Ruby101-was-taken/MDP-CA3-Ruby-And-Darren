@@ -1,5 +1,13 @@
 #include "RoboCatServerPCH.hpp"
 
+void PlayerCarServer::IncreaseTopSpeed() {
+	PlayerCar::IncreaseTopSpeed();
+	NetworkManagerServer::sInstance->SetStateDirty(
+		GetNetworkId(),
+		ECRS_Speed
+	);
+}
+
 PlayerCarServer::PlayerCarServer() :
 	mCarControlType(ESCT_Human),
 	mTimeOfNextShot(0.f),

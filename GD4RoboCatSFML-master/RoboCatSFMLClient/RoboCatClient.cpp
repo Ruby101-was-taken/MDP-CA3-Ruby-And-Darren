@@ -151,6 +151,15 @@ void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
 		}
 
 	}
+
+
+	inInputStream.Read(stateBit);
+	if (stateBit) {
+		mMaxLinearSpeed = 0;
+		inInputStream.Read(mMaxLinearSpeed);
+		readState |= ECRS_Speed;
+		Logging::Log("PlayerCarClient", std::to_string(mMaxLinearSpeed));
+	}
 }
 
 void PlayerCarClient::DoClientSidePredictionAfterReplicationForLocalCat(uint32_t inReadState)

@@ -6,7 +6,7 @@ const float WORLD_WIDTH = 3840.f;
 PlayerCar::PlayerCar() :
 	GameObject(),
 	mMaxRotationSpeed(300.f),	// stronger turning
-	mMaxLinearSpeed(1200.f),		// top speed
+	mMaxLinearSpeed(600.f),		// top speed
 	mAcceleration(1000.f),		// acceleration
 	mReverseAccelScale(0.4f), // reverse is weaker than forward
 	mLinearDrag(1.8f),			// drag when coasting
@@ -25,7 +25,10 @@ PlayerCar::PlayerCar() :
 	mCurrentCheckpointIndex(-1),
 	mLapsToWin(3),
 	mTotalCheckpoints(6),
-	mRaceFinished(false)
+	mRaceFinished(false),
+	star_speed_increase_(30),
+	stars_(0),
+	max_stars_(20)
 {
 	// Set scale based on original sprite size
 	const float originalHalfHeight = 1010.f / 2.f;
@@ -315,6 +318,16 @@ uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirt
 		inOutputStream.Write((bool)false);
 	}
 
+	if (inDirtyState & ECRS_Speed) {
+		inOutputStream.Write((bool)true);
+		inOutputStream.Write(mMaxLinearSpeed);
+
+		writtenState |= ECRS_Speed;
+	}
+	else {
+		inOutputStream.Write((bool)false);
+	}
+
 	return writtenState;
 
 
@@ -352,5 +365,9 @@ void PlayerCar::ResetRaceProgress()
 	mRaceFinished = false;
 }
 
-
-
+void PlayerCar::IncreaseTopSpeed() {
+	stars_++;
+	if (stars_ <= max_stars_) {
+		mMaxLinearSpeed += star_speed_increase_;
+	}
+}

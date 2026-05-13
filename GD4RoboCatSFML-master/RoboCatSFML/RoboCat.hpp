@@ -10,8 +10,9 @@ public:
 		ECRS_Color = 1 << 1,
 		ECRS_PlayerId = 1 << 2,
 		ECRS_Health = 1 << 3,
+		ECRS_Speed = 1 << 4,
 
-		ECRS_AllState = ECRS_Pose | ECRS_Color | ECRS_PlayerId | ECRS_Health
+		ECRS_AllState = ECRS_Pose | ECRS_Color | ECRS_PlayerId | ECRS_Health | ECRS_Speed
 	};
 
 
@@ -47,6 +48,8 @@ public:
 	bool IsRaceFinished() const { return mRaceFinished; }
 	int GetLapsToWin() const { return mLapsToWin; }
 
+	// Ruby White - D00255322
+	virtual void IncreaseTopSpeed();
 protected:
 	PlayerCar();
 
@@ -57,7 +60,6 @@ private:
 	Vector3	mVelocity;
 
 
-	float mMaxLinearSpeed;
 	float mMaxRotationSpeed;
 	float mAcceleration;
 	float mReverseAccelScale;
@@ -73,10 +75,16 @@ private:
 	float mCarRestitution;
 
 
+	// Ruby White - D00255322
+	float star_speed_increase_;
+	int stars_;
+	int max_stars_;
+
 	uint32_t mPlayerId;
 
 protected:
 
+	float mMaxLinearSpeed;
 	///move down here for padding reasons...
 
 	float mLastMoveTimestamp;

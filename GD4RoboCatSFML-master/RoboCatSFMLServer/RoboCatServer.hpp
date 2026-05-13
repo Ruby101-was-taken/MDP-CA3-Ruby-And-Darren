@@ -16,6 +16,8 @@ public:
 
 	void TakeDamage(int inDamagingPlayerId);
 
+	// Ruby White - D00255322
+	void IncreaseTopSpeed() override;
 protected:
 	PlayerCarServer();
 

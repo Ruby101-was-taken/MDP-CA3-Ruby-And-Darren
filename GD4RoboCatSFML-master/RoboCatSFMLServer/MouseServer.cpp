@@ -37,5 +37,7 @@ bool MouseServer::HandleCollisionWithCar(PlayerCar* inCar)
         EMRS_Pose
     );
 
+    inCar->IncreaseTopSpeed();
+
     return false;
 }

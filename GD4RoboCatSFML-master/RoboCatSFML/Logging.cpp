@@ -16,10 +16,14 @@ void Logging::LogInit() {
 
 	file_path_ = "../Log.txt";
 
+	ClearLog();
+
+	initialised_ = true;
+}
+
+void Logging::ClearLog() {
 	//https://stackoverflow.com/a/17033060
 	std::ofstream ofs;
 	ofs.open(file_path_, std::ofstream::out | std::ofstream::trunc);
 	ofs.close();
-
-	initialised_ = true;
 }
