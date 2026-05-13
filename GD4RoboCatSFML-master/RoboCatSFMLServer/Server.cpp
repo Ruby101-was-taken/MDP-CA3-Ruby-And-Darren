@@ -72,6 +72,44 @@ namespace
 		Vector3(318.778168, -93.539062, -30),
 		Vector3(498.528992, 750.646057, 0),
 		Vector3(2100.924805, 1559, 90),
+		Vector3(1169.368042, 2109.872070, 0),
+		Vector3(57.127823, 1640.833984, 0),
+		Vector3(-1383.010132, 2135.174805, 0)
+	};
+
+	const vector<Vector3> stars = {
+		Vector3(-2151.022949,-796.765137, 0),
+		Vector3(-2145.224365,-1063.186401, 0),
+		Vector3(-2112.547607,-1647.859009, 0),
+		Vector3(-1713.181396,-2091.355713, 0),
+		Vector3(-1128.787598,-2065.548096, 0),
+		Vector3(-754.482971,-1594.193604, 0),
+		Vector3(-416.820282,-1103.754272, 0),
+		Vector3(151.486084,-976.750122, 0),
+		Vector3(614.482727,-1323.291748, 0),
+		Vector3(838.261963,-1895.145386, 0),
+		Vector3(1329.267090,-2176.183350, 0),
+		Vector3(1914.383301,-2024.205933, 0),
+		Vector3(2212.397461,-1540.753296, 0),
+		Vector3(2157.127441,-912.124512, 0),
+		Vector3(1794.699219,-447.860138, 0),
+		Vector3(1215.443604,-315.310303, 0),
+		Vector3(626.994629,-164.481873, 0),
+		Vector3(34.708496,-87.057114, 0),
+		Vector3(-474.525879,213.981979, 0),
+		Vector3(-317.743500,587.991516, 0),
+		Vector3(260.299133,639.385376, 0),
+		Vector3(896.876343,614.390320, 0),
+		Vector3(1528.331299,629.404053, 0),
+		Vector3(2088.906738,874.417664, 0),
+		Vector3(2200.448242,1497.971924, 0),
+		Vector3(1853.668213,2001.300049, 0),
+		Vector3(1236.186401,2121.086182, 0),
+		Vector3(636.281311,1978.076172, 0),
+		Vector3(191.292435,1518.769409, 0),
+		Vector3(-357.734497,1703.224976, 0),
+		Vector3(-805.512268,2152.127441, 0),
+		Vector3(-1418.191406,2289.562500, 0)
 	};
 
 	void CreateRandomMice(int inMouseCount)
@@ -80,12 +118,10 @@ namespace
 		Vector3 mouseMax(1180.f, 620.f, 0.f);
 		GameObjectPtr go;
 
-		//make a mouse somewhere- where will these come from?
-		for (int i = 0; i < inMouseCount; ++i)
-		{
-			go = GameObjectRegistry::sInstance->CreateGameObject('MOUS');
-			Vector3 mouseLocation = RoboMath::GetRandomVector(mouseMin, mouseMax);
-			go->SetLocation(mouseLocation);
+		for (Vector3 vect : stars) {
+
+			GameObjectPtr go = GameObjectRegistry::sInstance->CreateGameObject('MOUS');
+			go->SetLocation(vect);
 		}
 
 	}

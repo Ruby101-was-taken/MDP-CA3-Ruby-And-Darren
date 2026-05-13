@@ -20,7 +20,7 @@ void PlayerCarServer::SetTotalCheckpoints(int in_total) {
 PlayerCarServer::PlayerCarServer() :
 	mCarControlType(ESCT_Human),
 	mTimeOfNextShot(0.f),
-	mTimeBetweenShots(0.2f)
+	mTimeBetweenShots(1.f)
 {}
 
 void PlayerCarServer::HandleDying()
@@ -67,7 +67,7 @@ void PlayerCarServer::Update()
 	}
 
 
-	//HandleShooting();
+	HandleShooting();
 
 	//if (!RoboMath::Is2DVectorEqual(oldLocation, GetLocation()) ||
 	//	!RoboMath::Is2DVectorEqual(oldVelocity, GetVelocity()) ||
@@ -91,8 +91,10 @@ void PlayerCarServer::HandleShooting()
 		mTimeOfNextShot = time + mTimeBetweenShots;
 
 		//fire!
-		YarnPtr yarn = std::static_pointer_cast<Yarn>(GameObjectRegistry::sInstance->CreateGameObject('YARN'));
-		yarn->InitFromShooter(this);
+		//YarnPtr yarn = std::static_pointer_cast<Yarn>(GameObjectRegistry::sInstance->CreateGameObject('YARN'));
+		//yarn->InitFromShooter(this);
+
+		Logging::Log("Star", "Vector3(" + std::to_string(GetLocation().mX / 1) + "," + std::to_string(GetLocation().mY / 1) + ", 0)");
 	}
 }
 
