@@ -187,7 +187,7 @@ void Server::DoFrame()
 	NetworkManagerServer::sInstance->SendOutgoingPackets();
 	// Darren Meidl - D00255479 - Lobby handling triggered by round end
 	// When a round finishes we open the lobby for mLobbyDuration seconds to allow joins
-	// After that window the lobby is closed and the next round starts (no joins allowed mid-game)
+	// NOTE: automatic start of the next round after the lobby timer has expired has been removed.
 	if (!NetworkManagerServer::sInstance)
 		return;
 
@@ -204,47 +204,19 @@ void Server::DoFrame()
 		}
 		else
 		{
-			// If lobby window expired, close lobby and start next round.
-			if ((now - mLobbyOpenStartTime) >= mLobbyDuration)
-			{
-				// Close lobby to prevent mid-game joins
-				NetworkManagerServer::sInstance->SetIsInLobby(false);
-
-				// Reset per-round state so the next race can start cleanly.
-				if (RaceManager::sInstance)
-				{
-					RaceManager::sInstance->Reset();
-
-					// repopulate active players in the race manager
-					std::vector<int> connected = NetworkManagerServer::sInstance->GetConnectedPlayerIds();
-					for (int pid : connected)
-					{
-						RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
-					}
-
-					// Destroy any pre-existing cars for connected players and spawn fresh cars for everyone
-					for (int pid : connected)
-					{
-						PlayerCarPtr existing = GetCarForPlayer(pid);
-						if (existing)
-						{
-							existing->SetDoesWantToDie(true);
-						}
-					}
-
-					for (int pid : connected)
-					{
-						ClientProxyPtr client = NetworkManagerServer::sInstance->GetClientProxy(pid);
-						if (client)
-						{
-							SpawnCarForPlayer(pid, client->GetPlayerColour());
-						}
-					}
-				}
-
-				// clear lobby timer so we can detect next round's game-over anew
-				mLobbyOpenStartTime = 0.f;
-			}
+			// Lobby timer is running. When it expires we intentionally DO NOTHING here
+			// to prevent automatic round start. Host must manually start the next round.
+			// (Previously this block closed the lobby and spawned the next round.)
+			// The timer is kept so the UI/clients can still display the countdown.
+			// No automatic Reset/Spawn/SetIsInLobby(false) actions are performed.
+			// This will leave mLobbyOpenStartTime set so the expired state can be observed by other code/clients.
+			// If you prefer the timer to stop tracking after expiry, set mLobbyOpenStartTime = 0.f here.
+			//
+			// Example (NOT ENABLED):
+			// if ((now - mLobbyOpenStartTime) >= mLobbyDuration)
+			// {
+			//     // intentionally left blank to disable auto-start
+			// }
 		}
 	}
 	else

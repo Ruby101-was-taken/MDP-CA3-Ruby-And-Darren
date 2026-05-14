@@ -54,7 +54,7 @@ void HUD::RenderHostStartPrompt() {
 			sf::Vector2f viewSize = defaultView.getSize();
 			sf::RectangleShape background(viewSize);
 			background.setPosition(0.f, 0.f);
-			background.setFillColor(sf::Color(0, 0, 0, 255));
+			background.setFillColor(sf::Color(0, 0, 0, 225));
 			WindowManager::sInstance->draw(background);
 
 			// Create text
