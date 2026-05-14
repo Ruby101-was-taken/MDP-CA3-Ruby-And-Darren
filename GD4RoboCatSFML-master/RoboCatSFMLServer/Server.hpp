@@ -22,7 +22,7 @@ private:
 	void SetupWorld();
 
 	float mLobbyOpenStartTime = 0.f; // 0 == lobby not currently opened by round-end
-	float mLobbyDuration = 5.0f;     // lobby open window in seconds (5s as requested)
+	float mLobbyDuration = 10.0f;     // lobby open window in seconds
 
 	int checkpoint_count_;
 };
