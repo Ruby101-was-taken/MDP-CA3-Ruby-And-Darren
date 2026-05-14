@@ -50,6 +50,7 @@ Client::Client()
 	SocketAddressPtr serverAddress = SocketAddressFactory::CreateIPv4FromString(destination);
 
 	NetworkManagerClient::StaticInit(*serverAddress, name);
+	LevelManager::StaticInit();
 
 
 	//NetworkManagerClient::sInstance->SetSimulatedLatency(0.0f);

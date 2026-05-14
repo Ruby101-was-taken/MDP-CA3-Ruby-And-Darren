@@ -88,6 +88,7 @@ class GameObject;
 #include "StringUtils.hpp"
 #include "ScoreBoardManager.hpp"
 #include "RaceManager.hpp"
+#include "LevelManager.hpp"
 #include "Checkpoint.hpp"
 
 #include "WeightedTimedMovingAverage.hpp"

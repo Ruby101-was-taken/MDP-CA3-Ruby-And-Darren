@@ -62,7 +62,6 @@ void RenderManager::RenderComponents()
 	for (SpriteComponent* c : mComponents)
 	{	
 		// Ruby White - D00255322
-		std::cout << c->IsActive() << std::endl;
 		if (c->IsActive()) {
 			sf::Sprite& sprite = c->GetSprite();
 			if (c->RotatesWithCamera())
@@ -71,6 +70,14 @@ void RenderManager::RenderComponents()
 			if (c->RotatesWithCamera())
 				sprite.setRotation(-world_rotation);
 		}
+	}
+
+	for (sf::FloatRect rect : LevelManager::sInstance->level_tiles_) {
+		sf::RectangleShape vis;
+		vis.setPosition(rect.getPosition());
+		vis.setSize(rect.getSize());
+		vis.setFillColor(sf::Color::Red);
+		WindowManager::sInstance->draw(vis);
 	}
 }
 

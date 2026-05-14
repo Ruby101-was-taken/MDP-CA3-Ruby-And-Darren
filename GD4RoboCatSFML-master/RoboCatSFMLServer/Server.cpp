@@ -6,8 +6,9 @@ bool Server::StaticInit()
 {
 	s_instance.reset(new Server());
 
-	// initialize RaceManager before handling clients
+	// initialize RaceManager & Level Manager before handling clients
 	RaceManager::StaticInit();
+	LevelManager::StaticInit();
 
 	return true;
 }

@@ -162,6 +162,7 @@
     <ClInclude Include="InFlightPacket.hpp" />
     <ClInclude Include="InputAction.hpp" />
     <ClInclude Include="InputState.hpp" />
+    <ClInclude Include="LevelManager.hpp" />
     <ClInclude Include="LinkingContext.hpp" />
     <ClInclude Include="Logging.hpp" />
     <ClInclude Include="MemoryBitStream.hpp" />
@@ -199,6 +200,7 @@
     <ClCompile Include="GameObjectRegistry.cpp" />
     <ClCompile Include="InFlightPacket.cpp" />
     <ClCompile Include="InputState.cpp" />
+    <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="MemoryBitStream.cpp" />
     <ClCompile Include="Mouse.cpp" />
