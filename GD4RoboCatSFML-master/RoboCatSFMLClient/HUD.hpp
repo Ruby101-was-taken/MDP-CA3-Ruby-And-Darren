@@ -23,7 +23,7 @@ private:
 	void RenderRoundTripTime();
 	void RenderScoreBoard();
 	void RenderRaceInfo();
-	void RenderGameOver();
+	void RenderRaceOver();
 
 	void RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
 
