@@ -23,5 +23,7 @@
 #include "NetworkManagerClient.hpp"
 #include "Client.hpp"
 
+#include "ColourUtilities.hpp"
+
 #include <iostream>
 #include <fstream>

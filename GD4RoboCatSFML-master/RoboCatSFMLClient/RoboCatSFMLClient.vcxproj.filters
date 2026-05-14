@@ -69,6 +69,9 @@
     <ClInclude Include="ClientTrack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ColourUtilities.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -123,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ClientTrack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColourUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

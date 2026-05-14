@@ -76,12 +76,21 @@ void NetworkManagerClient::UpdateSayingHello()
 	}
 }
 
-void NetworkManagerClient::SendHelloPacket()
-{
+void NetworkManagerClient::SendHelloPacket() {
 	OutputMemoryBitStream helloPacket;
 
 	helloPacket.Write(kHelloCC);
 	helloPacket.Write(mName);
+
+	sf::Color colour = ColourUtilities::GetUserColourFromFile();
+
+	Vector3 playerColour(
+		static_cast<float>(colour.r),
+		static_cast<float>(colour.g),
+		static_cast<float>(colour.b)
+	);
+
+	helloPacket.Write(playerColour);
 
 	SendPacket(helloPacket, mServerAddress);
 }
@@ -251,3 +260,5 @@ void NetworkManagerClient::SendStartRacePacket()
 	packet.Write(kStartRaceCC);
 	SendPacket(packet, mServerAddress);
 }
+
+

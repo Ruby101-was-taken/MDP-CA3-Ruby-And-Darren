@@ -31,7 +31,7 @@ void	ClientProxy::RespawnCarIfNecessary()
 {
 	if (mTimeToRespawn != 0.f && Timing::sInstance.GetFrameStartTime() > mTimeToRespawn)
 	{
-		static_cast<Server*> (Engine::s_instance.get())->SpawnCarForPlayer(mPlayerId);
+		static_cast<Server*> (Engine::s_instance.get())->SpawnCarForPlayer(mPlayerId, mPlayerColour);
 		mTimeToRespawn = 0.f;
 	}
 }

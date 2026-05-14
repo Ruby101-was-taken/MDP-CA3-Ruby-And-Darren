@@ -41,7 +41,7 @@ public:
 	Vector3	GetForwardVector() const;
 
 
-	void SetColor(const Vector3& inColor) { mColor = inColor; }
+	void SetColor(const Vector3& inColor);
 	const Vector3& GetColor() const { return mColor; }
 
 	bool DoesWantToDie() const { return mDoesWantToDie; }

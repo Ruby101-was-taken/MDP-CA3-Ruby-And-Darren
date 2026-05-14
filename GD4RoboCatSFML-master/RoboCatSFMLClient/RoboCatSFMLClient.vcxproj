@@ -22,6 +22,7 @@
     <ClInclude Include="CheckpointClient.hpp" />
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="ClientTrack.hpp" />
+    <ClInclude Include="ColourUtilities.hpp" />
     <ClInclude Include="FontManager.hpp" />
     <ClInclude Include="HUD.hpp" />
     <ClInclude Include="InputManager.hpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientMain.cpp" />
     <ClCompile Include="ClientTrack.cpp" />
+    <ClCompile Include="ColourUtilities.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="InputManager.cpp" />

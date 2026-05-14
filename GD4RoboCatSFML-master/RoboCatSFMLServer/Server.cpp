@@ -223,8 +223,12 @@ void Server::DoFrame()
 					// Spawn a car for any connected player that doesn't currently have one
 					for (int pid : connected)
 					{
-						if (!GetCarForPlayer(pid))
-							SpawnCarForPlayer(pid);
+						if (!GetCarForPlayer(pid)) {
+							ClientProxyPtr client = NetworkManagerServer::sInstance->GetClientProxy(pid);
+							if (client) {
+								SpawnCarForPlayer(pid, client->GetPlayerColour());
+							}
+						}
 					}
 				}
 
@@ -248,7 +252,7 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 	// If lobby is open, delay car spawning until the race starts
 	if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
 	{
-		SpawnCarForPlayer(playerId);
+		SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
 	}
 	else
 	{
@@ -261,10 +265,10 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 	}
 }
 
-void Server::SpawnCarForPlayer(int inPlayerId)
+void Server::SpawnCarForPlayer(int inPlayerId, const Vector3& colour)
 {
 	PlayerCarPtr cat = std::static_pointer_cast<PlayerCar>(GameObjectRegistry::sInstance->CreateGameObject('RCAR'));
-	cat->SetColor(ScoreBoardManager::sInstance->GetEntry(inPlayerId)->GetColor());
+	cat->SetColor(colour);
 	cat->SetPlayerId(inPlayerId);
 
 	// Ruby White - D00255322

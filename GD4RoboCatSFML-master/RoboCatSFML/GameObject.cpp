@@ -25,6 +25,10 @@ Vector3 GameObject::GetForwardVector()	const
 	return Vector3(sinf(RoboMath::ToRadians(mRotation)), -cosf(RoboMath::ToRadians(mRotation)), 0.f);
 }
 
+void GameObject::SetColor(const Vector3& inColor) {
+	mColor = inColor; Logging::Log("GameObject", "Set colour: (" + std::to_string(inColor.mX) + ", " + std::to_string(inColor.mY) + ", " + std::to_string(inColor.mZ) + ")");
+}
+
 void GameObject::SetNetworkId(int inNetworkId)
 {
 	//this doesn't put you in the map or remove you from it

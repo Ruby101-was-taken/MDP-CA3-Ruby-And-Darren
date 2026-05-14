@@ -50,7 +50,6 @@ private:
 	typedef unordered_map< SocketAddress, ClientProxyPtr >	AddressToClientMap;
 
 	AddressToClientMap mAddressToClientMap;
-	IntToClientMap mPlayerIdToClientMap;
 
 	int mNewPlayerId;
 	int mNewNetworkId;
@@ -60,6 +59,9 @@ private:
 	float mClientDisconnectTimeout;
 	// true by default - server starts in lobby allowing joins
 	bool mIsInLobby;
+
+protected:
+	IntToClientMap mPlayerIdToClientMap;
 };
 
 

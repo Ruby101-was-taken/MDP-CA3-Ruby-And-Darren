@@ -82,7 +82,7 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 					}
 					for (int pid : connected)
 					{
-						static_cast<Server*>(Engine::s_instance.get())->SpawnCarForPlayer(pid);
+						static_cast<Server*>(Engine::s_instance.get())->SpawnCarForPlayer(pid, mPlayerIdToClientMap[pid]->GetPlayerColour());
 					}
 				}
 			}
@@ -117,7 +117,10 @@ void NetworkManagerServer::HandlePacketFromNewClient(InputMemoryBitStream& inInp
 		//read the name
 		string name;
 		inInputStream.Read(name);
+		Vector3 playerColour;
+		inInputStream.Read(playerColour);
 		ClientProxyPtr newClientProxy = std::make_shared< ClientProxy >(inFromAddress, name, mNewPlayerId++);
+		newClientProxy->SetPlayerColour(playerColour);
 		mAddressToClientMap[inFromAddress] = newClientProxy;
 		mPlayerIdToClientMap[newClientProxy->GetPlayerId()] = newClientProxy;
 

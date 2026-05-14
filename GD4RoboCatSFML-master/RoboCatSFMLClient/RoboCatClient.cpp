@@ -6,6 +6,9 @@ PlayerCarClient::PlayerCarClient() :
 {
 	mSpriteComponent.reset(new PlayerSpriteComponent(this));
 	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("car")); // Darren Meidl - D00255479 - New car sprite
+	sf::Color colour = ColourUtilities::GetUserColourFromFile();
+	SetColor(Vector3(colour.r, colour.g, colour.b));
+	
 }
 
 void PlayerCarClient::HandleDying()
@@ -115,7 +118,8 @@ void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
 	{
 		Vector3 color;
 		inInputStream.Read(color);
-		SetColor(color);
+		if (GetPlayerId() != NetworkManagerClient::sInstance->GetPlayerId())
+			SetColor(color);
 		readState |= ECRS_Color;
 	}
 

@@ -12,7 +12,7 @@ public:
 	void HandleLostClient(ClientProxyPtr inClientProxy);
 
 	PlayerCarPtr GetCarForPlayer(int inPlayerId);
-	void SpawnCarForPlayer(int inPlayerId);
+	void SpawnCarForPlayer(int inPlayerId, const Vector3& colour);
 
 
 private:
