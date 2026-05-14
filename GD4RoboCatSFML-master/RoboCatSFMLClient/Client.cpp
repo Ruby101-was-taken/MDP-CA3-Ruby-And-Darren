@@ -1,4 +1,5 @@
 #include "RoboCatClientPCH.hpp"
+#include <filesystem>
 
 bool Client::StaticInit()
 {
@@ -37,8 +38,12 @@ Client::Client()
 	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('TRCK', ClientTrack::StaticCreate);
 
+	if (not SaveFileUtilities::CheckIfFolderExists("Data")) {
+		std::filesystem::create_directories("Data");
+	}
+
 	string destination = SaveFileUtilities::GetAddressFromFile() + ":" + SaveFileUtilities::GetPortFromFile();
-	string name = StringUtils::GetCommandLineArg(2);
+	string name = SaveFileUtilities::GetUserNameFromFile();
 
 	Logging::Log("Client", destination);
 

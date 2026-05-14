@@ -131,3 +131,15 @@ std::string SaveFileUtilities::GetPortFromFile() {
 	output_file << new_port;
 	return new_port;
 }
+
+//https://www.geeksforgeeks.org/cpp/how-to-check-a-file-or-directory-exists-in-cpp/
+bool SaveFileUtilities::CheckIfFolderExists(const char* dir) {
+
+	// Structure which would store the metadata
+	struct stat sb;
+
+	// Calls the function with path as argument
+	// If the file/directory exists at the path returns 0
+	// If block executes if path exists
+	return stat(dir, &sb) == 0;
+}

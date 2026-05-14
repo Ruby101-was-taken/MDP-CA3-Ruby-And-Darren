@@ -188,7 +188,8 @@
       <AdditionalDependencies>ws2_32.lib;sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)\..\SFML-2.6.2\bin\*.dll" "$(OutDir)" /c /i /s /y</Command>
+      <Command>xcopy "$(ProjectDir)\..\SFML-2.6.2\bin\*.dll" "$(OutDir)" /c /i /s /y
+xcopy /y /d /s /i "$(ProjectDir)..\Assets" "$(TargetDir)..\Assets"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

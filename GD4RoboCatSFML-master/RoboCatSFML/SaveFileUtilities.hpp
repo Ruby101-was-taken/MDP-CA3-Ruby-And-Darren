@@ -13,5 +13,6 @@ public:
 	//static sf::Color GetUserColourFromFile();
 	static std::string GetAddressFromFile();
 	static std::string GetPortFromFile();
+	static bool CheckIfFolderExists(const char* dir);
 };
 
