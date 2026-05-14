@@ -19,6 +19,7 @@ private:
 	HUD();
 
 	void RenderHostStartPrompt();
+	void RenderLobbyWaitingScreen(); // new: render waiting-for-host screen for non-host players
 	void RenderBandWidth();
 	void RenderRoundTripTime();
 	void RenderScoreBoard();

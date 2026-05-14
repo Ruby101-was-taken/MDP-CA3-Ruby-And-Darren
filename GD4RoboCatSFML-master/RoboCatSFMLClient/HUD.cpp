@@ -36,6 +36,7 @@ void HUD::Render()
 	RenderScoreBoard();
 	RenderRaceInfo();
 	RenderHostStartPrompt();
+	RenderLobbyWaitingScreen();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
@@ -67,6 +68,40 @@ void HUD::RenderHostStartPrompt() {
 			WindowManager::sInstance->draw(text);
 		}
 	}
+}
+
+// New: Render a fullscreen black screen with centered message for non-host players waiting in lobby
+void HUD::RenderLobbyWaitingScreen()
+{
+	if (!(NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()))
+		return;
+
+	// only non-host players (host is player 1) should see this waiting screen
+	if (NetworkManagerClient::sInstance->GetPlayerId() == 1)
+		return;
+
+	// Full-screen black background
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
+	sf::RectangleShape background(viewSize);
+	background.setPosition(0.f, 0.f);
+	background.setFillColor(sf::Color(0, 0, 0, 255));
+	WindowManager::sInstance->draw(background);
+
+	// Centered message
+	sf::Text text;
+	const string prompt = "You're in! Waiting on Host to Start.";
+	text.setString(prompt);
+	text.setFillColor(sf::Color(255, 255, 255, 255));
+	text.setCharacterSize(50);
+	text.setFont(*FontManager::sInstance->GetFont("carlito"));
+
+	// center the text
+	sf::FloatRect bounds = text.getLocalBounds();
+	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	text.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
+
+	WindowManager::sInstance->draw(text);
 }
 
 void HUD::RenderBandWidth()
