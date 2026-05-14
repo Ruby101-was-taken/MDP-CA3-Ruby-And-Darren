@@ -18,5 +18,5 @@ private:
 	bool mIsNext = false;
 
 	const float visualScaleX = 1.0f;
-	const float visualScaleY = 5.0f;
+	const float visualScaleY = 6.f;
 };

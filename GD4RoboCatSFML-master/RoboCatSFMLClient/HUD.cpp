@@ -29,12 +29,13 @@ void HUD::Render()
 	sf::View previousView = WindowManager::sInstance->getView();
 	WindowManager::sInstance->setView(WindowManager::sInstance->getDefaultView());
 
-	RenderHostStartPrompt();
+	
 	RenderGameOver();
 	RenderBandWidth();
 	RenderRoundTripTime();
 	RenderScoreBoard();
 	RenderRaceInfo();
+	RenderHostStartPrompt();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);

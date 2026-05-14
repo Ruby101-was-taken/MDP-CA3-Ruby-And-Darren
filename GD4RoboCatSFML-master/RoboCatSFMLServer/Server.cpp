@@ -60,7 +60,7 @@ bool Server::InitNetworkManager()
 namespace
 {
 	const int kNumCheckpoints = 6;
-	const float kCheckpointRadius = 40.f;
+	const float kCheckpointRadius = 160.f;
 
 	// Ruby White - D00255322
 	//places for checkpoits to spawn. Z indicates rotation cuz why not

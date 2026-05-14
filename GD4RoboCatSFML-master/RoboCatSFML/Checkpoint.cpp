@@ -26,7 +26,6 @@ uint32_t Checkpoint::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDir
 
 		inOutputStream.Write(GetScale());
 
-		// rotation/scale aren't meaningful for checkpoint visuals in this project, skip unless needed <- rotation and scale were needed, thanks Darren
 		writtenState |= ECRS_Pose;
 	}
 	else
