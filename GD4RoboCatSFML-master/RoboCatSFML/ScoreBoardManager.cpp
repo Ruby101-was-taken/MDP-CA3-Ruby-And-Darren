@@ -73,9 +73,8 @@ void ScoreBoardManager::AddEntry(uint32_t inPlayerId, const string& inPlayerName
 void ScoreBoardManager::IncScore(uint32_t inPlayerId, int inAmount)
 {
 	Entry* entry = GetEntry(inPlayerId);
-	if (entry)
-	{
-		entry->SetScore(entry->GetScore() + inAmount);
+	if (entry) {
+		 if(entry->GetScore() < 20) entry->SetScore(entry->GetScore() + inAmount);
 	}
 }
 
