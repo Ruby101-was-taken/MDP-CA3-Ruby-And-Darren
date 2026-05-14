@@ -37,6 +37,7 @@ void HUD::Render()
 	RenderRaceInfo();
 	RenderHostStartPrompt();
 	RenderLobbyWaitingScreen();
+	RenderRaceInProgressJoinScreen();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
@@ -91,6 +92,42 @@ void HUD::RenderLobbyWaitingScreen()
 	// Centered message
 	sf::Text text;
 	const string prompt = "You're in! Waiting on Host to Start.";
+	text.setString(prompt);
+	text.setFillColor(sf::Color(255, 255, 255, 255));
+	text.setCharacterSize(50);
+	text.setFont(*FontManager::sInstance->GetFont("carlito"));
+
+	// center the text
+	sf::FloatRect bounds = text.getLocalBounds();
+	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	text.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
+
+	WindowManager::sInstance->draw(text);
+}
+
+
+void HUD::RenderRaceInProgressJoinScreen()
+{
+	if (!NetworkManagerClient::sInstance)
+		return;
+
+	if (NetworkManagerClient::sInstance->IsLobbyOpen())
+		return;
+
+	if (NetworkManagerClient::sInstance->GetPlayerId() > 0)
+		return;
+
+	// Full-screen black background
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
+	sf::RectangleShape background(viewSize);
+	background.setPosition(0.f, 0.f);
+	background.setFillColor(sf::Color(0, 0, 0, 255));
+	WindowManager::sInstance->draw(background);
+
+	// Centered message
+	sf::Text text;
+	const string prompt = "Race has started. Please wait until race is complete to join.";
 	text.setString(prompt);
 	text.setFillColor(sf::Color(255, 255, 255, 255));
 	text.setCharacterSize(50);
