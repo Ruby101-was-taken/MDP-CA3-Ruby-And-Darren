@@ -30,12 +30,14 @@ void HUD::Render()
 	WindowManager::sInstance->setView(WindowManager::sInstance->getDefaultView());
 
 	
-	RenderGameOver();
+	RenderRaceOver();
 	RenderBandWidth();
 	RenderRoundTripTime();
 	RenderScoreBoard();
 	RenderRaceInfo();
 	RenderHostStartPrompt();
+	RenderLobbyWaitingScreen();
+	RenderRaceInProgressJoinScreen();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
@@ -69,6 +71,76 @@ void HUD::RenderHostStartPrompt() {
 	}
 }
 
+// New: Render a fullscreen black screen with centered message for non-host players waiting in lobby
+void HUD::RenderLobbyWaitingScreen()
+{
+	if (!(NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()))
+		return;
+
+	// only non-host players (host is player 1) should see this waiting screen
+	if (NetworkManagerClient::sInstance->GetPlayerId() == 1)
+		return;
+
+	// Full-screen black background
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
+	sf::RectangleShape background(viewSize);
+	background.setPosition(0.f, 0.f);
+	background.setFillColor(sf::Color(0, 0, 0, 255));
+	WindowManager::sInstance->draw(background);
+
+	// Centered message
+	sf::Text text;
+	const string prompt = "You're in! Waiting on Host to Start.";
+	text.setString(prompt);
+	text.setFillColor(sf::Color(255, 255, 255, 255));
+	text.setCharacterSize(50);
+	text.setFont(*FontManager::sInstance->GetFont("carlito"));
+
+	// center the text
+	sf::FloatRect bounds = text.getLocalBounds();
+	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	text.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
+
+	WindowManager::sInstance->draw(text);
+}
+
+
+void HUD::RenderRaceInProgressJoinScreen()
+{
+	if (!NetworkManagerClient::sInstance)
+		return;
+
+	if (NetworkManagerClient::sInstance->IsLobbyOpen())
+		return;
+
+	if (NetworkManagerClient::sInstance->GetPlayerId() > 0)
+		return;
+
+	// Full-screen black background
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
+	sf::RectangleShape background(viewSize);
+	background.setPosition(0.f, 0.f);
+	background.setFillColor(sf::Color(0, 0, 0, 255));
+	WindowManager::sInstance->draw(background);
+
+	// Centered message
+	sf::Text text;
+	const string prompt = "Race has started. Please wait until race is complete to join.";
+	text.setString(prompt);
+	text.setFillColor(sf::Color(255, 255, 255, 255));
+	text.setCharacterSize(50);
+	text.setFont(*FontManager::sInstance->GetFont("carlito"));
+
+	// center the text
+	sf::FloatRect bounds = text.getLocalBounds();
+	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	text.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
+
+	WindowManager::sInstance->draw(text);
+}
+
 void HUD::RenderBandWidth()
 {
 	string bandwidth = StringUtils::Sprintf("In %d  Bps, Out %d Bps",
@@ -99,8 +171,8 @@ void HUD::RenderScoreBoard()
 
 }
 
-// Darren Meidl - D00255479 - Render game over and winners if game is over
-void HUD::RenderGameOver()
+// Darren Meidl - D00255479 - Render race over
+void HUD::RenderRaceOver()
 {
 	if (!ScoreBoardManager::sInstance)
 		return;
@@ -112,31 +184,60 @@ void HUD::RenderGameOver()
 	if (winners.empty())
 		return;
 
-	
-	Vector3 origin(700.f, 360.f, 0.f);
-	int idx = 0;
-	for (uint32_t pid : winners)
+	// Draw a semi-transparent fullscreen background to darken the scene
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
+	sf::RectangleShape background(viewSize);
+	background.setPosition(0.f, 0.f);
+	background.setFillColor(sf::Color(0, 0, 0, 200)); // semi-transparent black
+	WindowManager::sInstance->draw(background);
+
+	// Title: "Race Standings" centered at the top
+	sf::Text title;
+	title.setFont(*FontManager::sInstance->GetFont("carlito"));
+	title.setString("Race Standings");
+	title.setCharacterSize(70);
+	title.setFillColor(sf::Color(255, 255, 255, 255));
+	// center title
+	sf::FloatRect tBounds = title.getLocalBounds();
+	title.setOrigin(tBounds.left + tBounds.width / 2.f, tBounds.top + tBounds.height / 2.f);
+	title.setPosition(viewSize.x / 2.f, 80.f);
+	WindowManager::sInstance->draw(title);
+
+	// List all finishers in order, center each line, highlight 1st in gold
+	const float startY = 160.f;
+	const float lineSpacing = 60.f;
+	for (size_t idx = 0; idx < winners.size(); ++idx)
 	{
+		uint32_t pid = winners[idx];
 		const auto* entry = ScoreBoardManager::sInstance->GetEntry(pid);
-		string text;
+		string name = entry ? entry->GetPlayerName() : StringUtils::Sprintf("Player %u", pid);
+		string line = StringUtils::Sprintf("%d. %s", static_cast<int>(idx + 1), name.c_str());
+
+		sf::Text lineText;
+		lineText.setFont(*FontManager::sInstance->GetFont("carlito"));
+		lineText.setString(line);
+		lineText.setCharacterSize(50);
+
+		// Winner in gold color, others in white
 		if (idx == 0)
 		{
-			string name = entry ? entry->GetPlayerName() : StringUtils::Sprintf("Player %u", pid);
-			text = StringUtils::Sprintf("Winner: %s", name.c_str());
-			RenderText(text, origin, Colors::White);
+			lineText.setFillColor(sf::Color(212, 175, 55, 255)); // gold-ish
 		}
 		else
 		{
-			string name = entry ? entry->GetPlayerName() : StringUtils::Sprintf("Player %u", pid);
-			text = StringUtils::Sprintf("%d: %s", idx + 1, name.c_str());
-			Vector3 subOrigin = origin;
-			subOrigin.mY += 40.f * idx;
-			RenderText(text, subOrigin, Colors::White);
+			lineText.setFillColor(sf::Color(255, 255, 255, 255));
 		}
-		++idx;
-		// only show up to top 3
-		if (idx >= 3) break;
+
+		// center the text horizontally
+		sf::FloatRect b = lineText.getLocalBounds();
+		lineText.setOrigin(b.left + b.width / 2.f, b.top + b.height / 2.f);
+		lineText.setPosition(viewSize.x / 2.f, startY + idx * lineSpacing);
+		WindowManager::sInstance->draw(lineText);
 	}
+
+	// Optionally show up to a max number to avoid overflowing the screen.
+	// The current loop shows all entries received in the winners vector.
 }
 
 // Darren Meidl - D00255479 - Update local player's checkpoint and lap progress for HUD display

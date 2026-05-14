@@ -221,14 +221,23 @@ void Server::DoFrame()
 					{
 						RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
 					}
-					// Spawn a car for any connected player that doesn't currently have one
+
+					// Destroy any pre-existing cars for connected players and spawn fresh cars for everyone
 					for (int pid : connected)
 					{
-						if (!GetCarForPlayer(pid)) {
-							ClientProxyPtr client = NetworkManagerServer::sInstance->GetClientProxy(pid);
-							if (client) {
-								SpawnCarForPlayer(pid, client->GetPlayerColour());
-							}
+						PlayerCarPtr existing = GetCarForPlayer(pid);
+						if (existing)
+						{
+							existing->SetDoesWantToDie(true);
+						}
+					}
+
+					for (int pid : connected)
+					{
+						ClientProxyPtr client = NetworkManagerServer::sInstance->GetClientProxy(pid);
+						if (client)
+						{
+							SpawnCarForPlayer(pid, client->GetPlayerColour());
 						}
 					}
 				}

@@ -24,7 +24,7 @@ void RaceManager::RemovePlayer(uint32_t inPlayerId)
     {
         if (ScoreBoardManager::sInstance)
         {
-            ScoreBoardManager::sInstance->SetRaceWinners(static_cast<int>(mFinishOrder.size()));
+            ScoreBoardManager::sInstance->SetWinners(mFinishOrder);
         }
     }
 }
@@ -39,9 +39,9 @@ void RaceManager::OnPlayerFinished(PlayerCar* inCar)
   
     mFinishOrder.push_back(pid); // record finish order
     inCar->SetDoesWantToDie(true); // mark car for removal; world/server will clean it up
-    // Update scoreboard state only
-    if (ScoreBoardManager::sInstance)
-        ScoreBoardManager::sInstance->SetRaceWinners(static_cast<int>(mFinishOrder.size()));
+
+    if (ScoreBoardManager::sInstance && AreAllPlayersFinished())
+        ScoreBoardManager::sInstance->SetWinners(mFinishOrder);
     
 }
 
