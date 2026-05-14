@@ -15,7 +15,7 @@ bool Server::StaticInit()
 
 Server::Server() :
 	mLobbyOpenStartTime(0.f),
-	mLobbyDuration(5.0f)
+	mLobbyDuration(15.0f)
 {
 
 	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAR', PlayerCarServer::StaticCreate);

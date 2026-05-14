@@ -5,15 +5,17 @@ const float WORLD_WIDTH = 3840.f;
 
 PlayerCar::PlayerCar() :
 	GameObject(),
-	mMaxRotationSpeed(300.f),	// stronger turning
-	mMaxLinearSpeed(600.f),		// top speed
-	mAcceleration(1000.f),		// acceleration
-	mReverseAccelScale(0.4f), // reverse is weaker than forward
-	mLinearDrag(1.8f),			// drag when coasting
-	mGrip(0.08f),				// low grip -> easy to oversteer
+	// Car physics parameters - tuned for a small, responsive go-kart feel
+	mMaxRotationSpeed(180.f),	// steering
+	mMaxLinearSpeed(1200.f),		// speed
+	mAcceleration(800.f),		// acceleration
+	mReverseAccelScale(0.5f), // brake
+	mLinearDrag(1.5f),			
+	mGrip(1.f),
+	
 	mVelocity(Vector3::Zero),
 	mCurrentSteer(0.f),
-	mMinSteerScale(0.35f),		// reduce steering to 35% at top speed
+	mMinSteerScale(0.85f),		// reduce steering (percentage) at top speed
 	mWallRestitution(0.1f),
 	mCarRestitution(0.1f),
 	mThrustDir(0.f),
@@ -23,7 +25,7 @@ PlayerCar::PlayerCar() :
 	// checkpoint / lap defaults
 	mCurrentLap(0),
 	mCurrentCheckpointIndex(0),
-	mLapsToWin(3),
+	mLapsToWin(2),
 	total_checkpoints_(0),
 	mRaceFinished(false),
 	star_speed_increase_(30),
@@ -57,7 +59,9 @@ void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState)
 	}
 	float steerScale = 1.f - speedRatio * (1.f - mMinSteerScale); // linear lerp(1, mMinSteerScale, speedRatio)
 	
-	mCurrentSteer = desiredHorizontal; // Immediate steering (no gradual increase) for responsiveness
+	//mCurrentSteer = desiredHorizontal; // Immediate steering (no gradual increase) for responsiveness
+	float steerLerpSpeed = 8.f;
+	mCurrentSteer += (desiredHorizontal - mCurrentSteer) * steerLerpSpeed * inDeltaTime;
 
 	// Apply rotation scaled by speed-based steering limit
 	float effectiveSteer = mCurrentSteer * steerScale;
@@ -110,9 +114,45 @@ void PlayerCar::AdjustVelocityByThrust(float inDeltaTime)
 
 	// Reduce lateral velocity by grip factor (1 - grip) per second
 	// Keep forward velocity untouched except for drag above
-	lateralVel *= (1.f - mGrip);
+	//lateralVel *= (1.f - mGrip);
+	float gripFactor = std::max(0.f, 1.f - (mGrip * inDeltaTime));
+	lateralVel *= gripFactor;
 
 	mVelocity = forwardVel + lateralVel;
+	// Separate velocity into forward/lateral components
+	//Vector3 vel = mVelocity;
+
+	//float forwardSpeed = Dot2D(vel, forwardVector);
+
+	//Vector3 forwardVel = forwardVector * forwardSpeed;
+	//Vector3 lateralVel = vel - forwardVel;
+
+	//// Apply grip to reduce sideways sliding
+	//float gripFactor = std::max(0.f, 1.f - (mGrip * inDeltaTime));
+	//lateralVel *= gripFactor;
+
+	//// Rebuild velocity
+	//mVelocity = forwardVel + lateralVel;
+
+	//// Gradually rotate momentum toward facing direction
+	//float currentSpeed = mVelocity.Length2D();
+
+	//Vector3 desiredVelocity = forwardVector * currentSpeed;
+
+	//float velocityRotateSpeed = 1.5f;
+
+	//mVelocity += (desiredVelocity - mVelocity) * velocityRotateSpeed * inDeltaTime;
+
+	//// Lose speed while cornering hard
+	//float turnAmount = fabs(mCurrentSteer);
+
+	//float speed = mVelocity.Length2D();
+	//float speedRatio = speed / mMaxLinearSpeed;
+
+	//// More speed loss when steering hard at high speed
+	//float cornerDrag = turnAmount * speedRatio * 3.5f;
+
+	//mVelocity *= (1.f - cornerDrag * inDeltaTime);
 }
 
 void PlayerCar::SimulateMovement(float inDeltaTime)
