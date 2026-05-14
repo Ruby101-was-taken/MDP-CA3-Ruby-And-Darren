@@ -37,6 +37,7 @@ void HUD::Render()
 	RenderRaceInfo();	
 	RenderLobbyWaitingScreen();
 	RenderRaceInProgressJoinScreen();
+	RenderRaceFinishedWaitingScreen();
 	RenderRaceOver();
 	RenderHostStartPrompt();
 
@@ -129,6 +130,64 @@ void HUD::RenderRaceInProgressJoinScreen()
 	// Centered message
 	sf::Text text;
 	const string prompt = "Race has started. Please wait until race is complete to join.";
+	text.setString(prompt);
+	text.setFillColor(sf::Color(255, 255, 255, 255));
+	text.setCharacterSize(50);
+	text.setFont(*FontManager::sInstance->GetFont("carlito"));
+
+	// center the text
+	sf::FloatRect bounds = text.getLocalBounds();
+	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	text.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
+
+	WindowManager::sInstance->draw(text);
+}
+
+void HUD::RenderRaceFinishedWaitingScreen()
+{
+	if (!NetworkManagerClient::sInstance)
+		return;
+
+	int myPlayerId = NetworkManagerClient::sInstance->GetPlayerId();
+	if (myPlayerId <= 0)
+		return;
+
+	// If the scoreboard is already showing the final standings (game over), don't show this waiting screen.
+	if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
+		return;
+
+	// Find local player's car and check if they've finished
+	PlayerCar* myCar = nullptr;
+	if (World::sInstance)
+	{
+		const auto& gameObjects = World::sInstance->GetGameObjects();
+		for (const auto& goPtr : gameObjects)
+		{
+			PlayerCar* car = goPtr->GetAsCar();
+			if (car && car->GetPlayerId() == static_cast<uint32_t>(myPlayerId))
+			{
+				myCar = car;
+				break;
+			}
+		}
+	}
+
+	if (!myCar)
+		return;
+
+	if (!myCar->IsRaceFinished())
+		return;
+
+	// Full-screen black background (opaque) and centered white text
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
+	sf::RectangleShape background(viewSize);
+	background.setPosition(0.f, 0.f);
+	background.setFillColor(sf::Color(0, 0, 0, 255));
+	WindowManager::sInstance->draw(background);
+
+	sf::Text text;
+	const string prompt = "You finished! Waiting for the other racers..";
 	text.setString(prompt);
 	text.setFillColor(sf::Color(255, 255, 255, 255));
 	text.setCharacterSize(50);

@@ -19,8 +19,9 @@ private:
 	HUD();
 
 	void RenderHostStartPrompt();
-	void RenderLobbyWaitingScreen(); // render waiting-for-host screen for non-host players
-	void RenderRaceInProgressJoinScreen(); // new: render when joining while a race is already in progress
+	void RenderLobbyWaitingScreen(); 
+	void RenderRaceInProgressJoinScreen();
+	void RenderRaceFinishedWaitingScreen();
 	void RenderBandWidth();
 	void RenderRoundTripTime();
 	void RenderScoreBoard();
