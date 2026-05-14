@@ -8,10 +8,10 @@ PlayerCar::PlayerCar() :
 	// Car physics parameters - tuned for a small, responsive go-kart feel
 	mMaxRotationSpeed(180.f),	// steering
 	mMaxLinearSpeed(1200.f),		// speed
-	mAcceleration(800.f),		// acceleration
+	mAcceleration(500.f),		// acceleration
 	mReverseAccelScale(0.5f), // brake
-	mLinearDrag(1.5f),			
-	mGrip(1.f),
+	mLinearDrag(4.5f),			
+	mGrip(2.f),
 	
 	mVelocity(Vector3::Zero),
 	mCurrentSteer(0.f),

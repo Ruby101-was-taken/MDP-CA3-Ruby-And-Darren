@@ -30,14 +30,15 @@ void HUD::Render()
 	WindowManager::sInstance->setView(WindowManager::sInstance->getDefaultView());
 
 	
-	RenderRaceOver();
+	
 	RenderBandWidth();
 	RenderRoundTripTime();
 	RenderScoreBoard();
-	RenderRaceInfo();
-	RenderHostStartPrompt();
+	RenderRaceInfo();	
 	RenderLobbyWaitingScreen();
 	RenderRaceInProgressJoinScreen();
+	RenderRaceOver();
+	RenderHostStartPrompt();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
