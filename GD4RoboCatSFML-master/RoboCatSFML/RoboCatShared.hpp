@@ -96,3 +96,4 @@ class GameObject;
 #include "Engine.hpp"
 
 #include "Logging.hpp"
+#include "SaveFileUtilities.hpp"

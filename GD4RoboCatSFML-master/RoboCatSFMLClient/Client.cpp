@@ -37,8 +37,10 @@ Client::Client()
 	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('TRCK', ClientTrack::StaticCreate);
 
-	string destination = StringUtils::GetCommandLineArg(1);
+	string destination = SaveFileUtilities::GetAddressFromFile() + ":" + SaveFileUtilities::GetPortFromFile();
 	string name = StringUtils::GetCommandLineArg(2);
+
+	Logging::Log("Client", destination);
 
 	SocketAddressPtr serverAddress = SocketAddressFactory::CreateIPv4FromString(destination);
 

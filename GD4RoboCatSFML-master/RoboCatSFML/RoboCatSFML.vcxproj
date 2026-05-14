@@ -125,6 +125,7 @@
       <AdditionalIncludeDirectories>../SFML-2.6.2/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>RoboCatPCH.hpp</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,6 +175,7 @@
     <ClInclude Include="RoboCatPCH.hpp" />
     <ClInclude Include="RoboCatShared.hpp" />
     <ClInclude Include="RoboMath.hpp" />
+    <ClInclude Include="SaveFileUtilities.hpp" />
     <ClInclude Include="ScoreBoardManager.hpp" />
     <ClInclude Include="SocketAddress.hpp" />
     <ClInclude Include="SocketAddressFactory.hpp" />
@@ -212,6 +214,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RoboMath.cpp" />
+    <ClCompile Include="SaveFileUtilities.cpp" />
     <ClCompile Include="ScoreBoardManager.cpp" />
     <ClCompile Include="SocketAddress.cpp" />
     <ClCompile Include="SocketAddressFactory.cpp" />

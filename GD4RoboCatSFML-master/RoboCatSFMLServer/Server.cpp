@@ -49,7 +49,7 @@ int Server::Run()
 
 bool Server::InitNetworkManager()
 {
-	string portString = StringUtils::GetCommandLineArg(1);
+	string portString = SaveFileUtilities::GetPortFromFile();
 	uint16_t port = stoi(portString);
 
 	return NetworkManagerServer::StaticInit(port);
