@@ -57,72 +57,112 @@ void HUD::RenderLobbyWaitingScreen() {
 			
 		
 		
-			// Create full-screen black background (slightly transparent)
-			sf::View defaultView = WindowManager::sInstance->getDefaultView();
-			sf::Vector2f viewSize = defaultView.getSize();
-			sf::RectangleShape background(viewSize);
-			background.setPosition(0.f, 0.f);
-			background.setFillColor(sf::Color(0, 0, 0, 225));
-			WindowManager::sInstance->draw(background);
+		// Create full-screen black background (slightly transparent)
+		sf::View defaultView = WindowManager::sInstance->getDefaultView();
+		sf::Vector2f viewSize = defaultView.getSize();
+		sf::RectangleShape background(viewSize);
+		background.setPosition(0.f, 0.f);
+		background.setFillColor(sf::Color(0, 0, 0, 225));
+		WindowManager::sInstance->draw(background);
 
-			// Left-hand "Press S to START" text
-			Vector3 startOrigin(50.f, 350.f, 0.f);
-			sf::Text text;
+		Vector3 startOrigin(50.f, 350.f, 0.f);
+		sf::Text text;
 			
-			text.setString(prompt);
-			text.setFillColor(sf::Color(255, 255, 255, 255));
-			text.setCharacterSize(50);
-			text.setPosition(startOrigin.mX, startOrigin.mY);
-			text.setFont(*FontManager::sInstance->GetFont("carlito"));
+		text.setString(prompt);
+		text.setFillColor(sf::Color(255, 255, 255, 255));
+		text.setCharacterSize(50);
+		text.setPosition(startOrigin.mX, startOrigin.mY);
+		text.setFont(*FontManager::sInstance->GetFont("carlito"));
 
-			WindowManager::sInstance->draw(text);
+		WindowManager::sInstance->draw(text);
 
-			// Draw a neat list of all players in their respective colors (to the right / center area)
-			if (ScoreBoardManager::sInstance)
+		// Draw a neat list of all players in their respective colors (to the right / center area)
+		if (ScoreBoardManager::sInstance)
+		{
+			const vector< ScoreBoardManager::Entry >& entries = ScoreBoardManager::sInstance->GetEntries();
+
+			// Title for player list
+			sf::Text listTitle;
+			listTitle.setFont(*FontManager::sInstance->GetFont("carlito"));
+			listTitle.setString("Players:");
+			listTitle.setCharacterSize(48);
+			listTitle.setFillColor(sf::Color(255, 255, 255, 255));
+
+			// Position the player list on the right-center area
+			const float listX = viewSize.x * 0.65f;
+			const float listStartY = 120.f;
+			const float lineSpacing = 48.f;
+
+			listTitle.setPosition(listX - 70.f, listStartY - lineSpacing);
+			WindowManager::sInstance->draw(listTitle);
+
+			// Attempt to fetch the car texture once
+			auto carTex = TextureManager::sInstance->GetTexture("car");
+
+			for (size_t i = 0; i < entries.size(); ++i)
 			{
-				const vector< ScoreBoardManager::Entry >& entries = ScoreBoardManager::sInstance->GetEntries();
+				const auto& e = entries[i];
 
-				// Title for player list
-				sf::Text listTitle;
-				listTitle.setFont(*FontManager::sInstance->GetFont("carlito"));
-				listTitle.setString("Players:");
-				listTitle.setCharacterSize(48);
-				listTitle.setFillColor(sf::Color(255, 255, 255, 255));
+				// Text for player name
+				sf::Text lineText;
+				lineText.setFont(*FontManager::sInstance->GetFont("carlito"));
+				lineText.setString(e.GetPlayerName());
 
-				// Position the player list on the right-center area
-				const float listX = viewSize.x * 0.55f;
-				const float listStartY = 120.f;
-				const float lineSpacing = 48.f;
+				// Use a character size consistent with list spacing / title
+				const unsigned int charSize = 48;
+				lineText.setCharacterSize(charSize);
 
-				listTitle.setPosition(listX, listStartY - lineSpacing);
-				WindowManager::sInstance->draw(listTitle);
+				Vector3 col = e.GetColor(); // Use the entry color
+				// clamp/conversion to uint8_t
+				auto toU8 = [](float v) -> uint8_t {
+					int iv = static_cast<int>(std::round(v));
+					if (iv < 0) iv = 0;
+					if (iv > 255) iv = 255;
+					return static_cast<uint8_t>(iv);
+				};
+				lineText.setFillColor(sf::Color(toU8(col.mX), toU8(col.mY), toU8(col.mZ), 255));
 
-				for (size_t i = 0; i < entries.size(); ++i)
+				// Calculate vertical center for this line based on text
+				sf::FloatRect textBounds = lineText.getLocalBounds();
+				float lineTopY = listStartY + static_cast<float>(i) * lineSpacing;
+				float textCenterY = lineTopY - textBounds.top + textBounds.height / 2.f;
+
+				// If we have a car texture: draw a tinted, west-facing sprite to the left of the name
+				float spriteWidth = 0.f;
+				if (carTex)
 				{
-					const auto& e = entries[i];
-					string line = StringUtils::Sprintf("%d. %s", static_cast<int>(i + 1), e.GetPlayerName().c_str());
+					sf::Sprite carSprite;
+					carSprite.setTexture(*carTex);
 
-					sf::Text lineText;
-					lineText.setFont(*FontManager::sInstance->GetFont("carlito"));
-					lineText.setString(line);
-					lineText.setCharacterSize(40);
+					sf::Vector2u tSize = carTex->getSize();
+					if (tSize.y > 0)
+					{
+						float targetHeight = static_cast<float>(charSize);
+						float scale = targetHeight / static_cast<float>(tSize.y);
+						carSprite.setScale(0.08f, 0.08f);
 
-					
-					Vector3 col = e.GetColor(); // Use the entry color
-					// clamp/conversion to uint8_t
-					auto toU8 = [](float v) -> uint8_t {
-						int iv = static_cast<int>(std::round(v));
-						if (iv < 0) iv = 0;
-						if (iv > 255) iv = 255;
-						return static_cast<uint8_t>(iv);
-					};
-					lineText.setFillColor(sf::Color(toU8(col.mX), toU8(col.mY), toU8(col.mZ), 255));
+						spriteWidth = static_cast<float>(tSize.x) * scale;
+					}
 
-					// left-align the list
-					lineText.setPosition(listX, listStartY + static_cast<float>(i) * lineSpacing);
-					WindowManager::sInstance->draw(lineText);
+					carSprite.setOrigin(static_cast<float>(tSize.x) * 0.5f, static_cast<float>(tSize.y) * 0.5f); // Set origin to center so rotation is around sprite center
+					carSprite.setRotation(270.f); // rotate so texture faces left
+					carSprite.setColor(sf::Color(toU8(col.mX), toU8(col.mY), toU8(col.mZ), 255)); // Tint using player colour
+
+					// Position sprite: left-aligned at listX, vertically centered on the same line as the text
+					float spritePosX = listX + spriteWidth - 50.f; // origin is centered
+					float spritePosY = textCenterY + 25.f;
+					carSprite.setPosition(spritePosX, spritePosY);
+
+					WindowManager::sInstance->draw(carSprite);
 				}
+
+				// Position text to the right of the sprite with a small gap
+				const float gap = 12.f;
+				float textPosX = listX + spriteWidth + gap;
+				lineText.setPosition(textPosX, lineTopY);
+				WindowManager::sInstance->draw(lineText);
 			}
+		}
 		
 	}
 }
@@ -335,7 +375,7 @@ void HUD::RenderHUD()
 	// Format star text as zero-padded two digits
 	string starTextStr = StringUtils::Sprintf("%02d", playerStars);
 
-	// Laps (display as "1/3" etc.)
+	// Laps
 	int displayLap = mPlayerCurrentLap + 1;
 	int lapGoal = (mPlayerLapsToWin > 0 ? mPlayerLapsToWin : 0);
 	string lapTextStr = StringUtils::Sprintf("%d/%d", displayLap, lapGoal);
