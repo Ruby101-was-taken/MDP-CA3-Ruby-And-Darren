@@ -78,6 +78,15 @@ void ScoreBoardManager::IncScore(uint32_t inPlayerId, int inAmount)
 	}
 }
 
+// Darren Meidl - D00255479 - Reset all scores to 0
+void ScoreBoardManager::ResetScores()
+{
+	for (Entry& entry : mEntries)
+	{
+		entry.SetScore(0);
+	}
+}
+
 
 // Darren Meidl - D00255479 - Determine race winners
 void ScoreBoardManager::SetRaceWinners(int inTopN)
@@ -154,7 +163,6 @@ bool ScoreBoardManager::Write(OutputMemoryBitStream& inOutputStream) const
 	int entryCount = mEntries.size();
 
 	//we don't know our player names, so it's hard to check for remaining space in the packet...
-	//not really a concern now though
 	inOutputStream.Write(entryCount);
 	for (const Entry& entry : mEntries)
 	{
