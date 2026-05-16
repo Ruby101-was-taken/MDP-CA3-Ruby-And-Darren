@@ -290,20 +290,137 @@ void HUD::SetPlayerFinished(bool inFinished) {
 // Darren Meidl - D00255479 - Render checkpoint and lap info for local player
 void HUD::RenderHUD()
 {
-	// Checkpoint index may be -1 before any are passed; display as 0 in that case
-	/*int displayCp = (mPlayerCurrentCheckpointIndex >= 0) ? (mPlayerCurrentCheckpointIndex + 1) : 0;
-	int totalCp = mPlayerTotalCheckpoints;
+	// Prepare default view size / margins
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
 
-	string cpString = StringUtils::Sprintf("Checkpoint %d / %d", displayCp, totalCp);
-	RenderText(cpString, mRaceInfoOrigin, Colors::White);*/
+	// If no local player, nothing to render for these elements
+	if (!NetworkManagerClient::sInstance || NetworkManagerClient::sInstance->GetPlayerId() == 0)
+		return;
 
-	// Laps (display as 1-based)
+	// Obtain star count from ScoreBoardManager entry for local player (use score as star count)
+	int playerStars = 0;
+	uint32_t localPlayerId = NetworkManagerClient::sInstance->GetPlayerId();
+	if (ScoreBoardManager::sInstance)
+	{
+		auto entry = ScoreBoardManager::sInstance->GetEntry(localPlayerId);
+		if (entry)
+		{
+			playerStars = entry->GetScore();
+		}
+	}
+	// cap at 20 as requested
+	if (playerStars > 20) playerStars = 20;
+	if (playerStars < 0) playerStars = 0;
+
+	// Format star text as zero-padded two digits
+	string starTextStr = StringUtils::Sprintf("%02d", playerStars);
+
+	// Laps (display as "1/3" etc.)
 	int displayLap = mPlayerCurrentLap + 1;
 	int lapGoal = (mPlayerLapsToWin > 0 ? mPlayerLapsToWin : 0);
-	string lapString = StringUtils::Sprintf("Lap %d / %d", displayLap, lapGoal);
-	Vector3 lapOrigin = mRaceInfoOrigin;
-	lapOrigin.mY += 40.f;
-	RenderText(lapString, lapOrigin, Colors::White);
+	string lapTextStr = StringUtils::Sprintf("%d/%d", displayLap, lapGoal);
+
+	// Visual params
+	const float marginLeft = 20.f;
+	const float marginBottom = 30.f;
+	const float padding = 8.f;
+	const float innerSpacing = 8.f; // spacing between icon and text within an element
+	const float elementGap = 20.f;  // space between star element and lap element
+	const unsigned int charSize = 50; // match existing RenderText character size
+
+	// Prepare SFML text objects
+	sf::Text starText;
+	starText.setFont(*FontManager::sInstance->GetFont("carlito"));
+	starText.setString(starTextStr);
+	starText.setCharacterSize(charSize);
+	starText.setFillColor(sf::Color::White);
+
+	sf::Text lapText;
+	lapText.setFont(*FontManager::sInstance->GetFont("carlito"));
+	lapText.setString(lapTextStr);
+	lapText.setCharacterSize(charSize);
+	lapText.setFillColor(sf::Color::White);
+
+	// Measure text bounds
+	sf::FloatRect starBounds = starText.getLocalBounds();
+	sf::FloatRect lapBounds = lapText.getLocalBounds();
+	float starTextW = starBounds.width;
+	float starTextH = starBounds.height;
+	float lapTextW = lapBounds.width;
+	float lapTextH = lapBounds.height;
+
+	// Load star texture (use as placeholder for both icons)
+	auto starTex = TextureManager::sInstance->GetTexture("star");
+	float iconW = 0.f, iconH = 0.f;
+	sf::Sprite starSprite;
+	if (starTex)
+	{
+		starSprite.setTexture(*starTex);
+		sf::Vector2u tSize = starTex->getSize();
+		// scale icon to approximately match text height
+		iconH = static_cast<float>(charSize); // target height in pixels
+		float scale = iconH / static_cast<float>(tSize.y);
+		iconW = static_cast<float>(tSize.x) * scale;
+		starSprite.setScale(scale, scale);
+	}
+
+	// Compute combined size: [icon + innerSpacing + text] for star element, same for lap element
+	float starElemW = iconW + innerSpacing + starTextW;
+	float lapElemW = iconW + innerSpacing + lapTextW;
+	float combinedW = padding*2 + starElemW + elementGap + lapElemW;
+	// Height is padding*2 + max of iconH and text heights (textH is bounds.height; we also account for bounds.top when positioning)
+	float contentH = std::max(iconH, std::max(starTextH, lapTextH));
+	float combinedH = padding*2 + contentH;
+
+	// Background rect positioned bottom-left
+	float bgX = marginLeft;
+	float bgY = viewSize.y - marginBottom - combinedH;
+
+	sf::RectangleShape background(sf::Vector2f(combinedW, combinedH));
+	background.setPosition(bgX, bgY);
+	background.setFillColor(sf::Color(0, 0, 0, 180)); // semi-transparent black
+	WindowManager::sInstance->draw(background);
+
+	// Draw star element
+	float curX = bgX + padding;
+	float innerY = bgY + padding;
+
+	// star icon
+	if (starTex)
+	{
+		// vertically center icon within content area
+		float iconY = innerY + (contentH - iconH) / 2.f;
+		starSprite.setPosition(curX, iconY);
+		WindowManager::sInstance->draw(starSprite);
+	}
+	curX += iconW + innerSpacing;
+
+	// star text: need to adjust for text local bounds top (font metrics)
+	{
+		float txtY = innerY + (contentH - starTextH) / 2.f - starBounds.top;
+		starText.setPosition(curX, txtY);
+		WindowManager::sInstance->draw(starText);
+	}
+	curX += starTextW;
+
+	// gap between elements
+	curX += elementGap;
+
+	// Draw lap element (icon + text)
+	if (starTex)
+	{
+		float iconY = innerY + (contentH - iconH) / 2.f;
+		starSprite.setPosition(curX, iconY);
+		WindowManager::sInstance->draw(starSprite);
+	}
+	curX += iconW + innerSpacing;
+
+	{
+		float txtY = innerY + (contentH - lapTextH) / 2.f - lapBounds.top;
+		lapText.setPosition(curX, txtY);
+		WindowManager::sInstance->draw(lapText);
+	}
 }
 
 void HUD::RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor)
