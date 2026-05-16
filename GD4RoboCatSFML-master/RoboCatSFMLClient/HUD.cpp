@@ -149,6 +149,11 @@ void HUD::RenderRaceFinishedWaitingScreen()
 	//Logging::ClearLog();
 	Logging::Log("HUD::RenderRaceFinishedWaitingScreen", "Checking if local player has finished");
 
+	if (NetworkManagerClient::sInstance->DidFinishRace() == false) {
+		Logging::Log("HUD::RenderRaceFinished", "DidFinishRace() == false");
+		return;
+	}
+
 	// Full-screen black background (opaque) and centered white text
 	sf::View defaultView = WindowManager::sInstance->getDefaultView();
 	sf::Vector2f viewSize = defaultView.getSize();

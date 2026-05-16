@@ -41,10 +41,12 @@ public:
 
 	// Darren Meidl - D00255479 - Game over / winners support
 	void	SetRaceWinners(int inTopN);
-	void	SetGameOver(bool inGameOver) { mGameOver = inGameOver; if (!mGameOver) mWinners.clear(); }
+	void	SetGameOver(bool inGameOver) { mGameOver = inGameOver; if (!mGameOver) mFinishers.clear(); }
 	bool	GetIsGameOver() const { return mGameOver; }
-	const vector<uint32_t>& GetWinners() const { return mWinners; }
-	void	SetWinners(const vector<uint32_t>& inWinners) { mWinners = inWinners; mGameOver = !mWinners.empty(); }
+	const vector<uint32_t>& GetWinners() const { return mFinishers; }
+	void	SetFinishers(const vector<uint32_t>& inWinners) { mFinishers = inWinners; mGameOver = !mFinishers.empty(); }
+	void	SetFinishersOnly(const vector<uint32_t>& inWinners) { mFinishers = inWinners; }
+	bool	GetFinisherByID(uint32_t inPlayerId) const;
 
 	bool	Write(OutputMemoryBitStream& inOutputStream) const;
 	bool	Read(InputMemoryBitStream& inInputStream);
@@ -59,8 +61,7 @@ private:
 
 	vector< Vector3 >	mDefaultColors;
 
-	// game over state
 	bool mGameOver = false;
-	vector<uint32_t> mWinners;
+	vector<uint32_t> mFinishers;
 };
 

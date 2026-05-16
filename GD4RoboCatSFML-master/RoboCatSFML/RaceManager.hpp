@@ -14,7 +14,6 @@ public:
     void RemovePlayer(uint32_t inPlayerId);
     
     void OnPlayerFinished(PlayerCar* inCar); // Called when a player's car completes the race
-
     // Query finish order
     const std::vector<uint32_t>& GetFinishOrder() const { return mFinishOrder; }
     bool AreAllPlayersFinished() const;

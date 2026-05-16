@@ -190,6 +190,21 @@ void NetworkManagerClient::HandleGameObjectState(InputMemoryBitStream& inInputSt
 void NetworkManagerClient::HandleScoreBoardState(InputMemoryBitStream& inInputStream)
 {
 	ScoreBoardManager::sInstance->Read(inInputStream);
+
+	// Update local "did finish" flag for this client based on the scoreboard data we just read
+	if (mState == NCS_Welcomed)
+	{
+		bool finished = false;
+		if (ScoreBoardManager::sInstance)
+		{
+			if (!finished && ScoreBoardManager::sInstance->GetFinisherByID(static_cast<uint32_t>(mPlayerId)))
+			{
+				finished = true;
+			}
+		}
+		mIsRaceFinished = finished;
+		Logging::Log("NetworkManagerClient::HandleScoreBoardState", "Local didFinishRace = " + std::string(mIsRaceFinished ? "true" : "false"));
+	}
 }
 
 void NetworkManagerClient::DestroyGameObjectsInMap(const IntToGameObjectMap& inObjectsToDestroy)
@@ -260,5 +275,3 @@ void NetworkManagerClient::SendStartRacePacket()
 	packet.Write(kStartRaceCC);
 	SendPacket(packet, mServerAddress);
 }
-
-

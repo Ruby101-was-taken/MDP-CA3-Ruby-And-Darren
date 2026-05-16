@@ -82,7 +82,7 @@ void ScoreBoardManager::IncScore(uint32_t inPlayerId, int inAmount)
 // Darren Meidl - D00255479 - Determine race winners
 void ScoreBoardManager::SetRaceWinners(int inTopN)
 {
-	mWinners.clear();
+	mFinishers.clear();
 	mGameOver = false;
 
 	if (inTopN <= 0)
@@ -113,13 +113,39 @@ void ScoreBoardManager::SetRaceWinners(int inTopN)
 	int count = std::min(static_cast<int>(progressList.size()), inTopN);
 	for (int i = 0; i < count; ++i)
 	{
-		mWinners.push_back(progressList[i].second);
+		mFinishers.push_back(progressList[i].second);
 	}
 
-	if (!mWinners.empty())
+	if (!mFinishers.empty())
 	{
 		mGameOver = true;
 	}
+}
+
+// Darren Meidl - D00255479 - Check if a given player id is in the winners list
+bool ScoreBoardManager::GetFinisherByID(uint32_t inPlayerId) const
+{
+	// log the id being checked
+	Logging::Log("ScoreBoardManager::GetFinisherByID", "Checking id: " + std::to_string(inPlayerId));
+
+	// build a comma-separated list of finisher ids and log it
+	std::string finishersStr;
+	if (mFinishers.empty())
+	{
+		finishersStr = "<none>";
+	}
+	else
+	{
+		finishersStr.reserve(mFinishers.size() * 11);
+		for (size_t i = 0; i < mFinishers.size(); ++i)
+		{
+			if (i) finishersStr += ", ";
+			finishersStr += std::to_string(mFinishers[i]);
+		}
+	}
+	Logging::Log("ScoreBoardManager::GetFinisherByID", "Finishers: " + finishersStr);
+
+	return std::find(mFinishers.begin(), mFinishers.end(), inPlayerId) != mFinishers.end();
 }
 
 
@@ -136,12 +162,19 @@ bool ScoreBoardManager::Write(OutputMemoryBitStream& inOutputStream) const
 	}
 	// Darren Meidl - D00255479 - Write game-over flag and winners
 	inOutputStream.Write(mGameOver);
-	if (mGameOver)
+	// OLD: Would only write winners if game-over was true
+	/*if (mGameOver)
 	{
-		int winnerCount = static_cast<int>(mWinners.size());
-		inOutputStream.Write(winnerCount);
-		for (uint32_t pid : mWinners)
+		int finisherCount = static_cast<int>(mFinishers.size());
+		inOutputStream.Write(finisherCount);
+		for (uint32_t pid : mFinishers) {
 			inOutputStream.Write(pid);
+		}
+	}*/
+	int finisherCount = static_cast<int>(mFinishers.size());
+	inOutputStream.Write(finisherCount);
+	for (uint32_t pid : mFinishers) {
+		inOutputStream.Write(pid);
 	}
 
 	return true;
@@ -163,18 +196,31 @@ bool ScoreBoardManager::Read(InputMemoryBitStream& inInputStream)
 	bool gameOver = false;
 	inInputStream.Read(gameOver);
 	mGameOver = gameOver;
-	mWinners.clear();
-	if (mGameOver)
+	Logging::Log("ScoreBoardManager::Read", "Read mGameOver: " + std::string(mGameOver ? "true" : "false"));
+	
+	
+	/*if (mGameOver)
 	{
 		int winnerCount = 0;
 		inInputStream.Read(winnerCount);
+		Logging::Log("ScoreBoardManager::Read", "Reading winners count: " + std::to_string(winnerCount));
 		for (int i = 0; i < winnerCount; ++i)
 		{
 			uint32_t pid = 0;
 			inInputStream.Read(pid);
-			mWinners.push_back(pid);
+			Logging::Log("ScoreBoardManager::Read", "Read winner pid: " + std::to_string(pid));
+			mFinishers.push_back(pid);
 		}
+	}*/
+	mFinishers.clear();
+	int finisherCount = 0;
+	inInputStream.Read(finisherCount);
+	for (int i = 0; i < finisherCount; ++i) {
+		uint32_t pid = 0;
+		inInputStream.Read(pid);
+		mFinishers.push_back(pid);
 	}
+	
 
 	return true;
 }
@@ -211,7 +257,3 @@ bool ScoreBoardManager::Entry::Read(InputMemoryBitStream& inInputStream)
 
 	return didSucceed;
 }
-
-
-
-
