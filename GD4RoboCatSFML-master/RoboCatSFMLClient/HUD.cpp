@@ -32,10 +32,10 @@ void HUD::Render()
 
 	
 	
-	RenderBandWidth();
-	RenderRoundTripTime();
-	RenderScoreBoard();
-	RenderRaceInfo();	
+	//RenderBandWidth();
+	//RenderRoundTripTime();
+	//RenderScoreBoard();
+	RenderHUD();
 	RenderLobbyWaitingScreen();
 	RenderRaceInProgressJoinScreen();
 	RenderRaceFinishedWaitingScreen();
@@ -288,18 +288,18 @@ void HUD::SetPlayerFinished(bool inFinished) {
 	mPlayerHasFinished = inFinished;
 }
 // Darren Meidl - D00255479 - Render checkpoint and lap info for local player
-void HUD::RenderRaceInfo()
+void HUD::RenderHUD()
 {
 	// Checkpoint index may be -1 before any are passed; display as 0 in that case
-	int displayCp = (mPlayerCurrentCheckpointIndex >= 0) ? (mPlayerCurrentCheckpointIndex + 1) : 0;
+	/*int displayCp = (mPlayerCurrentCheckpointIndex >= 0) ? (mPlayerCurrentCheckpointIndex + 1) : 0;
 	int totalCp = mPlayerTotalCheckpoints;
 
 	string cpString = StringUtils::Sprintf("Checkpoint %d / %d", displayCp, totalCp);
-	RenderText(cpString, mRaceInfoOrigin, Colors::White);
+	RenderText(cpString, mRaceInfoOrigin, Colors::White);*/
 
 	// Laps (display as 1-based)
 	int displayLap = mPlayerCurrentLap + 1;
-	int lapGoal = mPlayerLapsToWin > 0 ? mPlayerLapsToWin : 0;
+	int lapGoal = (mPlayerLapsToWin > 0 ? mPlayerLapsToWin : 0);
 	string lapString = StringUtils::Sprintf("Lap %d / %d", displayLap, lapGoal);
 	Vector3 lapOrigin = mRaceInfoOrigin;
 	lapOrigin.mY += 40.f;
