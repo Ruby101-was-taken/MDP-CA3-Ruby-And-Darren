@@ -182,7 +182,8 @@ void NetworkManagerServer::SendOutgoingPackets()
 		//process any timed out packets while we're going through the list
 		clientProxy->GetDeliveryNotificationManager().ProcessTimedOutPackets();
 
-		if (clientProxy->IsLastMoveTimestampDirty())
+		// Send state either when they have new moves or when we're in lobby so clients get lobby/replication updates
+		if (clientProxy->IsLastMoveTimestampDirty() || mIsInLobby)
 		{
 			SendStatePacketToClient(clientProxy);
 		}
