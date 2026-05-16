@@ -381,6 +381,7 @@ void HUD::RenderHUD()
 	string lapTextStr = StringUtils::Sprintf("%d/%d", displayLap, lapGoal);
 
 	// Visual params
+	const float marginRight = 40.f;
 	const float marginLeft = 20.f;
 	const float marginBottom = 30.f;
 	const float padding = 8.f;
@@ -479,6 +480,70 @@ void HUD::RenderHUD()
 		float txtY = innerY + (contentH - lapTextH) / 2.f - lapBounds.top;
 		lapText.setPosition(curX, txtY);
 		WindowManager::sInstance->draw(lapText);
+	}
+
+	// Darren Meidl - D00255479 - Determine local player's current position in the race
+	int playerPosition = 0;
+	// Compute live ordering by progress
+	if (playerPosition == 0 && World::sInstance)
+	{
+		std::vector<std::pair<int, uint32_t>> progressList;
+		const auto& gameObjects = World::sInstance->GetGameObjects();
+		for (const auto& goPtr : gameObjects)
+		{
+			PlayerCar* car = goPtr->GetAsCar();
+			if (car)
+			{
+				int lap = car->GetCurrentLap();
+				int cpIndex = car->GetCurrentCheckpointIndex();
+				if (cpIndex < 0) cpIndex = 0;
+				int progress = lap * 10000 + cpIndex;
+				progressList.emplace_back(progress, car->GetPlayerId());
+			}
+		}
+
+		// sort descending by progress
+		std::sort(progressList.begin(), progressList.end(), [](const auto& a, const auto& b) {
+			return a.first > b.first;
+		});
+
+		for (size_t i = 0; i < progressList.size(); ++i)
+		{
+			if (progressList[i].second == localPlayerId)
+			{
+				playerPosition = static_cast<int>(i) + 1;
+				break;
+			}
+		}
+	}
+
+	// Helper to get ordinal suffix (handles 11-13)
+	auto GetOrdinalSuffix = [](int n) -> const char* {
+		int mod100 = n % 100;
+		if (mod100 >= 11 && mod100 <= 13) return "th";
+		switch (n % 10)
+		{
+		case 1: return "st";
+		case 2: return "nd";
+		case 3: return "rd";
+		default: return "th";
+		}
+	};
+
+	if (playerPosition > 0 && playerPosition <= 15)
+	{
+		string posStr = StringUtils::Sprintf("%d%s", playerPosition, GetOrdinalSuffix(playerPosition));
+		sf::Text posText;
+		posText.setFont(*FontManager::sInstance->GetFont("carlito"));
+		posText.setString(posStr);
+		posText.setCharacterSize(charSize + 25);
+		posText.setFillColor(sf::Color::White);
+
+		sf::FloatRect pb = posText.getLocalBounds();
+		// anchor bottom-right: set origin to bottom-right corner of the text bounds
+		posText.setOrigin(pb.left + pb.width, pb.top + pb.height);
+		posText.setPosition(viewSize.x - marginRight, viewSize.y - marginBottom);
+		WindowManager::sInstance->draw(posText);
 	}
 }
 
