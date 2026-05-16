@@ -19,8 +19,7 @@ private:
 
 	HUD();
 
-	void RenderHostStartPrompt();
-	void RenderLobbyWaitingScreen(); 
+	void RenderLobbyWaitingScreen();
 	void RenderRaceInProgressJoinScreen();
 	void RenderRaceFinishedWaitingScreen();
 	void RenderBandWidth();

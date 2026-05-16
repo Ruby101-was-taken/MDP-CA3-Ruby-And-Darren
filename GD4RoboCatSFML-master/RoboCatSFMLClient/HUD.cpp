@@ -36,20 +36,27 @@ void HUD::Render()
 	//RenderRoundTripTime();
 	//RenderScoreBoard();
 	RenderHUD();
-	RenderLobbyWaitingScreen();
 	RenderRaceInProgressJoinScreen();
 	RenderRaceFinishedWaitingScreen();
 	RenderRaceOver();
-	RenderHostStartPrompt();
+	RenderLobbyWaitingScreen();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
 }
 // Darren Meidl - D00255479 - Render start prompt for host player when in lobby
-void HUD::RenderHostStartPrompt() {
+void HUD::RenderLobbyWaitingScreen() {
 	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()) {
-		// only the host (player 1) sees the start prompt
+		string prompt;
 		if (NetworkManagerClient::sInstance->GetPlayerId() == 1) {
+			prompt = "Press 'S' to START RACE.";
+		}
+		else {
+			prompt = "Waiting on Host to Start.";
+		}
+			
+		
+		
 			// Create full-screen black background (slightly transparent)
 			sf::View defaultView = WindowManager::sInstance->getDefaultView();
 			sf::Vector2f viewSize = defaultView.getSize();
@@ -61,7 +68,7 @@ void HUD::RenderHostStartPrompt() {
 			// Left-hand "Press S to START" text
 			Vector3 startOrigin(50.f, 350.f, 0.f);
 			sf::Text text;
-			const string prompt = "Press 'S' to START RACE.";
+			
 			text.setString(prompt);
 			text.setFillColor(sf::Color(255, 255, 255, 255));
 			text.setCharacterSize(50);
@@ -116,42 +123,8 @@ void HUD::RenderHostStartPrompt() {
 					WindowManager::sInstance->draw(lineText);
 				}
 			}
-		}
+		
 	}
-}
-
-// Darren Meidl - D00255479 - Render waiting screen for non-host players in lobby
-void HUD::RenderLobbyWaitingScreen()
-{
-	if (!(NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()))
-		return;
-
-	// only non-host players (host is player 1) should see this waiting screen
-	if (NetworkManagerClient::sInstance->GetPlayerId() == 1)
-		return;
-
-	// Full-screen black background
-	sf::View defaultView = WindowManager::sInstance->getDefaultView();
-	sf::Vector2f viewSize = defaultView.getSize();
-	sf::RectangleShape background(viewSize);
-	background.setPosition(0.f, 0.f);
-	background.setFillColor(sf::Color(0, 0, 0, 255));
-	WindowManager::sInstance->draw(background);
-
-	// Centered message
-	sf::Text text;
-	const string prompt = "You're in! Waiting on Host to Start.";
-	text.setString(prompt);
-	text.setFillColor(sf::Color(255, 255, 255, 255));
-	text.setCharacterSize(50);
-	text.setFont(*FontManager::sInstance->GetFont("carlito"));
-
-	// center the text
-	sf::FloatRect bounds = text.getLocalBounds();
-	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
-	text.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
-
-	WindowManager::sInstance->draw(text);
 }
 
 // Darren Meidl - D00255479
