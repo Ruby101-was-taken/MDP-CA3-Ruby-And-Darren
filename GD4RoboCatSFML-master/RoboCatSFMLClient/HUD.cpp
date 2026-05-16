@@ -13,7 +13,8 @@ HUD::HUD() :
 	mPlayerCurrentCheckpointIndex(-1),
 	mPlayerTotalCheckpoints(0),
 	mPlayerCurrentLap(0),
-	mPlayerLapsToWin(0)
+	mPlayerLapsToWin(0),
+	mPlayerHasFinished(false)
 {
 }
 
@@ -73,7 +74,7 @@ void HUD::RenderHostStartPrompt() {
 	}
 }
 
-// New: Render a fullscreen black screen with centered message for non-host players waiting in lobby
+// Darren Meidl - D00255479 - Render waiting screen for non-host players in lobby
 void HUD::RenderLobbyWaitingScreen()
 {
 	if (!(NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()))
@@ -107,7 +108,7 @@ void HUD::RenderLobbyWaitingScreen()
 	WindowManager::sInstance->draw(text);
 }
 
-
+// Darren Meidl - D00255479
 void HUD::RenderRaceInProgressJoinScreen()
 {
 	if (!NetworkManagerClient::sInstance)
@@ -142,41 +143,11 @@ void HUD::RenderRaceInProgressJoinScreen()
 
 	WindowManager::sInstance->draw(text);
 }
-
+// Darren Meidl - D00255479 - Render waiting screen for local player who has finished the race but is waiting for others to finish
 void HUD::RenderRaceFinishedWaitingScreen()
 {
-	if (!NetworkManagerClient::sInstance)
-		return;
-
-	int myPlayerId = NetworkManagerClient::sInstance->GetPlayerId();
-	if (myPlayerId <= 0)
-		return;
-
-	// If the scoreboard is already showing the final standings (game over), don't show this waiting screen.
-	if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
-		return;
-
-	// Find local player's car and check if they've finished
-	PlayerCar* myCar = nullptr;
-	if (World::sInstance)
-	{
-		const auto& gameObjects = World::sInstance->GetGameObjects();
-		for (const auto& goPtr : gameObjects)
-		{
-			PlayerCar* car = goPtr->GetAsCar();
-			if (car && car->GetPlayerId() == static_cast<uint32_t>(myPlayerId))
-			{
-				myCar = car;
-				break;
-			}
-		}
-	}
-
-	if (!myCar)
-		return;
-
-	if (!myCar->IsRaceFinished())
-		return;
+	//Logging::ClearLog();
+	Logging::Log("HUD::RenderRaceFinishedWaitingScreen", "Checking if local player has finished");
 
 	// Full-screen black background (opaque) and centered white text
 	sf::View defaultView = WindowManager::sInstance->getDefaultView();
@@ -244,12 +215,12 @@ void HUD::RenderRaceOver()
 	if (winners.empty())
 		return;
 
-	// Draw a semi-transparent fullscreen background to darken the scene
+	// Draw background
 	sf::View defaultView = WindowManager::sInstance->getDefaultView();
 	sf::Vector2f viewSize = defaultView.getSize();
 	sf::RectangleShape background(viewSize);
 	background.setPosition(0.f, 0.f);
-	background.setFillColor(sf::Color(0, 0, 0, 200)); // semi-transparent black
+	background.setFillColor(sf::Color(0, 0, 0, 255));
 	WindowManager::sInstance->draw(background);
 
 	// Title: "Race Standings" centered at the top
@@ -307,6 +278,9 @@ void HUD::SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpo
 	mPlayerTotalCheckpoints = inTotalCheckpoints;
 	mPlayerCurrentLap = inCurrentLap;
 	mPlayerLapsToWin = inLapsToWin;
+}
+void HUD::SetPlayerFinished(bool inFinished) {
+	mPlayerHasFinished = inFinished;
 }
 // Darren Meidl - D00255479 - Render checkpoint and lap info for local player
 void HUD::RenderRaceInfo()

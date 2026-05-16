@@ -13,6 +13,7 @@ public:
 
 	// Race / checkpoint display for local player
 	void SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpoints, int inCurrentLap, int inLapsToWin);
+	void SetPlayerFinished(bool inFinished);
 
 private:
 
@@ -42,6 +43,7 @@ private:
 	int	mPlayerTotalCheckpoints;
 	int	mPlayerCurrentLap;
 	int	mPlayerLapsToWin;
+	bool mPlayerHasFinished;
 };
 
 
