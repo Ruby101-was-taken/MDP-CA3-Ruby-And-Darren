@@ -259,8 +259,6 @@ void PlayerCar::ProcessCollisionsWithScreenWalls()
 
 	sf::FloatRect rect({ x, y }, { radius * 2.f , radius * 2.f });
 
-	Logging::ClearLog();
-	Logging::Log("PlayerCar", std::to_string(LevelManager::sInstance->IsCollidingWithLevel(rect)));
 	
 	float recoil_strength = 0.1;
 
