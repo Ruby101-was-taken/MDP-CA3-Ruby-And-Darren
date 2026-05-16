@@ -50,8 +50,6 @@ void HUD::RenderHostStartPrompt() {
 	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()) {
 		// only the host (player 1) sees the start prompt
 		if (NetworkManagerClient::sInstance->GetPlayerId() == 1) {
-			Vector3 startOrigin(250.f, 350.f, 0.f);
-
 			// Create full-screen black background (slightly transparent)
 			sf::View defaultView = WindowManager::sInstance->getDefaultView();
 			sf::Vector2f viewSize = defaultView.getSize();
@@ -60,9 +58,10 @@ void HUD::RenderHostStartPrompt() {
 			background.setFillColor(sf::Color(0, 0, 0, 225));
 			WindowManager::sInstance->draw(background);
 
-			// Create text
+			// Left-hand "Press S to START" text
+			Vector3 startOrigin(50.f, 350.f, 0.f);
 			sf::Text text;
-			const string prompt = "Press 'S' to START RACE (Host Only)";
+			const string prompt = "Press 'S' to START RACE.";
 			text.setString(prompt);
 			text.setFillColor(sf::Color(255, 255, 255, 255));
 			text.setCharacterSize(50);
@@ -70,6 +69,53 @@ void HUD::RenderHostStartPrompt() {
 			text.setFont(*FontManager::sInstance->GetFont("carlito"));
 
 			WindowManager::sInstance->draw(text);
+
+			// Draw a neat list of all players in their respective colors (to the right / center area)
+			if (ScoreBoardManager::sInstance)
+			{
+				const vector< ScoreBoardManager::Entry >& entries = ScoreBoardManager::sInstance->GetEntries();
+
+				// Title for player list
+				sf::Text listTitle;
+				listTitle.setFont(*FontManager::sInstance->GetFont("carlito"));
+				listTitle.setString("Players:");
+				listTitle.setCharacterSize(48);
+				listTitle.setFillColor(sf::Color(255, 255, 255, 255));
+
+				// Position the player list on the right-center area
+				const float listX = viewSize.x * 0.55f;
+				const float listStartY = 120.f;
+				const float lineSpacing = 48.f;
+
+				listTitle.setPosition(listX, listStartY - lineSpacing);
+				WindowManager::sInstance->draw(listTitle);
+
+				for (size_t i = 0; i < entries.size(); ++i)
+				{
+					const auto& e = entries[i];
+					string line = StringUtils::Sprintf("%d. %s", static_cast<int>(i + 1), e.GetPlayerName().c_str());
+
+					sf::Text lineText;
+					lineText.setFont(*FontManager::sInstance->GetFont("carlito"));
+					lineText.setString(line);
+					lineText.setCharacterSize(40);
+
+					
+					Vector3 col = e.GetColor(); // Use the entry color
+					// clamp/conversion to uint8_t
+					auto toU8 = [](float v) -> uint8_t {
+						int iv = static_cast<int>(std::round(v));
+						if (iv < 0) iv = 0;
+						if (iv > 255) iv = 255;
+						return static_cast<uint8_t>(iv);
+					};
+					lineText.setFillColor(sf::Color(toU8(col.mX), toU8(col.mY), toU8(col.mZ), 255));
+
+					// left-align the list
+					lineText.setPosition(listX, listStartY + static_cast<float>(i) * lineSpacing);
+					WindowManager::sInstance->draw(lineText);
+				}
+			}
 		}
 	}
 }
