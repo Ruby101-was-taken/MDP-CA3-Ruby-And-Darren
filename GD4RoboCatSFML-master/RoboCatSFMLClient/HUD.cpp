@@ -541,8 +541,22 @@ void HUD::RenderHUD()
 
 		sf::FloatRect pb = posText.getLocalBounds();
 		// anchor bottom-right: set origin to bottom-right corner of the text bounds
+		const float offsetFromEdge = 40.f;
 		posText.setOrigin(pb.left + pb.width, pb.top + pb.height);
-		posText.setPosition(viewSize.x - marginRight, viewSize.y - marginBottom);
+		posText.setPosition(viewSize.x - (marginRight + offsetFromEdge), viewSize.y - (marginBottom + offsetFromEdge));
+
+		// Draw semi-transparent black circle behind the position text
+		sf::FloatRect globalBounds = posText.getGlobalBounds();
+		float centerX = globalBounds.left + globalBounds.width * 0.5f;
+		float centerY = globalBounds.top + globalBounds.height * 0.5f;
+		float radius = std::max(globalBounds.width, globalBounds.height) * 0.5f + 40.f;
+
+		sf::CircleShape bgCircle(radius);
+		bgCircle.setOrigin(radius, radius);
+		bgCircle.setPosition(centerX, centerY);
+		bgCircle.setFillColor(sf::Color(0, 0, 0, 180));
+
+		WindowManager::sInstance->draw(bgCircle);
 		WindowManager::sInstance->draw(posText);
 	}
 }
