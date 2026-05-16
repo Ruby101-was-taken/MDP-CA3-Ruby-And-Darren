@@ -28,6 +28,16 @@ void PlayerCarClient::Update()
 	//is this the cat owned by us?
 	if (GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId())
 	{
+		// If lobby is open and this client is not host, suppress client-side prediction
+		if (NetworkManagerClient::sInstance->IsLobbyOpen() && NetworkManagerClient::sInstance->GetPlayerId() != 1)
+		{
+			// Clear pending move(s) so they don't accumulate while lobby is open
+			InputManager::sInstance->GetMoveList().Clear();
+
+			// Do not apply any input or simulate movement while waiting in the lobby
+			return;
+		}
+
 		const Move* pendingMove = InputManager::sInstance->GetAndClearPendingMove();
 		//in theory, only do this if we want to sample input this frame / if there's a new move ( since we have to keep in sync with server )
 		if (pendingMove) //is it time to sample a new move...
@@ -35,14 +45,10 @@ void PlayerCarClient::Update()
 			float deltaTime = pendingMove->GetDeltaTime();
 
 			//apply that input
-
 			ProcessInput(deltaTime, pendingMove->GetInputState());
 
 			//and simulate!
-
 			SimulateMovement(deltaTime);
-
-			//LOG( "Client Move Time: %3.4f deltaTime: %3.4f left rot at %3.4f", latestMove.GetTimestamp(), deltaTime, GetRotation() );
 		}
 	}
 	else
@@ -178,6 +184,14 @@ void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
 
 void PlayerCarClient::DoClientSidePredictionAfterReplicationForLocalCat(uint32_t inReadState)
 {
+	// If lobby is open and this client is not host, skip replaying moves (no prediction)
+	if (NetworkManagerClient::sInstance->IsLobbyOpen() && NetworkManagerClient::sInstance->GetPlayerId() != 1)
+	{
+		// clear move list to avoid replay/backlog when lobby closes
+		InputManager::sInstance->GetMoveList().Clear();
+		return;
+	}
+
 	if ((inReadState & ECRS_Pose) != 0)
 	{
 		//simulate pose only if we received new pose- might have just gotten thrustDir

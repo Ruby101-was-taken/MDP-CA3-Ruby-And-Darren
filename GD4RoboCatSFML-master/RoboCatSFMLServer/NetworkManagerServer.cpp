@@ -61,7 +61,15 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 	case kInputCC:
 		if (inClientProxy->GetDeliveryNotificationManager().ReadAndProcessState(inInputStream))
 		{
-			HandleInputPacket(inClientProxy, inInputStream);
+			// If lobby is open, ignore movement input from non-host clients.
+			if (mIsInLobby && inClientProxy->GetPlayerId() != 1)
+			{
+				Logging::Log("NetworkManagerServer::ProcessPacket", "Ignoring input packet from player " + std::to_string(inClientProxy->GetPlayerId()) + " while lobby is open");
+			}
+			else
+			{
+				HandleInputPacket(inClientProxy, inInputStream);
+			}
 		}
 		break;
 	case kStartRaceCC:

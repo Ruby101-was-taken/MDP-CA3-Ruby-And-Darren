@@ -202,22 +202,6 @@ void Server::DoFrame()
 			NetworkManagerServer::sInstance->SetIsInLobby(true); // allow joins
 			mLobbyOpenStartTime = now;
 		}
-		else
-		{
-			// Lobby timer is running. When it expires we intentionally DO NOTHING here
-			// to prevent automatic round start. Host must manually start the next round.
-			// (Previously this block closed the lobby and spawned the next round.)
-			// The timer is kept so the UI/clients can still display the countdown.
-			// No automatic Reset/Spawn/SetIsInLobby(false) actions are performed.
-			// This will leave mLobbyOpenStartTime set so the expired state can be observed by other code/clients.
-			// If you prefer the timer to stop tracking after expiry, set mLobbyOpenStartTime = 0.f here.
-			//
-			// Example (NOT ENABLED):
-			// if ((now - mLobbyOpenStartTime) >= mLobbyDuration)
-			// {
-			//     // intentionally left blank to disable auto-start
-			// }
-		}
 	}
 	else
 	{
@@ -231,14 +215,13 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 	int playerId = inClientProxy->GetPlayerId();
 	ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
 
-	// If lobby is open, delay car spawning until the race starts
-	if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
-	{
+	//// If lobby is open, delay car spawning until the race starts
+	//if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
+	//{
+	//	SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
+	//}
+	if (NetworkManagerServer::sInstance) {
 		SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
-	}
-	else
-	{
-		LOG("Player %d joined during lobby; delaying car spawn until race start", playerId);
 	}
 	// Register player with RaceManager
 	if (RaceManager::sInstance)
@@ -249,6 +232,35 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 
 void Server::SpawnCarForPlayer(int inPlayerId, const Vector3& colour)
 {
+	// If a car for this player already exists, reuse it instead of spawning another
+	PlayerCarPtr existing = GetCarForPlayer(inPlayerId);
+	if (existing)
+	{
+		// reset state / reposition existing car rather than creating a duplicate
+		existing->SetColor(colour);
+		existing->SetPlayerId(inPlayerId);
+
+		float spawn_y = -239 + (120*(inPlayerId-1));
+		existing->SetLocation(Vector3((inPlayerId%2==0)? -2240 : -2070, spawn_y, 0.f));
+
+		// inform car of checkpoint count and race length, reset progress
+		existing->SetTotalCheckpoints(checkpoint_count_);
+		existing->SetLapsToWin(3);
+		existing->ResetRaceProgress();
+
+		// ensure it's alive / not marked for removal
+		existing->SetDoesWantToDie(false);
+
+		// mark pose/state dirty so clients get updated
+		if (NetworkManagerServer::sInstance)
+		{
+			NetworkManagerServer::sInstance->SetStateDirty(existing->GetNetworkId(), PlayerCar::ECRS_AllState);
+		}
+
+		return;
+	}
+
+	// otherwise create a fresh car
 	PlayerCarPtr cat = std::static_pointer_cast<PlayerCar>(GameObjectRegistry::sInstance->CreateGameObject('RCAR'));
 	cat->SetColor(colour);
 	cat->SetPlayerId(inPlayerId);

@@ -11,7 +11,7 @@ PlayerCar::PlayerCar() :
 	mAcceleration(500.f),		// acceleration
 	mReverseAccelScale(0.5f), // brake
 	mLinearDrag(4.5f),			
-	mGrip(2.f),
+	mGrip(20.f),
 	
 	mVelocity(Vector3::Zero),
 	mCurrentSteer(0.f),

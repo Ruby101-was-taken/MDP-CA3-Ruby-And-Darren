@@ -233,6 +233,12 @@ void NetworkManagerClient::UpdateSendingInputPacket()
 
 void NetworkManagerClient::SendInputPacket()
 {
+	// If lobby is open, only allow host to send input packets
+	if (mIsLobbyOpen && mPlayerId != 1)
+	{
+		return;
+	}
+
 	//only send if there's any input to send!
 	const MoveList& moveList = InputManager::sInstance->GetMoveList();
 
