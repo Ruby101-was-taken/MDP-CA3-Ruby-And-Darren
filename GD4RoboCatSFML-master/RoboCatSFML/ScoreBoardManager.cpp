@@ -62,12 +62,12 @@ bool ScoreBoardManager::RemoveEntry(uint32_t inPlayerId)
 	return false;
 }
 
-void ScoreBoardManager::AddEntry(uint32_t inPlayerId, const string& inPlayerName)
+void ScoreBoardManager::AddEntry(uint32_t inPlayerId, const string& inPlayerName, const Vector3 player_colour)
 {
 	//if this player id exists already, remove it first- it would be crazy to have two of the same id
 	RemoveEntry(inPlayerId);
 
-	mEntries.emplace_back(inPlayerId, inPlayerName, mDefaultColors[inPlayerId % mDefaultColors.size()]);
+	mEntries.emplace_back(inPlayerId, inPlayerName, player_colour);
 }
 
 void ScoreBoardManager::IncScore(uint32_t inPlayerId, int inAmount)
@@ -135,7 +135,7 @@ void ScoreBoardManager::SetRaceWinners(int inTopN)
 bool ScoreBoardManager::GetFinisherByID(uint32_t inPlayerId) const
 {
 	// log the id being checked
-	Logging::Log("ScoreBoardManager::GetFinisherByID", "Checking id: " + std::to_string(inPlayerId));
+	//Logging::Log("ScoreBoardManager::GetFinisherByID", "Checking id: " + std::to_string(inPlayerId));
 
 	// build a comma-separated list of finisher ids and log it
 	std::string finishersStr;
@@ -152,7 +152,7 @@ bool ScoreBoardManager::GetFinisherByID(uint32_t inPlayerId) const
 			finishersStr += std::to_string(mFinishers[i]);
 		}
 	}
-	Logging::Log("ScoreBoardManager::GetFinisherByID", "Finishers: " + finishersStr);
+	//Logging::Log("ScoreBoardManager::GetFinisherByID", "Finishers: " + finishersStr);
 
 	return std::find(mFinishers.begin(), mFinishers.end(), inPlayerId) != mFinishers.end();
 }
@@ -204,7 +204,7 @@ bool ScoreBoardManager::Read(InputMemoryBitStream& inInputStream)
 	bool gameOver = false;
 	inInputStream.Read(gameOver);
 	mGameOver = gameOver;
-	Logging::Log("ScoreBoardManager::Read", "Read mGameOver: " + std::string(mGameOver ? "true" : "false"));
+	//Logging::Log("ScoreBoardManager::Read", "Read mGameOver: " + std::string(mGameOver ? "true" : "false"));
 	
 	
 	/*if (mGameOver)

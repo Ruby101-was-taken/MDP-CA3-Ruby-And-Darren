@@ -39,7 +39,10 @@ void RaceManager::OnPlayerFinished(PlayerCar* inCar)
   
     mFinishOrder.push_back(pid); // record finish order
 
-    inCar->SetDoesWantToDie(true); // mark the car for removal on the server
+	// We move the car instead of destroying it to save the overhead of object destruction and creation
+    const Vector3 kFarAwayLocation(99999.f, 99999.f, 0.f);
+    inCar->SetLocation(kFarAwayLocation);
+
     // Update latest finishers list
     if (ScoreBoardManager::sInstance)
         ScoreBoardManager::sInstance->SetFinishersOnly(mFinishOrder);

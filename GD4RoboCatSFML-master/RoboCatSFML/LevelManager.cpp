@@ -40,27 +40,38 @@ LevelManager::LevelManager() {
 
     file.close();
 
-    level_tiles_.clear();
+    wall_tiles_.clear();
 
     for (int y = 0; y < data.size(); ++y) {
         const auto& row = data[y];
         for (int x = 0; x < row.size(); ++x) {
             const auto& cell = row[x];
             if (std::stoi(cell) == 0) {
-                level_tiles_.emplace_back(sf::FloatRect({ ((x * 80) - 2560) * 1.f, ((y * 80) - 2560) * 1.f }, { 16 * 5.f, 16 * 5.f }));
+                wall_tiles_.emplace_back(sf::FloatRect({ ((x * 80) - 2560) * 1.f, ((y * 80) - 2560) * 1.f }, { 80.f, 80.f }));
+            }
+            if (std::stoi(cell) == 1) {
+                // I love hardcoded values mmmmmmmm
+                grass_tiles_.emplace_back(sf::FloatRect({ (((x * 80) - 2560) * 1.f) + 30, (((y * 80) - 2560) * 1.f) + 30 }, { 20.f, 20.f }));
             }
         }
     }
 }
 
-bool LevelManager::IsCollidingWithLevel(sf::FloatRect collider) {
+bool LevelManager::IsCollidingWithWalls(sf::FloatRect collider) {
 
-    //Logging::Log("LevelManager", "Level tiles: "+std::to_string(level_tiles_.size()));
-    for (const sf::FloatRect& rect : level_tiles_) {
+    for (const sf::FloatRect& rect : wall_tiles_) {
         auto intersection = rect.intersects(collider);
-        //Logging::Log("LevelManager", "Checking Collision");
-        //Logging::Log("LevelManager", "BOX: " + std::to_string(rect.left) + ", " + std::to_string(rect.top));
-        //Logging::Log("LevelManager", "COL: " + std::to_string(collider.left) + ", " + std::to_string(collider.top));
+        if (intersection) {
+            return true;
+        }
+    }
+
+    return false;
+}
+bool LevelManager::IsCollidingWithOffRoad(sf::FloatRect collider) {
+
+    for (const sf::FloatRect& rect : grass_tiles_) {
+        auto intersection = rect.intersects(collider);
         if (intersection) {
             return true;
         }

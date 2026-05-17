@@ -36,7 +36,7 @@ public:
 
 	Entry* GetEntry(uint32_t inPlayerId);
 	bool	RemoveEntry(uint32_t inPlayerId);
-	void	AddEntry(uint32_t inPlayerId, const string& inPlayerName);
+	void	AddEntry(uint32_t inPlayerId, const string& inPlayerName,const Vector3 player_colour);
 	void	IncScore(uint32_t inPlayerId, int inAmount);
 
 	void ResetScores();

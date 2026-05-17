@@ -6,6 +6,7 @@
 #include "SpriteComponent.hpp"
 #include "PlayerSpriteComponent.hpp"
 #include "TextureManager.hpp"
+#include "SoundManager.hpp"
 #include "FontManager.hpp"
 #include "RenderManager.hpp"
 #include "WindowManager.hpp"

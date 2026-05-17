@@ -1,12 +1,12 @@
-class MouseServer : public Mouse
+class StarServer : public Star
 {
 public:
-	static GameObjectPtr	StaticCreate() { return NetworkManagerServer::sInstance->RegisterAndReturn(new MouseServer()); }
+	static GameObjectPtr	StaticCreate() { return NetworkManagerServer::sInstance->RegisterAndReturn(new StarServer()); }
 	void HandleDying() override;
 	virtual bool HandleCollisionWithCar(PlayerCar* inCat) override;
 
 protected:
-	MouseServer();
+	StarServer();
 
 	void Respawn() override;
 };

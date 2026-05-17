@@ -1,7 +1,7 @@
 #include "RoboCatPCH.hpp"
 #include <fstream>
 
-Mouse::Mouse() : 
+Star::Star() : 
 	is_collectable_(true),
 	time_until_respawn_(0.f)
 {
@@ -10,15 +10,15 @@ Mouse::Mouse() :
 }
 
 // Ruby White - D00255322
-void Mouse::SetOldXPosition() {
+void Star::SetOldXPosition() {
 	old_x_position_ = GetLocation().mX;
 }
-void Mouse::Respawn() {
+void Star::Respawn() {
 
 }
 
 
-bool Mouse::HandleCollisionWithCar(PlayerCar* inCar)
+bool Star::HandleCollisionWithCar(PlayerCar* inCar)
 {
 	if (!is_collectable_) {
 		return false;
@@ -28,15 +28,15 @@ bool Mouse::HandleCollisionWithCar(PlayerCar* inCar)
 	return false;
 }
 
-void Mouse::SetActive(bool can_collect) {
+void Star::SetActive(bool can_collect) {
 	is_collectable_ = can_collect;
 }
 
-void Mouse::ResetTimer() {
+void Star::ResetTimer() {
 	time_until_respawn_ = default_time_until_respawn_;
 }
 
-void Mouse::Update() {
+void Star::Update() {
 	GameObject::Update();
 
 	if (!is_collectable_) {
@@ -51,7 +51,7 @@ void Mouse::Update() {
 }
 
 
-uint32_t Mouse::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const
+uint32_t Star::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const
 {
 	uint32_t writtenState = 0;
 
@@ -88,7 +88,7 @@ uint32_t Mouse::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtySta
 	return writtenState;
 }
 
-void Mouse::Read(InputMemoryBitStream& inInputStream)
+void Star::Read(InputMemoryBitStream& inInputStream)
 {
 	bool stateBit;
 

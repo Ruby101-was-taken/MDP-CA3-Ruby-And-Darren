@@ -8,7 +8,7 @@ PlayerCarClient::PlayerCarClient() :
 	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("car")); // Darren Meidl - D00255479 - New car sprite
 	sf::Color colour = ColourUtilities::GetUserColourFromFile();
 	SetColor(Vector3(colour.r, colour.g, colour.b));
-	
+
 }
 
 void PlayerCarClient::HandleDying()
@@ -292,5 +292,17 @@ void PlayerCarClient::DoClientSidePredictionAfterReplicationForRemoteCat(uint32_
 			}
 		}
 	}
+}
+
+void PlayerCarClient::OnCompleteLap() {
+	PlayerCar::OnCompleteLap();
+	SoundManager::sInstance->Play("Lap");
+	if(OnFinalLap())
+		SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Final.wav");
+}
+
+void PlayerCarClient::OnCompleteRace() {
+	PlayerCar::OnCompleteRace();
+	Logging::Log("PlayerCarClient::OnCompleteRace", "Player " + std::to_string(GetPlayerId()) + " has completed the race!");
 }
 
