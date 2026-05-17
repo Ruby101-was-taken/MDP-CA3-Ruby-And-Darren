@@ -215,7 +215,7 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 	if (NetworkManagerServer::sInstance && NetworkManagerServer::sInstance->IsInLobby())
 	{
 		int playerId = inClientProxy->GetPlayerId();
-		ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
+		ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName(), inClientProxy->GetPlayerColour());
 		SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
 	}
 }
