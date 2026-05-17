@@ -9,7 +9,7 @@ void FontManager::StaticInit()
 
 FontManager::FontManager()
 {
-	CacheFont("carlito", "../Assets/Carlito-Regular.ttf");
+	CacheFont("carlito", "../Assets/Fonts/Carlito-Regular.ttf");
 }
 
 FontPtr FontManager::GetFont(const string& p_fontName)

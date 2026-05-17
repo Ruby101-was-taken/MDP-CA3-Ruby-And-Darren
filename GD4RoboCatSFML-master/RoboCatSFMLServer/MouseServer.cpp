@@ -1,15 +1,15 @@
 #include "RoboCatServerPCH.hpp"
 
-MouseServer::MouseServer()
+StarServer::StarServer()
 {
 }
 
-void MouseServer::HandleDying()
+void StarServer::HandleDying()
 {
 	NetworkManagerServer::sInstance->UnregisterGameObject(this);
 }
 
-void MouseServer::Respawn() {
+void StarServer::Respawn() {
     SetLocation(Vector3(old_x_position_, GetLocation().mY, GetLocation().mZ));
     NetworkManagerServer::sInstance->SetStateDirty(
         GetNetworkId(),
@@ -17,8 +17,7 @@ void MouseServer::Respawn() {
     );
 }
 
-bool MouseServer::HandleCollisionWithCar(PlayerCar* inCar)
-{
+bool StarServer::HandleCollisionWithCar(PlayerCar* inCar) {
     if (!IsActive()) {
         return false;
     }

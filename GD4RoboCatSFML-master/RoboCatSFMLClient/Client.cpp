@@ -10,6 +10,7 @@ bool Client::StaticInit()
 	WindowManager::StaticInit();
 	FontManager::StaticInit();
 	TextureManager::StaticInit();
+	SoundManager::StaticInit();
 	RenderManager::StaticInit();
 
 
@@ -33,7 +34,7 @@ bool Client::StaticInit()
 Client::Client()
 {
 	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAR', PlayerCarClient::StaticCreate);
-	GameObjectRegistry::sInstance->RegisterCreationFunction('MOUS', MouseClient::StaticCreate);
+	GameObjectRegistry::sInstance->RegisterCreationFunction('MOUS', StarClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('YARN', YarnClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('TRCK', ClientTrack::StaticCreate);
@@ -69,6 +70,8 @@ void Client::DoFrame()
 	RenderManager::sInstance->Render();
 
 	NetworkManagerClient::sInstance->SendOutgoingPackets();
+
+	SoundManager::sInstance->RemoveStoppedSounds();
 }
 
 void Client::HandleEvent(sf::Event& p_event)
