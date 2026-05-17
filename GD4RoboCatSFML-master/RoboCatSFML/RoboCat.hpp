@@ -55,6 +55,9 @@ public:
 	virtual void IncreaseTopSpeed();
 	virtual void OnCompleteLap();
 	virtual void OnCompleteRace();
+
+	// Ruby White - D00255322
+	bool OnFinalLap();
 protected:
 	PlayerCar();
 

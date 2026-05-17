@@ -8,6 +8,8 @@ public:
 
 	void Play(std::string effect);
 
+	void PlayMusic(std::string music_path);
+
 	void RemoveStoppedSounds();
 
 	void SetVolume(float volume);
@@ -23,4 +25,5 @@ private:
 	std::map < std::string, sf::SoundBuffer > resource_map_;
 	std::list<sf::Sound> sounds_;
 	float volume_;
+	sf::Music music_;
 };

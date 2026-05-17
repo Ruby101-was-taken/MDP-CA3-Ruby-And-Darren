@@ -13,6 +13,8 @@ bool Client::StaticInit()
 	SoundManager::StaticInit();
 	RenderManager::StaticInit();
 
+	SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Race.mp3");
+
 
 	GameObjectPtr go;
 	go = GameObjectRegistry::sInstance->CreateGameObject('TRCK');
