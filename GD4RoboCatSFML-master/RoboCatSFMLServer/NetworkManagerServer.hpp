@@ -57,7 +57,7 @@ private:
 	float mTimeOfLastSatePacket;
 	float mTimeBetweenStatePackets;
 	float mClientDisconnectTimeout;
-	// true by default - server starts in lobby allowing joins
+	
 	bool mIsInLobby;
 
 protected:

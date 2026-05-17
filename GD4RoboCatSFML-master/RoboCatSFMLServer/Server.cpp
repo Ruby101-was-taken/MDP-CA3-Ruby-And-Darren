@@ -187,7 +187,6 @@ void Server::DoFrame()
 	NetworkManagerServer::sInstance->SendOutgoingPackets();
 	// Darren Meidl - D00255479 - Lobby handling triggered by round end
 	// When a round finishes we open the lobby for mLobbyDuration seconds to allow joins
-	// NOTE: automatic start of the next round after the lobby timer has expired has been removed.
 	if (!NetworkManagerServer::sInstance)
 		return;
 

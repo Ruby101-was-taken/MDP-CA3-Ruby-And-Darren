@@ -168,7 +168,7 @@ bool ScoreBoardManager::Write(OutputMemoryBitStream& inOutputStream) const
 	{
 		entry.Write(inOutputStream);
 	}
-	// Darren Meidl - D00255479 - Write game-over flag and winners
+	// Darren Meidl - D00255479 - Write game-over flag and finishers
 	inOutputStream.Write(mGameOver);
 	// OLD: Would only write winners if game-over was true
 	/*if (mGameOver)
