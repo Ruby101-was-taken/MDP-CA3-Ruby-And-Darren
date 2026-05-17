@@ -14,6 +14,7 @@ StarClient::StarClient()
 }
 
 bool StarClient::HandleCollisionWithCar(PlayerCar* inCar) {
+	SetLocation(Vector3(100000, GetLocation().mY, GetLocation().mZ));
 	SoundManager::sInstance->Play("StarGet");
 	return false;
 }

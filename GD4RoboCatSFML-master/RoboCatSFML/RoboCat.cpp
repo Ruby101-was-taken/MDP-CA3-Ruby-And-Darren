@@ -282,7 +282,6 @@ void PlayerCar::MoveOutOfWall(Vector3 direction) {
 		rect = sf::FloatRect({ x - radius, y - radius }, { radius * 2.f , radius * 2.f });
 
 		SetLocation(location + direction);
-		Logging::Log("PlayerCar", "Trying to move: " + std::to_string(GetLocation().mX) + ", " + std::to_string(GetLocation().mY));
 	} while (LevelManager::sInstance->IsCollidingWithWalls(rect));
 }
 

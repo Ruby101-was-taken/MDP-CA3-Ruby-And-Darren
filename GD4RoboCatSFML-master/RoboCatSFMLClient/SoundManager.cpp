@@ -13,6 +13,7 @@ SoundManager::SoundManager()
 }
 
 void SoundManager::Play(std::string effect) {
+	Logging::Log("SoundManager", "Playing: " + effect);
 	sounds_.emplace_back(resource_map_[effect]);
 	sf::Sound& sound = sounds_.back();
 
