@@ -373,8 +373,10 @@ uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirt
 
 	if (inDirtyState & ECRS_Checkpoints) {
 		inOutputStream.Write((bool)true);
-		inOutputStream.Write(total_checkpoints_);
-		inOutputStream.Write(mCurrentLap);
+		uint8_t total_checkpoints = static_cast<uint8_t>(total_checkpoints_);
+		inOutputStream.Write(total_checkpoints);
+		uint8_t current_lap = static_cast<uint8_t>(mCurrentLap);
+		inOutputStream.Write(current_lap);
 		inOutputStream.Write(mRaceFinished);
 
 		writtenState |= ECRS_Checkpoints;

@@ -178,11 +178,11 @@ void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
 
 	inInputStream.Read(stateBit);
 	if (stateBit) {
-		int total_checkpoints = 0;
+		uint8_t total_checkpoints = 0;
 		inInputStream.Read(total_checkpoints);
 		readState |= ECRS_Checkpoints;
 		SetTotalCheckpoints(total_checkpoints);
-		int current_lap = 0;
+		uint8_t current_lap = 0;
 		inInputStream.Read(current_lap);
 		mCurrentLap = current_lap - 1;
 		bool is_finished= 0;
