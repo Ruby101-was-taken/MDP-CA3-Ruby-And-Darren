@@ -65,7 +65,7 @@ namespace
 	// Ruby White - D00255322
 	//places for checkpoits to spawn. Z indicates rotation cuz why not
 	const vector<Vector3> checkpoints = {
-		Vector3(-2125.552246, -421.344971, 90),
+		Vector3(-2125.552246, -1200, 90),
 		Vector3(-1466.522827, -2102.799316, 0),
 		Vector3(51.324478, -1018.3812871, 0),
 		Vector3(1409.942139, -2075.799316, 0),
