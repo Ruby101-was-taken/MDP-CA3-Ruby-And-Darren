@@ -15,7 +15,9 @@ public:
 	void SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpoints, int inCurrentLap, int inLapsToWin);
 	void SetPlayerFinished(bool inFinished);
 
+	// Ruby White - D00255322
 	void SetInRaceStatus(bool in_race);
+	bool IsInRace();
 private:
 
 	HUD();

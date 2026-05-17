@@ -10,10 +10,13 @@ PlayerCarClient::PlayerCarClient() :
 	SetColor(Vector3(colour.r, colour.g, colour.b));
 
 	HUD::sInstance->SetInRaceStatus(true);
+
+	// this sucks but it works so it stays
+	if(NetworkManagerClient::sInstance->GetPlayerId() != 1)
+		SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Race.mp3");
 }
 
-void PlayerCarClient::HandleDying()
-{
+void PlayerCarClient::HandleDying() {
 	PlayerCar::HandleDying();
 
 	//and if we're local, tell the hud so our health goes away!
@@ -24,8 +27,7 @@ void PlayerCarClient::HandleDying()
 }
 
 
-void PlayerCarClient::Update()
-{
+void PlayerCarClient::Update() {
 	//is this the cat owned by us?
 	if (GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId())
 	{
@@ -308,7 +310,7 @@ void PlayerCarClient::DoClientSidePredictionAfterReplicationForRemoteCat(uint32_
 void PlayerCarClient::OnCompleteLap() {
 	PlayerCar::OnCompleteLap();
 	SoundManager::sInstance->Play("Lap");
-	if(OnFinalLap())
+	if(OnFinalLap() and GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId())
 		SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Final.wav");
 }
 

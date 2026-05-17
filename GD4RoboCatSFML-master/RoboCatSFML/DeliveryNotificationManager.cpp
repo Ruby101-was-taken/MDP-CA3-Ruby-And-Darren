@@ -21,9 +21,9 @@ DeliveryNotificationManager::DeliveryNotificationManager(bool inShouldSendAcks, 
 //we're going away- log how well we did...
 DeliveryNotificationManager::~DeliveryNotificationManager()
 {
-	LOG("DNM destructor. Delivery rate %d%%, Drop rate %d%%",
-		(100 * mDeliveredPacketCount) / mDispatchedPacketCount,
-		(100 * mDroppedPacketCount) / mDispatchedPacketCount);
+	//LOG("DNM destructor. Delivery rate %d%%, Drop rate %d%%",
+	//	(100 * mDeliveredPacketCount) / mDispatchedPacketCount,
+	//	(100 * mDroppedPacketCount) / mDispatchedPacketCount);
 }
 
 

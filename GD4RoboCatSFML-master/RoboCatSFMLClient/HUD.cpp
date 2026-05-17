@@ -22,6 +22,10 @@ void HUD::SetInRaceStatus(bool in_race) {
 	Logging::Log("HUD", std::to_string(in_race_));
 }
 
+bool HUD::IsInRace() {
+	return in_race_;
+}
+
 void HUD::StaticInit()
 {
 	sInstance.reset(new HUD());
