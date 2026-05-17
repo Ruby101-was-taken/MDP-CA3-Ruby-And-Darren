@@ -25,6 +25,12 @@ void SoundManager::Play(std::string effect) {
 	sound.play();
 }
 
+void SoundManager::PlayMusic(std::string music_path) {
+	Logging::Log("SoundManager", "Playing Music: " + music_path);
+	if (music_.openFromFile(music_path))
+		music_.play();
+}
+
 void SoundManager::RemoveStoppedSounds() {
 	sounds_.remove_if([](const sf::Sound& s) {
 		return s.getStatus() == sf::Sound::Status::Stopped;

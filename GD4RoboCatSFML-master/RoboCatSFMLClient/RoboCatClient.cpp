@@ -307,6 +307,8 @@ void PlayerCarClient::DoClientSidePredictionAfterReplicationForRemoteCat(uint32_
 void PlayerCarClient::OnCompleteLap() {
 	PlayerCar::OnCompleteLap();
 	SoundManager::sInstance->Play("Lap");
+	if(OnFinalLap())
+		SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Final.wav");
 }
 
 void PlayerCarClient::OnCompleteRace() {

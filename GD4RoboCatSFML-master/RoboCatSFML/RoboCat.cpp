@@ -4,6 +4,10 @@
 const float WORLD_HEIGHT = 2160.f;
 const float WORLD_WIDTH = 3840.f;
 
+bool PlayerCar::OnFinalLap() {
+	return mCurrentLap == mLapsToWin-1;
+}
+
 PlayerCar::PlayerCar() :
 	GameObject(),
 	// Car physics parameters - tuned for a small, responsive go-kart feel
