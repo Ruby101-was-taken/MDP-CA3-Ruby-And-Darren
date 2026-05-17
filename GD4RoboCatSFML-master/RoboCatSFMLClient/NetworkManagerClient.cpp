@@ -119,7 +119,17 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 		// Read lobby flag (server writes this after timestamp)
 		bool lobbyOpen = false;
 		inInputStream.Read(lobbyOpen);
+
+		// Detect transition from lobby open -> closed (race start) and play race music
+		bool wasLobbyOpen = mIsLobbyOpen;
 		mIsLobbyOpen = lobbyOpen;
+		if (wasLobbyOpen && !mIsLobbyOpen)
+		{
+			if (SoundManager::sInstance)
+			{
+				SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Race.mp3");
+			}
+		}
 
 		// Scoreboard and rest
 		HandleScoreBoardState(inInputStream);
