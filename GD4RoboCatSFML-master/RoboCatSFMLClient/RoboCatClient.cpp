@@ -26,18 +26,8 @@ void PlayerCarClient::HandleDying()
 void PlayerCarClient::Update()
 {
 	//is this the cat owned by us?
-	if (GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId())
+	if (GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId() && !NetworkManagerClient::sInstance->IsLobbyOpen())
 	{
-		// If lobby is open and this client is not host, suppress client-side prediction
-		if (NetworkManagerClient::sInstance->IsLobbyOpen() && NetworkManagerClient::sInstance->GetPlayerId() != 1)
-		{
-			// Clear pending move(s) so they don't accumulate while lobby is open
-			InputManager::sInstance->GetMoveList().Clear();
-
-			// Do not apply any input or simulate movement while waiting in the lobby
-			return;
-		}
-
 		const Move* pendingMove = InputManager::sInstance->GetAndClearPendingMove();
 		//in theory, only do this if we want to sample input this frame / if there's a new move ( since we have to keep in sync with server )
 		if (pendingMove) //is it time to sample a new move...

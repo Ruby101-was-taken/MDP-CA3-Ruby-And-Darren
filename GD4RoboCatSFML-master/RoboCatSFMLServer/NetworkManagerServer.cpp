@@ -61,15 +61,7 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 	case kInputCC:
 		if (inClientProxy->GetDeliveryNotificationManager().ReadAndProcessState(inInputStream))
 		{
-			// If lobby is open, ignore movement input from non-host clients.
-			if (mIsInLobby && inClientProxy->GetPlayerId() != 1)
-			{
-				Logging::Log("NetworkManagerServer::ProcessPacket", "Ignoring input packet from player " + std::to_string(inClientProxy->GetPlayerId()) + " while lobby is open");
-			}
-			else
-			{
-				HandleInputPacket(inClientProxy, inInputStream);
-			}
+			HandleInputPacket(inClientProxy, inInputStream);
 		}
 		break;
 	case kStartRaceCC:
@@ -264,20 +256,44 @@ int NetworkManagerServer::GetNewNetworkId()
 
 void NetworkManagerServer::HandleInputPacket(ClientProxyPtr inClientProxy, InputMemoryBitStream& inInputStream)
 {
-	uint32_t moveCount = 0;
-	Move move;
-	inInputStream.Read(moveCount, 2);
-
-	for (; moveCount > 0; --moveCount)
+	// Darren Meidl - D00255479 - If we're in the lobby, ignore movement input from non-host clients
+	if (mIsInLobby && inClientProxy->GetPlayerId() != 1)
 	{
-		if (move.Read(inInputStream))
+		InputState defaultState;
+		float timestamp = Timing::sInstance.GetFrameStartTime();
+		float deltaTime = 0.f; // no simulation step for lobby "no-op"
+		Move defaultMove(defaultState, timestamp, deltaTime);
+
+		if (inClientProxy->GetUnprocessedMoveList().AddMoveIfNew(defaultMove))
 		{
-			if (inClientProxy->GetUnprocessedMoveList().AddMoveIfNew(move))
-			{
-				inClientProxy->SetIsLastMoveTimestampDirty(true);
+			inClientProxy->SetIsLastMoveTimestampDirty(true);
+		}
+
+		// Consume and discard any move data present in the incoming packet so the bitstream position is correct
+		uint32_t moveCount = 0;
+		inInputStream.Read(moveCount, 2);
+		Move discardMove;
+		for (; moveCount > 0; --moveCount)
+		{	
+			discardMove.Read(inInputStream); // Read into discardMove to advance the stream
+		}
+
+		return;
+	}
+	else {
+		uint32_t moveCount = 0;
+		Move move;
+		inInputStream.Read(moveCount, 2);
+
+		for (; moveCount > 0; --moveCount) {
+			if (move.Read(inInputStream)) {
+				if (inClientProxy->GetUnprocessedMoveList().AddMoveIfNew(move)) {
+					inClientProxy->SetIsLastMoveTimestampDirty(true);
+				}
 			}
 		}
 	}
+	
 }
 
 ClientProxyPtr NetworkManagerServer::GetClientProxy(int inPlayerId) const
