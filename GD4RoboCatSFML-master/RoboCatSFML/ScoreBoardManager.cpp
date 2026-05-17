@@ -62,12 +62,12 @@ bool ScoreBoardManager::RemoveEntry(uint32_t inPlayerId)
 	return false;
 }
 
-void ScoreBoardManager::AddEntry(uint32_t inPlayerId, const string& inPlayerName)
+void ScoreBoardManager::AddEntry(uint32_t inPlayerId, const string& inPlayerName, const Vector3 player_colour)
 {
 	//if this player id exists already, remove it first- it would be crazy to have two of the same id
 	RemoveEntry(inPlayerId);
 
-	mEntries.emplace_back(inPlayerId, inPlayerName, mDefaultColors[inPlayerId % mDefaultColors.size()]);
+	mEntries.emplace_back(inPlayerId, inPlayerName, player_colour);
 }
 
 void ScoreBoardManager::IncScore(uint32_t inPlayerId, int inAmount)
