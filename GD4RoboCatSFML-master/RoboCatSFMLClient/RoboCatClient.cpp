@@ -8,7 +8,7 @@ PlayerCarClient::PlayerCarClient() :
 	mSpriteComponent->SetTexture(TextureManager::sInstance->GetTexture("car")); // Darren Meidl - D00255479 - New car sprite
 	sf::Color colour = ColourUtilities::GetUserColourFromFile();
 	SetColor(Vector3(colour.r, colour.g, colour.b));
-	
+
 }
 
 void PlayerCarClient::HandleDying()

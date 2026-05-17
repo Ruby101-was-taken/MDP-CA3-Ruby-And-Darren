@@ -16,7 +16,6 @@ SoundManager::SoundManager()
 }
 
 void SoundManager::Play(std::string effect) {
-	Logging::Log("SoundManager", "Playing: " + effect);
 	sounds_.emplace_back(resource_map_[effect]);
 	sf::Sound& sound = sounds_.back();
 
@@ -26,9 +25,10 @@ void SoundManager::Play(std::string effect) {
 }
 
 void SoundManager::PlayMusic(std::string music_path) {
-	Logging::Log("SoundManager", "Playing Music: " + music_path);
-	if (music_.openFromFile(music_path))
+	if (music_.openFromFile(music_path)) {
 		music_.play();
+		music_.setLoop(true);
+	}
 }
 
 void SoundManager::RemoveStoppedSounds() {

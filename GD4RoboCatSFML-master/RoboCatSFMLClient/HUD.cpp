@@ -211,6 +211,7 @@ void HUD::RenderRaceFinishedWaitingScreen()
 	}
 	if (!mHasPlayedRaceOverSound) {
 		SoundManager::sInstance->Play("Finish");
+		SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Lobby.wav");
 		mHasPlayedRaceOverSound = true;
 	}
 	// Full-screen black background (opaque) and centered white text

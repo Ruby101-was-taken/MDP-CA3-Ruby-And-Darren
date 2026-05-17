@@ -13,7 +13,7 @@ bool Client::StaticInit()
 	SoundManager::StaticInit();
 	RenderManager::StaticInit();
 
-	SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Race.mp3");
+	SoundManager::sInstance->PlayMusic("../Assets/Sound/Music/Theme/Lobby.wav");
 
 
 	GameObjectPtr go;
