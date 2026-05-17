@@ -32,8 +32,8 @@ void HUD::Render()
 
 	
 	
-	//RenderBandWidth();
-	//RenderRoundTripTime();
+	RenderBandWidth();
+	RenderRoundTripTime();
 	//RenderScoreBoard();
 	RenderHUD();
 	RenderRaceInProgressJoinScreen();

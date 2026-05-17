@@ -79,19 +79,10 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 			if (mIsInLobby)
 			{
 				mIsInLobby = false;
-				// Reset race state, repopulate players and spawn cars immediately
+				// Reset race state just incase
 				if (RaceManager::sInstance)
 				{
 					RaceManager::sInstance->Reset();
-					std::vector<int> connected = GetConnectedPlayerIds();
-					for (int pid : connected)
-					{
-						RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
-					}
-					for (int pid : connected)
-					{
-						static_cast<Server*>(Engine::s_instance.get())->SpawnCarForPlayer(pid, mPlayerIdToClientMap[pid]->GetPlayerColour());
-					}
 				}
 			}
 		}
@@ -182,8 +173,7 @@ void NetworkManagerServer::SendOutgoingPackets()
 		//process any timed out packets while we're going through the list
 		clientProxy->GetDeliveryNotificationManager().ProcessTimedOutPackets();
 
-		// Send state either when they have new moves or when we're in lobby so clients get lobby/replication updates
-		if (clientProxy->IsLastMoveTimestampDirty() || mIsInLobby)
+		if (clientProxy->IsLastMoveTimestampDirty())
 		{
 			SendStatePacketToClient(clientProxy);
 		}

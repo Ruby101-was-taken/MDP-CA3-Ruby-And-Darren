@@ -180,7 +180,7 @@ void Server::DoFrame()
 
 	NetworkManagerServer::sInstance->CheckForDisconnects();
 
-	NetworkManagerServer::sInstance->RespawnCats();
+	//NetworkManagerServer::sInstance->RespawnCats(); // TODO: Check how this affects performance
 
 	Engine::DoFrame();
 
@@ -212,55 +212,19 @@ void Server::DoFrame()
 
 void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 {
-	int playerId = inClientProxy->GetPlayerId();
-	ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
-
-	//// If lobby is open, delay car spawning until the race starts
-	//if (NetworkManagerServer::sInstance && !NetworkManagerServer::sInstance->IsInLobby())
-	//{
-	//	SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
-	//}
-	if (NetworkManagerServer::sInstance) {
-		SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
-	}
-	// Register player with RaceManager
-	if (RaceManager::sInstance)
+	// If lobby is open, perform client join logic
+	if (NetworkManagerServer::sInstance && NetworkManagerServer::sInstance->IsInLobby())
 	{
-		RaceManager::sInstance->AddPlayer(playerId);
+		int playerId = inClientProxy->GetPlayerId();
+		ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
+		SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
+		if (RaceManager::sInstance) // Register player with RaceManager
+			RaceManager::sInstance->AddPlayer(playerId);
 	}
 }
 
 void Server::SpawnCarForPlayer(int inPlayerId, const Vector3& colour)
 {
-	// If a car for this player already exists, reuse it instead of spawning another
-	PlayerCarPtr existing = GetCarForPlayer(inPlayerId);
-	if (existing)
-	{
-		// reset state / reposition existing car rather than creating a duplicate
-		existing->SetColor(colour);
-		existing->SetPlayerId(inPlayerId);
-
-		float spawn_y = -239 + (120*(inPlayerId-1));
-		existing->SetLocation(Vector3((inPlayerId%2==0)? -2240 : -2070, spawn_y, 0.f));
-
-		// inform car of checkpoint count and race length, reset progress
-		existing->SetTotalCheckpoints(checkpoint_count_);
-		existing->SetLapsToWin(3);
-		existing->ResetRaceProgress();
-
-		// ensure it's alive / not marked for removal
-		existing->SetDoesWantToDie(false);
-
-		// mark pose/state dirty so clients get updated
-		if (NetworkManagerServer::sInstance)
-		{
-			NetworkManagerServer::sInstance->SetStateDirty(existing->GetNetworkId(), PlayerCar::ECRS_AllState);
-		}
-
-		return;
-	}
-
-	// otherwise create a fresh car
 	PlayerCarPtr cat = std::static_pointer_cast<PlayerCar>(GameObjectRegistry::sInstance->CreateGameObject('RCAR'));
 	cat->SetColor(colour);
 	cat->SetPlayerId(inPlayerId);
