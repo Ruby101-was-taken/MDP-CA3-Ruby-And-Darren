@@ -49,8 +49,6 @@ void RaceManager::OnPlayerFinished(PlayerCar* inCar)
     // if everyone is finished, finalize finishers
     if (ScoreBoardManager::sInstance && AreAllPlayersFinished())
         ScoreBoardManager::sInstance->SetFinishers(mFinishOrder);
-
-    inCar->OnCompleteRace();
 }
 
 bool RaceManager::AreAllPlayersFinished() const

@@ -205,14 +205,14 @@ void HUD::RenderRaceInProgressJoinScreen()
 // Darren Meidl - D00255479 - Render waiting screen for local player who has finished the race but is waiting for others to finish
 void HUD::RenderRaceFinishedWaitingScreen()
 {
-	//Logging::ClearLog();
-	//Logging::Log("HUD::RenderRaceFinishedWaitingScreen", "Checking if local player has finished");
-
 	if (NetworkManagerClient::sInstance->DidFinishRace() == false) {
-		//Logging::Log("HUD::RenderRaceFinished", "DidFinishRace() == false");
+		mHasPlayedRaceOverSound = false; // reset
 		return;
 	}
-
+	if (!mHasPlayedRaceOverSound) {
+		SoundManager::sInstance->Play("Finish");
+		mHasPlayedRaceOverSound = true;
+	}
 	// Full-screen black background (opaque) and centered white text
 	sf::View defaultView = WindowManager::sInstance->getDefaultView();
 	sf::Vector2f viewSize = defaultView.getSize();

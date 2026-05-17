@@ -43,6 +43,7 @@ private:
 	int	mPlayerCurrentLap;
 	int	mPlayerLapsToWin;
 	bool mPlayerHasFinished;
+	bool mHasPlayedRaceOverSound = false;
 };
 
 
