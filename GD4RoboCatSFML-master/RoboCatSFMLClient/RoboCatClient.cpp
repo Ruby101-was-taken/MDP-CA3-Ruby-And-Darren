@@ -9,6 +9,7 @@ PlayerCarClient::PlayerCarClient() :
 	sf::Color colour = ColourUtilities::GetUserColourFromFile();
 	SetColor(Vector3(colour.r, colour.g, colour.b));
 
+	HUD::sInstance->SetInRaceStatus(true);
 }
 
 void PlayerCarClient::HandleDying()

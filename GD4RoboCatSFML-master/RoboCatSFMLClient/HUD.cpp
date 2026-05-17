@@ -17,7 +17,10 @@ HUD::HUD() :
 	mPlayerHasFinished(false)
 {
 }
-
+void HUD::SetInRaceStatus(bool in_race) {
+	in_race_ = in_race;
+	Logging::Log("HUD", std::to_string(in_race_));
+}
 
 void HUD::StaticInit()
 {
@@ -34,13 +37,13 @@ void HUD::Render()
 	
 	RenderBandWidth();
 	RenderRoundTripTime();
+	//RenderScoreBoard();
 	RenderHUD();
-	RenderClientWaitingScreen();
 	RenderRaceInProgressJoinScreen();
 	RenderRaceFinishedWaitingScreen();
 	RenderRaceOver();
 	RenderLobbyWaitingScreen();
-	
+	RenderClientWaitingScreen();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
@@ -48,11 +51,15 @@ void HUD::Render()
 // Darren Meidl - D00255479 - Render start prompt for host player when in lobby
 void HUD::RenderLobbyWaitingScreen() {
 	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()) {
-		if (NetworkManagerClient::sInstance->GetPlayerId() != 1) {
-			return;
+		string prompt;
+		if (NetworkManagerClient::sInstance->GetPlayerId() == 1) {
+			prompt = "Press 'ENTER' to START RACE.";
+		}
+		else {
+			prompt = "Waiting on Host to Start.";
 		}
 			
-		string prompt = "Press 'S' to START RACE.";
+		
 		
 		// Create full-screen black background (slightly transparent)
 		sf::View defaultView = WindowManager::sInstance->getDefaultView();
@@ -339,6 +346,9 @@ void HUD::RenderClientWaitingScreen() {
 		return;
 	// Do not display this screen if we are the host
 	if (NetworkManagerClient::sInstance->GetPlayerId() == 1)
+		return;
+
+	if (in_race_)
 		return;
 
 	// Full-screen black background (opaque) and centered white text

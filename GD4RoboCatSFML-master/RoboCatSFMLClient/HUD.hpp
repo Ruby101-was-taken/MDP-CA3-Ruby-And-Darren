@@ -15,9 +15,11 @@ public:
 	void SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpoints, int inCurrentLap, int inLapsToWin);
 	void SetPlayerFinished(bool inFinished);
 
+	void SetInRaceStatus(bool in_race);
 private:
 
 	HUD();
+
 
 	void RenderLobbyWaitingScreen();
 	void RenderRaceInProgressJoinScreen();
@@ -45,6 +47,8 @@ private:
 	int	mPlayerLapsToWin;
 	bool mPlayerHasFinished;
 	bool mHasPlayedRaceOverSound = false;
+
+	bool in_race_ = false;
 };
 
 

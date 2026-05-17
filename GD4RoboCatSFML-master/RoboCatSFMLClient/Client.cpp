@@ -96,7 +96,7 @@ void Client::HandleEvent(sf::Event& p_event)
 	{
 	case sf::Event::KeyPressed:
 		// Darren Meidl - D00255479
-		if (p_event.key.code == sf::Keyboard::S) // Detect 'S' (start-race) key
+		if (p_event.key.code == sf::Keyboard::Return) // Detect 'RETURN' (start-race) key
 		{
 			if (NetworkManagerClient::sInstance)
             {
