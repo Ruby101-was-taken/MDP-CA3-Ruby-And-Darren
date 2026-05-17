@@ -53,7 +53,8 @@ public:
 	// Ruby White - D00255322
 	virtual void SetTotalCheckpoints(int in_total);
 	virtual void IncreaseTopSpeed();
-	void OnCompleteLap();
+	virtual void OnCompleteLap();
+	virtual void OnCompleteRace();
 protected:
 	PlayerCar();
 

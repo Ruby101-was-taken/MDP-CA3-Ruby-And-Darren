@@ -429,6 +429,12 @@ void PlayerCar::IncreaseTopSpeed() {
 
 void PlayerCar::OnCompleteLap() {
 	mCurrentLap++;
-	if (mCurrentLap > mLapsToWin - 1)
+	if (mCurrentLap > mLapsToWin - 1) {
 		mRaceFinished = true;
+		OnCompleteRace();
+	}
 }
+void PlayerCar::OnCompleteRace() {
+	Logging::Log("PlayerCar", "OnCompleteRace");
+}
+

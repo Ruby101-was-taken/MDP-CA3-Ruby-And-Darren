@@ -10,6 +10,9 @@ SoundManager::SoundManager()
 	: volume_(100.f) {
 	Load("StarGet", "../Assets/Sound/Star/Star-Get.ogg");
 
+	Load("Lap", "../Assets/Sound/Music/Jingle/Lap.wav");
+	Load("Finish", "../Assets/Sound/Music/Jingle/Finish.wav");
+
 }
 
 void SoundManager::Play(std::string effect) {
