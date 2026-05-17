@@ -286,7 +286,7 @@ void PlayerCar::ProcessCollisionsWithLevel()
 	}
 
 	if (LevelManager::sInstance->IsCollidingWithOffRoad(rect))	{
-		mVelocity *= 0.9;
+		mVelocity *= 0.75;
 	}
 }
 

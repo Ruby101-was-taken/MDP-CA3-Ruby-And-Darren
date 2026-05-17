@@ -72,20 +72,21 @@ void RenderManager::RenderComponents()
 		}
 	}
 
-	for (sf::FloatRect rect : LevelManager::sInstance->wall_tiles_) {
-		sf::RectangleShape vis;
-		vis.setPosition(rect.getPosition());
-		vis.setSize(rect.getSize());
-		vis.setFillColor(sf::Color::Red);
-		WindowManager::sInstance->draw(vis);
-	}
-	for (sf::FloatRect rect : LevelManager::sInstance->grass_tiles_) {
-		sf::RectangleShape vis;
-		vis.setPosition(rect.getPosition());
-		vis.setSize(rect.getSize());
-		vis.setFillColor(sf::Color::Blue);
-		WindowManager::sInstance->draw(vis);
-	}
+	//level collisions debug rendering and such
+	//for (sf::FloatRect rect : LevelManager::sInstance->wall_tiles_) {
+	//	sf::RectangleShape vis;
+	//	vis.setPosition(rect.getPosition());
+	//	vis.setSize(rect.getSize());
+	//	vis.setFillColor(sf::Color::Red);
+	//	WindowManager::sInstance->draw(vis);
+	//}
+	//for (sf::FloatRect rect : LevelManager::sInstance->grass_tiles_) {
+	//	sf::RectangleShape vis;
+	//	vis.setPosition(rect.getPosition());
+	//	vis.setSize(rect.getSize());
+	//	vis.setFillColor(sf::Color::Blue);
+	//	WindowManager::sInstance->draw(vis);
+	//}
 }
 
 void RenderManager::Render()
