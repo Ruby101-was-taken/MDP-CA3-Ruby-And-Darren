@@ -310,6 +310,8 @@ void PlayerCarClient::OnCompleteLap() {
 }
 
 void PlayerCarClient::OnCompleteRace() {
+	PlayerCar::OnCompleteRace();
 	SoundManager::sInstance->Play("Finish");
+	Logging::Log("PlayerCarClient::OnCompleteRace", "Player " + std::to_string(GetPlayerId()) + " has completed the race!");
 }
 
