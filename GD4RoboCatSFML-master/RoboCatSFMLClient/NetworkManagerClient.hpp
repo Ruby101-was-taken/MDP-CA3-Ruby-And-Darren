@@ -20,8 +20,9 @@ public:
 	float GetRoundTripTime() const { return mAvgRoundTripTime.GetValue(); }
 	int GetPlayerId() const { return mPlayerId; }
 	float GetLastMoveProcessedByServerTimestamp() const { return mLastMoveProcessedByServerTimestamp; }
-
+	// Darren Meidl - D00255479 - Lobby / game state control
 	bool IsLobbyOpen() const { return mIsLobbyOpen; }	void SendStartRacePacket();
+	bool DidFinishRace() const { return mIsRaceFinished; }
 
 private:
 	NetworkManagerClient();
@@ -62,5 +63,6 @@ private:
 	float mLastRoundTripTime;
 
 	bool mIsLobbyOpen = false;
+	bool mIsRaceFinished = false;
 };
 

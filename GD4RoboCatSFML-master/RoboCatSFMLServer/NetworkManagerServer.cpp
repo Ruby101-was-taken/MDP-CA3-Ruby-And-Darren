@@ -204,7 +204,6 @@ void NetworkManagerServer::SendStatePacketToClient(ClientProxyPtr inClientProxy)
 
 	WriteLastMoveTimestampIfDirty(statePacket, inClientProxy);
 
-	// Write lobby flag so client and server packet layouts match
 	statePacket.Write(mIsInLobby);
 
 	AddScoreBoardStateToPacket(statePacket);

@@ -13,19 +13,19 @@ public:
 
 	// Race / checkpoint display for local player
 	void SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpoints, int inCurrentLap, int inLapsToWin);
+	void SetPlayerFinished(bool inFinished);
 
 private:
 
 	HUD();
 
-	void RenderHostStartPrompt();
-	void RenderLobbyWaitingScreen(); 
+	void RenderLobbyWaitingScreen();
 	void RenderRaceInProgressJoinScreen();
 	void RenderRaceFinishedWaitingScreen();
 	void RenderBandWidth();
 	void RenderRoundTripTime();
 	void RenderScoreBoard();
-	void RenderRaceInfo();
+	void RenderHUD();
 	void RenderRaceOver();
 
 	void RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
@@ -42,6 +42,7 @@ private:
 	int	mPlayerTotalCheckpoints;
 	int	mPlayerCurrentLap;
 	int	mPlayerLapsToWin;
+	bool mPlayerHasFinished;
 };
 
 
