@@ -13,6 +13,7 @@ public:
 
 	void OnCompleteLap() override;
 	void OnCompleteRace() override;
+	void SetLapsToWin(int inLaps) override;
 protected:
 	PlayerCarClient();
 

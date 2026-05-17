@@ -182,6 +182,12 @@ void PlayerCarClient::Read(InputMemoryBitStream& inInputStream)
 		inInputStream.Read(total_checkpoints);
 		readState |= ECRS_Checkpoints;
 		SetTotalCheckpoints(total_checkpoints);
+		int current_lap = 0;
+		inInputStream.Read(current_lap);
+		mCurrentLap = current_lap - 1;
+		bool is_finished= 0;
+		inInputStream.Read(is_finished);
+		mRaceFinished = is_finished;
 	}
 }
 
@@ -317,5 +323,11 @@ void PlayerCarClient::OnCompleteLap() {
 void PlayerCarClient::OnCompleteRace() {
 	PlayerCar::OnCompleteRace();
 	Logging::Log("PlayerCarClient::OnCompleteRace", "Player " + std::to_string(GetPlayerId()) + " has completed the race!");
+}
+
+void PlayerCarClient::SetLapsToWin(int inLaps) {
+	PlayerCar::SetLapsToWin(inLaps);
+	HUD::sInstance->SetPlayerRaceProgress(0, total_checkpoints_, 0, 3);
+
 }
 

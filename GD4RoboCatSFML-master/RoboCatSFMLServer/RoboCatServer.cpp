@@ -17,6 +17,15 @@ void PlayerCarServer::SetTotalCheckpoints(int in_total) {
 	);
 }
 
+void PlayerCarServer::SetLapsToWin(int inLaps) {
+	PlayerCar::SetLapsToWin(inLaps);
+
+	NetworkManagerServer::sInstance->SetStateDirty(
+		GetNetworkId(),
+		ECRS_Checkpoints
+	);
+}
+
 PlayerCarServer::PlayerCarServer() :
 	mCarControlType(ESCT_Human),
 	mTimeOfNextShot(0.f),
@@ -73,7 +82,7 @@ void PlayerCarServer::Update()
 		!RoboMath::Is2DVectorEqual(oldVelocity, GetVelocity()) ||
 		oldRotation != GetRotation())
 	{
-		NetworkManagerServer::sInstance->SetStateDirty(GetNetworkId(), ECRS_Pose);
+		NetworkManagerServer::sInstance->SetStateDirty(GetNetworkId(), ECRS_Pose | ECRS_Checkpoints);
 	}
 
 }

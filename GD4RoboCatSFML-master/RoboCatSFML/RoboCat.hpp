@@ -44,7 +44,7 @@ public:
 	// Darren Meidl - D000255479 - Checkpoint + lap logic
 	void OnCheckpointPassed(Checkpoint* inCheckpoint);
 	void ResetRaceProgress();
-	void SetLapsToWin(int inLaps) { mLapsToWin = inLaps; }
+	virtual void SetLapsToWin(int inLaps);
 	int GetCurrentLap() const { return mCurrentLap; }
 	int GetCurrentCheckpointIndex() const { return mCurrentCheckpointIndex; }
 	bool IsRaceFinished() const { return mRaceFinished; }
@@ -109,13 +109,12 @@ protected:
 
 	bool mIsShooting;
 
-private:
 	// checkpoint & lap tracking
-	int mCurrentLap;
 	int mCurrentCheckpointIndex; // -1 == none yet
 	int mLapsToWin;
-	int total_checkpoints_;
 	bool mRaceFinished;
+	int total_checkpoints_;
+	int mCurrentLap;
 };
 
 typedef shared_ptr< PlayerCar >	PlayerCarPtr;

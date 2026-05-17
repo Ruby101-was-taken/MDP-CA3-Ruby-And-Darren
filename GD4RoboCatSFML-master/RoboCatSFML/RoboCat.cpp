@@ -5,7 +5,7 @@ const float WORLD_HEIGHT = 2160.f;
 const float WORLD_WIDTH = 3840.f;
 
 bool PlayerCar::OnFinalLap() {
-	return mCurrentLap >= mLapsToWin-1;
+	return mCurrentLap >= mLapsToWin;
 }
 
 PlayerCar::PlayerCar() :
@@ -374,6 +374,8 @@ uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirt
 	if (inDirtyState & ECRS_Checkpoints) {
 		inOutputStream.Write((bool)true);
 		inOutputStream.Write(total_checkpoints_);
+		inOutputStream.Write(mCurrentLap);
+		inOutputStream.Write(mRaceFinished);
 
 		writtenState |= ECRS_Checkpoints;
 	}
@@ -385,6 +387,13 @@ uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirt
 
 
 }
+
+void PlayerCar::SetLapsToWin(int inLaps) {
+	mLapsToWin = inLaps;
+	mCurrentLap = 0;
+	mCurrentCheckpointIndex = -1;
+}
+
 // Ruby White - D00255322 Darren Meidl - D00255479 - Handle checkpoint collision
 void PlayerCar::OnCheckpointPassed(Checkpoint* inCheckpoint) {
 	if (!inCheckpoint || mRaceFinished)
@@ -419,7 +428,6 @@ void PlayerCar::ResetRaceProgress() {
 // Ruby White - D00255322
 void PlayerCar::SetTotalCheckpoints(int in_total) {
 	total_checkpoints_ = in_total;
-	Logging::Log("PlayerCar", "Set checkpoints: " + std::to_string(total_checkpoints_));
 }
 
 
