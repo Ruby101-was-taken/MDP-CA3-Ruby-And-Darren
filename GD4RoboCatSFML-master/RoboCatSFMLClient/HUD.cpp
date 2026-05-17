@@ -457,25 +457,51 @@ void HUD::RenderHUD()
 	auto starTex = TextureManager::sInstance->GetTexture("star");
 	// Load flag texture 
 	auto flagTex = TextureManager::sInstance->GetTexture("flag");
-	float iconW = 0.f, iconH = 0.f;
+
+	// Prepare sprites and sizes for both icons. Flag will be used for lap icon when available.
 	sf::Sprite starSprite;
+	sf::Sprite flagSprite;
+	float starIconW = 0.f, starIconH = 0.f;
+	float flagIconW = 0.f, flagIconH = 0.f;
+
 	if (starTex)
 	{
 		starSprite.setTexture(*starTex);
 		sf::Vector2u tSize = starTex->getSize();
-		// scale icon to approximately match text height
-		iconH = static_cast<float>(charSize); // target height in pixels
-		float scale = iconH / static_cast<float>(tSize.y);
-		iconW = static_cast<float>(tSize.x) * scale;
-		starSprite.setScale(scale, scale);
+		if (tSize.y > 0)
+		{
+			// scale icon to approximately match text height
+			starIconH = static_cast<float>(charSize); // target height in pixels
+			float scale = starIconH / static_cast<float>(tSize.y);
+			starIconW = static_cast<float>(tSize.x) * scale;
+			starSprite.setScale(scale, scale);
+		}
 	}
 
+	if (flagTex)
+	{
+		flagSprite.setTexture(*flagTex);
+		sf::Vector2u tSize = flagTex->getSize();
+		if (tSize.y > 0)
+		{
+			// scale flag icon to approximately match text height - keep aspect ratio
+			flagIconH = static_cast<float>(charSize); // target height in pixels
+			float scale = flagIconH / static_cast<float>(tSize.y);
+			flagIconW = static_cast<float>(tSize.x) * scale;
+			flagSprite.setScale(scale, scale);
+		}
+	}
+
+	// If flag texture is missing fall back to star icon for lap element
+	float lapIconWEffective = (flagIconW > 0.f ? flagIconW : starIconW);
+	float lapIconHEffective = (flagIconH > 0.f ? flagIconH : starIconH);
+
 	// Compute combined size: [icon + innerSpacing + text] for star element, same for lap element
-	float starElemW = iconW + innerSpacing + starTextW;
-	float lapElemW = iconW + innerSpacing + lapTextW;
+	float starElemW = starIconW + innerSpacing + starTextW;
+	float lapElemW = lapIconWEffective + innerSpacing + lapTextW;
 	float combinedW = padding*2 + starElemW + elementGap + lapElemW;
 	// Height is padding*2 + max of iconH and text heights (textH is bounds.height; we also account for bounds.top when positioning)
-	float contentH = std::max(iconH, std::max(starTextH, lapTextH));
+	float contentH = std::max(std::max(starIconH, lapIconHEffective), std::max(starTextH, lapTextH));
 	float combinedH = padding*2 + contentH;
 
 	// Background rect positioned bottom-left
@@ -495,11 +521,11 @@ void HUD::RenderHUD()
 	if (starTex)
 	{
 		// vertically center icon within content area
-		float iconY = innerY + (contentH - iconH) / 2.f;
+		float iconY = innerY + (contentH - starIconH) / 2.f;
 		starSprite.setPosition(curX, iconY);
 		WindowManager::sInstance->draw(starSprite);
 	}
-	curX += iconW + innerSpacing;
+	curX += starIconW + innerSpacing;
 
 	// star text: need to adjust for text local bounds top (font metrics)
 	{
@@ -512,14 +538,20 @@ void HUD::RenderHUD()
 	// gap between elements
 	curX += elementGap;
 
-	// Draw lap element (icon + text)
-	if (starTex)
+	// Draw lap element (use flag icon if available, otherwise fall back to star)
+	if (flagTex)
 	{
-		float iconY = innerY + (contentH - iconH) / 2.f;
+		float iconY = innerY + (contentH - flagIconH) / 2.f;
+		flagSprite.setPosition(curX, iconY);
+		WindowManager::sInstance->draw(flagSprite);
+	}
+	else if (starTex) // fall back
+	{
+		float iconY = innerY + (contentH - starIconH) / 2.f;
 		starSprite.setPosition(curX, iconY);
 		WindowManager::sInstance->draw(starSprite);
 	}
-	curX += iconW + innerSpacing;
+	curX += lapIconWEffective + innerSpacing;
 
 	{
 		float txtY = innerY + (contentH - lapTextH) / 2.f - lapBounds.top;
