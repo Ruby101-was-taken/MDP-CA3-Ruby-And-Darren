@@ -17,7 +17,10 @@ HUD::HUD() :
 	mPlayerHasFinished(false)
 {
 }
-
+void HUD::SetInRaceStatus(bool in_race) {
+	in_race_ = in_race;
+	Logging::Log("HUD", std::to_string(in_race_));
+}
 
 void HUD::StaticInit()
 {
@@ -40,6 +43,7 @@ void HUD::Render()
 	RenderRaceFinishedWaitingScreen();
 	RenderRaceOver();
 	RenderLobbyWaitingScreen();
+	RenderClientWaitingScreen();
 
 	// Restore world view for any further world rendering / display
 	WindowManager::sInstance->setView(previousView);
@@ -334,6 +338,40 @@ void HUD::RenderRaceOver()
 
 	// Optionally show up to a max number to avoid overflowing the screen.
 	// The current loop shows all entries received in the winners vector.
+}
+// Darren Meidl - D00255479 - Render wait screen for clients only
+void HUD::RenderClientWaitingScreen() {
+	// Display this screen only when lobby is open
+	if (NetworkManagerClient::sInstance->IsLobbyOpen())
+		return;
+	// Do not display this screen if we are the host
+	if (NetworkManagerClient::sInstance->GetPlayerId() == 1)
+		return;
+
+	if (in_race_)
+		return;
+
+	// Full-screen black background (opaque) and centered white text
+	sf::View defaultView = WindowManager::sInstance->getDefaultView();
+	sf::Vector2f viewSize = defaultView.getSize();
+	sf::RectangleShape background(viewSize);
+	background.setPosition(0.f, 0.f);
+	background.setFillColor(sf::Color(0, 0, 0, 255));
+	WindowManager::sInstance->draw(background);
+
+	sf::Text text;
+	const string prompt = "Waiting on Host to Start.";
+	text.setString(prompt);
+	text.setFillColor(sf::Color(255, 255, 255, 255));
+	text.setCharacterSize(50);
+	text.setFont(*FontManager::sInstance->GetFont("carlito"));
+
+	// center the text
+	sf::FloatRect bounds = text.getLocalBounds();
+	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	text.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
+
+	WindowManager::sInstance->draw(text);
 }
 
 // Darren Meidl - D00255479 - Update local player's checkpoint and lap progress for HUD display

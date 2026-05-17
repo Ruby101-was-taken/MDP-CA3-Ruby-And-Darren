@@ -15,9 +15,11 @@ public:
 	void SetPlayerRaceProgress(int inCurrentCheckpointIndex, int inTotalCheckpoints, int inCurrentLap, int inLapsToWin);
 	void SetPlayerFinished(bool inFinished);
 
+	void SetInRaceStatus(bool in_race);
 private:
 
 	HUD();
+
 
 	void RenderLobbyWaitingScreen();
 	void RenderRaceInProgressJoinScreen();
@@ -27,6 +29,7 @@ private:
 	void RenderScoreBoard();
 	void RenderHUD();
 	void RenderRaceOver();
+	void RenderClientWaitingScreen();
 
 	void RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
 
@@ -44,6 +47,8 @@ private:
 	int	mPlayerLapsToWin;
 	bool mPlayerHasFinished;
 	bool mHasPlayedRaceOverSound = false;
+
+	bool in_race_ = false;
 };
 
 
