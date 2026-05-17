@@ -49,7 +49,7 @@ void HUD::RenderLobbyWaitingScreen() {
 	if (NetworkManagerClient::sInstance && NetworkManagerClient::sInstance->IsLobbyOpen()) {
 		string prompt;
 		if (NetworkManagerClient::sInstance->GetPlayerId() == 1) {
-			prompt = "Press 'S' to START RACE.";
+			prompt = "Press 'ENTER' to START RACE.";
 		}
 		else {
 			prompt = "Waiting on Host to Start.";
