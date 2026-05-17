@@ -240,7 +240,7 @@ void Server::SpawnCarForPlayer(int inPlayerId, const Vector3& colour)
 
 	// inform car of checkpoint count and race length
 	cat->SetTotalCheckpoints(checkpoint_count_);
-	cat->SetLapsToWin(3);
+	cat->SetLapsToWin(4);
 	cat->ResetRaceProgress();
 }
 

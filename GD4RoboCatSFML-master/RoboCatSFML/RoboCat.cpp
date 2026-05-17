@@ -30,7 +30,7 @@ PlayerCar::PlayerCar() :
 	// checkpoint / lap defaults
 	mCurrentLap(0),
 	mCurrentCheckpointIndex(0),
-	mLapsToWin(2),
+	mLapsToWin(3),
 	total_checkpoints_(0),
 	mRaceFinished(false),
 	star_speed_increase_(30),

@@ -17,4 +17,3 @@ for i in range(ans):
     newThread:threading.Thread = threading.Thread(target=RunClient)
     newThread.start()
     threads.append(newThread)
-    

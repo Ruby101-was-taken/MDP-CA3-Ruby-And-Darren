@@ -13,7 +13,8 @@ TextureManager::TextureManager()
 	CacheTexture("checkpoint", "../Assets/Textures/Checkpoint/checkpoint.png"); // Darren Meidl - D00255479 - New checkpoint sprite
 	CacheTexture("star", "../Assets/Textures/Item/Star.png");  // Ruby White - D00255322 - new collectable sprite
 	CacheTexture("flag", "../Assets/Textures/Item/Flag.png");  // Ruby White - D00255322 - icon for laps
-	CacheTexture("track", "../Assets/Textures/Track.png");  // Ruby White - D00255322 - sprite for the track visuals
+	CacheTexture("track", "../Assets/Textures/World/Track.png");  // Ruby White - D00255322 - sprite for the track visuals
+	CacheTexture("water", "../Assets/Textures/World/Water.png");  // Ruby White - D00255322 - sprite for background
 	
 }
 

@@ -25,6 +25,7 @@ private:
 
 	sf::View view;
 
+	sf::Sprite background_;
 
 };
 

@@ -7,6 +7,8 @@ RenderManager::RenderManager()
 {
 	view.reset(sf::FloatRect(0, 0, 1280, 720));
 	WindowManager::sInstance->setView(view);
+	background_.setTexture(*TextureManager::sInstance->GetTexture("water"));
+	background_.setOrigin({640, 360});
 }
 
 
@@ -106,9 +108,12 @@ void RenderManager::Render()
 			{
 				Vector3 loc = cat->GetLocation() + cat->GetForwardVector()*250;
 				view.setCenter(loc.mX, loc.mY);
+				background_.setPosition(loc.mX, loc.mY);
 				// Ruby White - D00255322
 				float rot = cat->GetRotation();
-				view.setRotation(rot);
+				view.setRotation(rot);				
+				background_.setRotation(rot);
+
 
 				World::sInstance->SetAngle(rot);
 
@@ -122,52 +127,9 @@ void RenderManager::Render()
 	// Clear the back buffer
 	//
 	WindowManager::sInstance->clear(sf::Color(100, 149, 237, 255));
-
-	//
-	// Darren Meidl - D00255479
-	// Background / spatial reference drawing
-	//
-	{
-		sf::Vector2f viewCenter = view.getCenter();
-		sf::Vector2f viewSize = view.getSize();
-		sf::FloatRect visibleRect(viewCenter.x - viewSize.x * 0.5f, viewCenter.y - viewSize.y * 0.5f, viewSize.x, viewSize.y);
-
-		sf::RectangleShape ground(sf::Vector2f(2560, 2560)); // draw ground as a rectangle covering the visible area
-									// Ruby White - D00255322
-		ground.setPosition(visibleRect.left-(visibleRect.width/2), visibleRect.top - (visibleRect.height / 2));
-		ground.setFillColor(sf::Color(80, 80, 90, 255));
-		
-		const float GRID_SIZE = 128.f; // Grid overlay
-		sf::VertexArray gridLines(sf::Lines);
-
-		float firstVertical = std::floor(visibleRect.left / GRID_SIZE) * GRID_SIZE; // verticals
-		for (float x = firstVertical; x <= visibleRect.left + visibleRect.width; x += GRID_SIZE)
-		{
-			sf::Vertex v1(sf::Vector2f(x, visibleRect.top), sf::Color(200, 200, 200, 50));
-			sf::Vertex v2(sf::Vector2f(x, visibleRect.top + visibleRect.height), sf::Color(200, 200, 200, 50));
-			gridLines.append(v1);
-			gridLines.append(v2);
-		}
+	WindowManager::sInstance->draw(background_);
 	
-		float firstHorizontal = std::floor(visibleRect.top / GRID_SIZE) * GRID_SIZE; // horizontals
-		for (float y = firstHorizontal; y <= visibleRect.top + visibleRect.height; y += GRID_SIZE)
-		{
-			sf::Vertex v1(sf::Vector2f(visibleRect.left, y), sf::Color(200, 200, 200, 50));
-			sf::Vertex v2(sf::Vector2f(visibleRect.left + visibleRect.width, y), sf::Color(200, 200, 200, 50));
-			gridLines.append(v1);
-			gridLines.append(v2);
-		}
-		
-		sf::RectangleShape worldBorder(sf::Vector2f(3840.f, 2160.f)); // world width & height
-		worldBorder.setPosition(0.f, 0.f);
-		worldBorder.setFillColor(sf::Color::Transparent);
-		worldBorder.setOutlineColor(sf::Color(255, 60, 60, 220)); // Red
-		worldBorder.setOutlineThickness(12.f); // thicker border
 
-		WindowManager::sInstance->draw(ground);
-		WindowManager::sInstance->draw(gridLines);
-		WindowManager::sInstance->draw(worldBorder);
-	}
 
 	RenderManager::sInstance->RenderComponents();
 

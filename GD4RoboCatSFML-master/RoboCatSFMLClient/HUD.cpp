@@ -13,7 +13,7 @@ HUD::HUD() :
 	mPlayerCurrentCheckpointIndex(-1),
 	mPlayerTotalCheckpoints(0),
 	mPlayerCurrentLap(0),
-	mPlayerLapsToWin(0),
+	mPlayerLapsToWin(3),
 	mPlayerHasFinished(false)
 {
 }
