@@ -6,12 +6,14 @@ public:
     static std::unique_ptr<LevelManager> sInstance;
 
     LevelManager();
-    bool IsCollidingWithLevel(sf::FloatRect collider);
+    bool IsCollidingWithWalls(sf::FloatRect collider);
+    bool IsCollidingWithOffRoad(sf::FloatRect collider);
     ~LevelManager() = default;
 
     
 
 //private:
-    std::vector<sf::FloatRect> level_tiles_;
+    std::vector<sf::FloatRect> wall_tiles_;
+    std::vector<sf::FloatRect> grass_tiles_;
 };
 

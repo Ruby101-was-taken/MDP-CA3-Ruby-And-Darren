@@ -173,7 +173,7 @@ void PlayerCar::Update()
 void PlayerCar::ProcessCollisions()
 {
 	//right now just bounce off the sides..
-	ProcessCollisionsWithScreenWalls();
+	ProcessCollisionsWithLevel();
 
 	float sourceRadius = GetCollisionRadius();
 	Vector3 sourceLocation = GetLocation();
@@ -246,7 +246,7 @@ void PlayerCar::ProcessCollisions()
 
 }
 
-void PlayerCar::ProcessCollisionsWithScreenWalls()
+void PlayerCar::ProcessCollisionsWithLevel()
 {
 	Vector3 location = GetLocation();
 	float x = location.mX;
@@ -263,30 +263,35 @@ void PlayerCar::ProcessCollisionsWithScreenWalls()
 	float recoil_strength = 0.1;
 
 	////if the cat collides against a wall, the quick solution is to push it off
-	if (LevelManager::sInstance->IsCollidingWithLevel(rect) && vy > 0)
+	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy > 0)
 	{
 		location.mY -= vy * recoil_strength;
 		mVelocity.mY = -vy * recoil_strength;
 		SetLocation(location);
 	}
-	else if (LevelManager::sInstance->IsCollidingWithLevel(rect) && vy < 0)
+	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy < 0)
 	{
 		location.mY -= vy * recoil_strength;
 		mVelocity.mY = -vy * recoil_strength;
 		SetLocation(location);
 	}
 
-	if (LevelManager::sInstance->IsCollidingWithLevel(rect) && vx > 0)
+	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx > 0)
 	{
 		location.mX -= vx * recoil_strength;
 		mVelocity.mX = -vx * recoil_strength;
 		SetLocation(location);
 	}
-	else if (LevelManager::sInstance->IsCollidingWithLevel(rect) && vx < 0)
+	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx < 0)
 	{
 		location.mX -= vx * recoil_strength;
 		mVelocity.mX = -vx* recoil_strength;
 		SetLocation(location);
+	}
+
+	if (LevelManager::sInstance->IsCollidingWithOffRoad(rect))
+	{
+		mVelocity *= 0.9;
 	}
 }
 
