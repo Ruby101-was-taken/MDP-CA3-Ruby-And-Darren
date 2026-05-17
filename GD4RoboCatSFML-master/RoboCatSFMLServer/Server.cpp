@@ -1,6 +1,7 @@
 #include "RoboCatServerPCH.hpp"
 #include <iostream>
 #include <cmath>
+#include <chrono>
 
 bool Server::StaticInit()
 {
@@ -15,7 +16,8 @@ bool Server::StaticInit()
 
 Server::Server() :
 	mLobbyOpenStartTime(0.f),
-	mLobbyDuration(15.0f)
+	mLobbyDuration(15.0f),
+	race_finished_(false)
 {
 
 	GameObjectRegistry::sInstance->RegisterCreationFunction('RCAR', PlayerCarServer::StaticCreate);
@@ -196,16 +198,16 @@ void Server::DoFrame()
 		return;
 
 	// If game-over detected, ensure lobby opens (once) and start timer
-	if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
-	{
-		NetworkManagerServer::sInstance->SetIsInLobby(true); // allow joins
-		float now = Timing::sInstance.GetFrameStartTime();
-		// TODO: Consider removing?
-		// Open lobby when we first notice game-over.
-		if (mLobbyOpenStartTime == 0.f)
-		{
-			
-			mLobbyOpenStartTime = now;
+	if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver()) {
+		const auto p1 = std::chrono::system_clock::now();
+		int now = std::chrono::duration_cast<std::chrono::seconds>(p1.time_since_epoch()).count();
+		if (!race_finished_) {
+			race_finished_ = true;
+			race_end_time_ = now + kResultsTimer;
+		}
+		else if(now >= race_end_time_) {
+			NetworkManagerServer::sInstance->SetIsInLobby(true); // allow joins
+
 		}
 	}
 	else

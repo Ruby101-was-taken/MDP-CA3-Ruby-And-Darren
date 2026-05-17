@@ -25,5 +25,9 @@ private:
 	float mLobbyDuration = 10.0f;     // lobby open window in seconds
 
 	int checkpoint_count_;
+
+	bool race_finished_;
+	int race_end_time_;
+	const int kResultsTimer = 10;
 };
 
