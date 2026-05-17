@@ -1,3 +1,4 @@
+
 #include "RoboCatPCH.hpp"
 
 const float WORLD_HEIGHT = 2160.f;
@@ -10,10 +11,10 @@ PlayerCar::PlayerCar() :
 	mMaxLinearSpeed(1200.f),		// speed
 	mAcceleration(500.f),		// acceleration
 	mReverseAccelScale(0.5f), // brake
-	mLinearDrag(4.5f),			
+	mLinearDrag(4.5f),
 	mGrip(20.f),
-	
-	mVelocity(Vector3::Zero),
+
+	velocity_(Vector3::Zero),
 	mCurrentSteer(0.f),
 	mMinSteerScale(0.85f),		// reduce steering (percentage) at top speed
 	mWallRestitution(0.1f),
@@ -30,8 +31,7 @@ PlayerCar::PlayerCar() :
 	mRaceFinished(false),
 	star_speed_increase_(30),
 	stars_(0),
-	max_stars_(20)
-{
+	max_stars_(20) {
 	// Set scale based on original sprite size
 	const float originalHalfHeight = 1010.f / 2.f;
 	const float originalHalfWidth = 424.f / 2.f;
@@ -42,15 +42,14 @@ PlayerCar::PlayerCar() :
 	SetCollisionRadius(widthBasedRadius);
 }
 
-void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState)
-{
+void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState) {
 	// Turning:
 	// Keep rotation very responsive (small, quick car). We rotate the car sprite immediately,
 	// but velocity direction is only slowly aligned to heading (grip), producing oversteer/drift.
 	float desiredHorizontal = inInputState.GetDesiredHorizontalDelta();
 
 	// Compute speed-based steering scale (1.0 at rest, mMinSteerScale at max speed)
-	float speed = mVelocity.Length2D();
+	float speed = velocity_.Length2D();
 	float speedRatio = 0.f;
 	if (mMaxLinearSpeed > 0.f)
 	{
@@ -58,7 +57,7 @@ void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState)
 		if (speedRatio > 1.f) speedRatio = 1.f;
 	}
 	float steerScale = 1.f - speedRatio * (1.f - mMinSteerScale); // linear lerp(1, mMinSteerScale, speedRatio)
-	
+
 	//mCurrentSteer = desiredHorizontal; // Immediate steering (no gradual increase) for responsiveness
 	float steerLerpSpeed = 8.f;
 	mCurrentSteer += (desiredHorizontal - mCurrentSteer) * steerLerpSpeed * inDeltaTime;
@@ -70,7 +69,7 @@ void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState)
 	SetRotation(newRotation);
 
 	// Movement/throttle input (-1 .. 1)
-	float inputForwardDelta = inInputState.GetDesiredVerticalDelta();	
+	float inputForwardDelta = inInputState.GetDesiredVerticalDelta();
 	if (inputForwardDelta >= 0.f)
 		mThrustDir = inputForwardDelta;
 	else
@@ -79,34 +78,33 @@ void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState)
 	mIsShooting = inInputState.IsShooting();
 }
 // Darren Meidl - D00255479 - Apply acceleration, drag, and grip to velocity based on current throttle and heading
-void PlayerCar::AdjustVelocityByThrust(float inDeltaTime)
-{
+void PlayerCar::AdjustVelocityByThrust(float inDeltaTime) {
 	Vector3 forwardVector = GetForwardVector(); // Vector forward
 	// Apply acceleration/braking along forward vector
 	if (mThrustDir != 0.f) {
 		// Positive thrust accelerates forward; negative thrust brakes / reverses
-		mVelocity += forwardVector * (mAcceleration * mThrustDir * inDeltaTime);
+		velocity_ += forwardVector * (mAcceleration * mThrustDir * inDeltaTime);
 	}
 	else {
 		// No throttle: apply linear drag to gradually slow down
 		// Use a stable multiplier rather than direct subtraction
 		float dragFactor = 1.f / (1.f + mLinearDrag * inDeltaTime);
-		mVelocity *= dragFactor;
+		velocity_ *= dragFactor;
 	}
 
 	// Clamp speed to max
-	float speedSq = mVelocity.LengthSq2D();
+	float speedSq = velocity_.LengthSq2D();
 	float maxSpeedSq = mMaxLinearSpeed * mMaxLinearSpeed;
 	if (speedSq > maxSpeedSq)
 	{
 		float speed = sqrtf(speedSq);
-		mVelocity = mVelocity * (mMaxLinearSpeed / speed);
+		velocity_ = velocity_ * (mMaxLinearSpeed / speed);
 	}
 
 	// Grip: reduce lateral velocity relative to forward direction to simulate tire grip.
 	// Lower mGrip => less lateral friction => easier to oversteer.
 	// Separate velocity into forward and lateral components
-	Vector3 vel = mVelocity;
+	Vector3 vel = velocity_;
 	// project velocity onto forward
 	float forwardSpeed = Dot2D(vel, forwardVector);
 	Vector3 forwardVel = forwardVector * forwardSpeed;
@@ -118,62 +116,44 @@ void PlayerCar::AdjustVelocityByThrust(float inDeltaTime)
 	float gripFactor = std::max(0.f, 1.f - (mGrip * inDeltaTime));
 	lateralVel *= gripFactor;
 
-	mVelocity = forwardVel + lateralVel;
-	// Separate velocity into forward/lateral components
-	//Vector3 vel = mVelocity;
-
-	//float forwardSpeed = Dot2D(vel, forwardVector);
-
-	//Vector3 forwardVel = forwardVector * forwardSpeed;
-	//Vector3 lateralVel = vel - forwardVel;
-
-	//// Apply grip to reduce sideways sliding
-	//float gripFactor = std::max(0.f, 1.f - (mGrip * inDeltaTime));
-	//lateralVel *= gripFactor;
-
-	//// Rebuild velocity
-	//mVelocity = forwardVel + lateralVel;
-
-	//// Gradually rotate momentum toward facing direction
-	//float currentSpeed = mVelocity.Length2D();
-
-	//Vector3 desiredVelocity = forwardVector * currentSpeed;
-
-	//float velocityRotateSpeed = 1.5f;
-
-	//mVelocity += (desiredVelocity - mVelocity) * velocityRotateSpeed * inDeltaTime;
-
-	//// Lose speed while cornering hard
-	//float turnAmount = fabs(mCurrentSteer);
-
-	//float speed = mVelocity.Length2D();
-	//float speedRatio = speed / mMaxLinearSpeed;
-
-	//// More speed loss when steering hard at high speed
-	//float cornerDrag = turnAmount * speedRatio * 3.5f;
-
-	//mVelocity *= (1.f - cornerDrag * inDeltaTime);
+	velocity_ = forwardVel + lateralVel;
 }
 
-void PlayerCar::SimulateMovement(float inDeltaTime)
-{
+void PlayerCar::SimulateMovement(float inDeltaTime) {
 	//simulate us...
 	AdjustVelocityByThrust(inDeltaTime);
-    
-	SetLocation(GetLocation() + mVelocity * inDeltaTime);
+
+	MoveCar(inDeltaTime);
 
 	ProcessCollisions();
 }
 
-void PlayerCar::Update()
-{
+// Ruby White - D00255322
+void PlayerCar::MoveCar(float inDeltaTime) {
+	//move on X axis
+	Vector3 location = GetLocation();
+	float new_x = location.mX + velocity_.mX * inDeltaTime;
+
+	SetLocation(Vector3(new_x, location.mY, 0));
+
+	ProcessCollisionsWithLevel(velocity_.mX, 0);
+
+	//move on Y axis
+	location = GetLocation();
+	float new_y = location.mY + velocity_.mY * inDeltaTime;
+
+	SetLocation(Vector3(location.mX, new_y, 0));
+
+	ProcessCollisionsWithLevel(0, velocity_.mY);
+}
+
+
+void PlayerCar::Update() {
 
 }
 
-void PlayerCar::ProcessCollisions()
-{
+void PlayerCar::ProcessCollisions() {
 	//right now just bounce off the sides..
-	ProcessCollisionsWithLevel();
 
 	float sourceRadius = GetCollisionRadius();
 	Vector3 sourceLocation = GetLocation();
@@ -190,7 +170,7 @@ void PlayerCar::ProcessCollisions()
 		{
 			//simple collision test for spheres- are the radii summed less than the distance?
 			Vector3 targetLocation = target->GetLocation();
-			float targetRadius = target->GetCollisionRadius()*target->GetScale();
+			float targetRadius = target->GetCollisionRadius() * target->GetScale();
 
 			Vector3 delta = targetLocation - sourceLocation;
 			float distSq = delta.LengthSq2D();
@@ -210,13 +190,13 @@ void PlayerCar::ProcessCollisions()
 					SetLocation(targetLocation - acceptableDeltaFromSourceToTarget);
 
 
-					Vector3 relVel = mVelocity;
+					Vector3 relVel = velocity_;
 
 					//if other object is a cat, it might have velocity, so there might be relative velocity...
 					PlayerCar* targetCat = target->GetAsCar();
 					if (targetCat)
 					{
-						relVel -= targetCat->mVelocity;
+						relVel -= targetCat->velocity_;
 					}
 
 					//got vel with dir between objects to figure out if they're moving towards each other
@@ -229,13 +209,13 @@ void PlayerCar::ProcessCollisions()
 
 						if (targetCat)
 						{
-							mVelocity -= impulse;
-							mVelocity *= mCarRestitution;
+							velocity_ -= impulse;
+							velocity_ *= mCarRestitution;
 						}
 						else
 						{
-							mVelocity -= impulse * 2.f;
-							mVelocity *= mWallRestitution;
+							velocity_ -= impulse * 2.f;
+							velocity_ *= mWallRestitution;
 						}
 
 					}
@@ -246,52 +226,59 @@ void PlayerCar::ProcessCollisions()
 
 }
 
-void PlayerCar::ProcessCollisionsWithLevel()
-{
+// Ruby White - D00255322
+void PlayerCar::ProcessCollisionsWithLevel(float vx, float vy) {
 	Vector3 location = GetLocation();
 	float x = location.mX;
 	float y = location.mY;
 
-	float vx = mVelocity.mX;
-	float vy = mVelocity.mY;
-
 	float radius = GetCollisionRadius();
 
-	sf::FloatRect rect({ x-radius, y - radius }, { radius * 2.f , radius * 2.f });
+	sf::FloatRect rect({ x - radius, y - radius }, { radius * 2.f , radius * 2.f });
 
-	
+
 	float recoil_strength = 0.1;
 
 	////if the car collides against a wall, the quick solution is to push it off
-	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy > 0)	{
-		location.mY -= vy * recoil_strength;
-		mVelocity.mY = -vy * recoil_strength;
-		SetLocation(location);
+	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy > 0) {
+		velocity_.mY = 0;
+		MoveOutOfWall(Vector3(0, -1, 0));
 	}
-	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy < 0)	{
-		location.mY -= vy * recoil_strength;
-		mVelocity.mY = -vy * recoil_strength;
-		SetLocation(location);
+	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy < 0) {
+		velocity_.mY = 0;
+		MoveOutOfWall(Vector3(0, 1, 0));
 	}
 
-	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx > 0)	{
-		location.mX -= vx * recoil_strength;
-		mVelocity.mX = -vx * recoil_strength;
-		SetLocation(location);
+	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx > 0) {
+		velocity_.mX = 0;
+		MoveOutOfWall(Vector3(-1, 0, 0));
 	}
-	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx < 0)	{
-		location.mX -= vx * recoil_strength;
-		mVelocity.mX = -vx* recoil_strength;
-		SetLocation(location);
+	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx < 0) {
+		velocity_.mX = 0;
+		MoveOutOfWall(Vector3(1, 0, 0));
 	}
 
-	if (LevelManager::sInstance->IsCollidingWithOffRoad(rect))	{
-		mVelocity *= 0.75;
+	if (LevelManager::sInstance->IsCollidingWithOffRoad(rect)) {
+		velocity_ *= 0.75;
 	}
 }
 
-uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const
-{
+void PlayerCar::MoveOutOfWall(Vector3 direction) {
+	sf::FloatRect rect;
+	do {
+		Vector3 location = GetLocation();
+		float x = location.mX;
+		float y = location.mY;
+		float radius = GetCollisionRadius();
+
+		rect = sf::FloatRect({ x - radius, y - radius }, { radius * 2.f , radius * 2.f });
+
+		SetLocation(location + direction);
+		Logging::Log("PlayerCar", "Trying to move: " + std::to_string(GetLocation().mX) + ", " + std::to_string(GetLocation().mY));
+	} while (LevelManager::sInstance->IsCollidingWithWalls(rect));
+}
+
+uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const {
 	uint32_t writtenState = 0;
 
 	if (inDirtyState & ECRS_PlayerId)
@@ -311,7 +298,7 @@ uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirt
 	{
 		inOutputStream.Write((bool)true);
 
-		Vector3 velocity = mVelocity;
+		Vector3 velocity = velocity_;
 		inOutputStream.Write(velocity.mX);
 		inOutputStream.Write(velocity.mY);
 
@@ -388,8 +375,7 @@ uint32_t PlayerCar::Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirt
 
 }
 // Ruby White - D00255322 Darren Meidl - D00255479 - Handle checkpoint collision
-void PlayerCar::OnCheckpointPassed(Checkpoint* inCheckpoint)
-{
+void PlayerCar::OnCheckpointPassed(Checkpoint* inCheckpoint) {
 	if (!inCheckpoint || mRaceFinished)
 		return;
 
@@ -407,14 +393,13 @@ void PlayerCar::OnCheckpointPassed(Checkpoint* inCheckpoint)
 			OnCompleteLap();
 		}
 		mCurrentCheckpointIndex++;
-		if (mCurrentCheckpointIndex == total_checkpoints_-1) { //we have passed the last checkpoint
+		if (mCurrentCheckpointIndex == total_checkpoints_ - 1) { //we have passed the last checkpoint
 			mCurrentCheckpointIndex = -1;
 		}
-	}	
+	}
 }
 // Darren Meidl - D00255479 - Reset lap and checkpoint progress
-void PlayerCar::ResetRaceProgress()
-{
+void PlayerCar::ResetRaceProgress() {
 	mCurrentLap = 0;
 	mCurrentCheckpointIndex = -1;
 	mRaceFinished = false;
@@ -437,6 +422,6 @@ void PlayerCar::IncreaseTopSpeed() {
 
 void PlayerCar::OnCompleteLap() {
 	mCurrentLap++;
-	if (mCurrentLap > mLapsToWin -1)
+	if (mCurrentLap > mLapsToWin - 1)
 		mRaceFinished = true;
 }

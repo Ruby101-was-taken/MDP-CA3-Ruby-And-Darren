@@ -203,7 +203,7 @@ void NetworkManagerClient::HandleScoreBoardState(InputMemoryBitStream& inInputSt
 			}
 		}
 		mIsRaceFinished = finished;
-		Logging::Log("NetworkManagerClient::HandleScoreBoardState", "Local didFinishRace = " + std::string(mIsRaceFinished ? "true" : "false"));
+		//Logging::Log("NetworkManagerClient::HandleScoreBoardState", "Local didFinishRace = " + std::string(mIsRaceFinished ? "true" : "false"));
 	}
 }
 

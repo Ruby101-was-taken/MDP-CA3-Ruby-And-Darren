@@ -206,10 +206,10 @@ void HUD::RenderRaceInProgressJoinScreen()
 void HUD::RenderRaceFinishedWaitingScreen()
 {
 	//Logging::ClearLog();
-	Logging::Log("HUD::RenderRaceFinishedWaitingScreen", "Checking if local player has finished");
+	//Logging::Log("HUD::RenderRaceFinishedWaitingScreen", "Checking if local player has finished");
 
 	if (NetworkManagerClient::sInstance->DidFinishRace() == false) {
-		Logging::Log("HUD::RenderRaceFinished", "DidFinishRace() == false");
+		//Logging::Log("HUD::RenderRaceFinished", "DidFinishRace() == false");
 		return;
 	}
 

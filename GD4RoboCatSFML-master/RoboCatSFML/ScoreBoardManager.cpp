@@ -135,7 +135,7 @@ void ScoreBoardManager::SetRaceWinners(int inTopN)
 bool ScoreBoardManager::GetFinisherByID(uint32_t inPlayerId) const
 {
 	// log the id being checked
-	Logging::Log("ScoreBoardManager::GetFinisherByID", "Checking id: " + std::to_string(inPlayerId));
+	//Logging::Log("ScoreBoardManager::GetFinisherByID", "Checking id: " + std::to_string(inPlayerId));
 
 	// build a comma-separated list of finisher ids and log it
 	std::string finishersStr;
@@ -152,7 +152,7 @@ bool ScoreBoardManager::GetFinisherByID(uint32_t inPlayerId) const
 			finishersStr += std::to_string(mFinishers[i]);
 		}
 	}
-	Logging::Log("ScoreBoardManager::GetFinisherByID", "Finishers: " + finishersStr);
+	//Logging::Log("ScoreBoardManager::GetFinisherByID", "Finishers: " + finishersStr);
 
 	return std::find(mFinishers.begin(), mFinishers.end(), inPlayerId) != mFinishers.end();
 }
@@ -204,7 +204,7 @@ bool ScoreBoardManager::Read(InputMemoryBitStream& inInputStream)
 	bool gameOver = false;
 	inInputStream.Read(gameOver);
 	mGameOver = gameOver;
-	Logging::Log("ScoreBoardManager::Read", "Read mGameOver: " + std::string(mGameOver ? "true" : "false"));
+	//Logging::Log("ScoreBoardManager::Read", "Read mGameOver: " + std::string(mGameOver ? "true" : "false"));
 	
 	
 	/*if (mGameOver)

@@ -23,19 +23,20 @@ public:
 
 	virtual	PlayerCar* GetAsCar() override { return this; }
 
+
 	virtual void Update() override;
 
 	void ProcessInput(float inDeltaTime, const InputState& inInputState);
 	void SimulateMovement(float inDeltaTime);
 
 	void ProcessCollisions();
-	void ProcessCollisionsWithLevel();
+	void ProcessCollisionsWithLevel(float vx, float vy);
 
 	void		SetPlayerId(uint32_t inPlayerId) { mPlayerId = inPlayerId; }
 	uint32_t	GetPlayerId()						const { return mPlayerId; }
 
-	void			SetVelocity(const Vector3& inVelocity) { mVelocity = inVelocity; }
-	const Vector3& GetVelocity()						const { return mVelocity; }
+	void			SetVelocity(const Vector3& inVelocity) { velocity_ = inVelocity; }
+	const Vector3& GetVelocity()						const { return velocity_; }
 
 	virtual uint32_t	Write(OutputMemoryBitStream& inOutputStream, uint32_t inDirtyState) const override;
 
@@ -57,9 +58,12 @@ protected:
 
 private:
 
+	void MoveCar(float inDeltaTime);
+	void MoveOutOfWall(Vector3 direction);
+
 	void	AdjustVelocityByThrust(float inDeltaTime);
 
-	Vector3	mVelocity;
+	Vector3	velocity_;
 
 
 	float mMaxRotationSpeed;
