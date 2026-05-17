@@ -43,7 +43,7 @@ private:
 	void WriteLastMoveTimestampIfDirty(OutputMemoryBitStream& inOutputStream, ClientProxyPtr inClientProxy);
 
 	void HandleInputPacket(ClientProxyPtr inClientProxy, InputMemoryBitStream& inInputStream);
-
+	void HandleRaceStartPacket(ClientProxyPtr inClientProxy); // Darren Meidl - D00255479
 	int GetNewNetworkId();
 
 	typedef unordered_map< int, ClientProxyPtr >	IntToClientMap;

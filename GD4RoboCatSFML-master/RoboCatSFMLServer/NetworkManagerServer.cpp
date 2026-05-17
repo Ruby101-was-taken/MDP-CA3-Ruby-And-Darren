@@ -76,15 +76,7 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 		// Only allow player 1 (host) to start the race.
 		if (inClientProxy->GetPlayerId() == 1)
 		{
-			if (mIsInLobby)
-			{
-				mIsInLobby = false;
-				// Reset race state just incase
-				if (RaceManager::sInstance)
-				{
-					RaceManager::sInstance->Reset();
-				}
-			}
+			HandleRaceStartPacket(inClientProxy);
 		}
 		else
 		{
@@ -275,6 +267,36 @@ void NetworkManagerServer::HandleInputPacket(ClientProxyPtr inClientProxy, Input
 			if (inClientProxy->GetUnprocessedMoveList().AddMoveIfNew(move))
 			{
 				inClientProxy->SetIsLastMoveTimestampDirty(true);
+			}
+		}
+	}
+}
+// Darren Meidl - D00255479 - Handle race start packet
+void NetworkManagerServer::HandleRaceStartPacket(ClientProxyPtr inClientProxy) {
+	if (mIsInLobby) {
+		mIsInLobby = false;
+		if (RaceManager::sInstance) {
+			RaceManager::sInstance->Reset(); // clear previous racers
+			std::vector<int> connected = GetConnectedPlayerIds();
+			for (int pid : connected) {
+				RaceManager::sInstance->AddPlayer(static_cast<uint32_t>(pid));
+			}
+		}
+		Server* server = static_cast<Server*>(Engine::s_instance.get());
+		if (server) {
+			std::vector<int> connected = GetConnectedPlayerIds();
+			for (int pid : connected) {
+				PlayerCarPtr car = server->GetCarForPlayer(pid);
+				// spawn positions match SpawnCarForPlayer
+				float spawn_y = -239.f + (120.f * (pid - 1));
+				Vector3 spawnPos((pid % 2 == 0) ? -2240.f : -2070.f, spawn_y, 0.f);
+
+				if (car) {
+					car->SetLocation(spawnPos); // teleport existing car back to grid	
+					car->SetVelocity(Vector3::Zero); // stop any motion
+					car->ResetRaceProgress(); // reset race progress
+					car->SetRotation(0.f); // ensure correct facing direction
+				}
 			}
 		}
 	}

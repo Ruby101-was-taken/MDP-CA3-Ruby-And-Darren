@@ -185,20 +185,20 @@ void Server::DoFrame()
 	Engine::DoFrame();
 
 	NetworkManagerServer::sInstance->SendOutgoingPackets();
-	// Darren Meidl - D00255479 - Lobby handling triggered by round end
-	// When a round finishes we open the lobby for mLobbyDuration seconds to allow joins
+	// Darren Meidl - D00255479 - Lobby handling
 	if (!NetworkManagerServer::sInstance)
 		return;
 
 	// If game-over detected, ensure lobby opens (once) and start timer
 	if (ScoreBoardManager::sInstance && ScoreBoardManager::sInstance->GetIsGameOver())
 	{
+		NetworkManagerServer::sInstance->SetIsInLobby(true); // allow joins
 		float now = Timing::sInstance.GetFrameStartTime();
-
+		// TODO: Consider removing?
 		// Open lobby when we first notice game-over.
 		if (mLobbyOpenStartTime == 0.f)
 		{
-			NetworkManagerServer::sInstance->SetIsInLobby(true); // allow joins
+			
 			mLobbyOpenStartTime = now;
 		}
 	}
@@ -217,8 +217,6 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 		int playerId = inClientProxy->GetPlayerId();
 		ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
 		SpawnCarForPlayer(playerId, inClientProxy->GetPlayerColour());
-		if (RaceManager::sInstance) // Register player with RaceManager
-			RaceManager::sInstance->AddPlayer(playerId);
 	}
 }
 
