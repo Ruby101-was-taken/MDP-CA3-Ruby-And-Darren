@@ -69,17 +69,13 @@ void PlayerCarServer::Update()
 
 	HandleShooting();
 
-	//if (!RoboMath::Is2DVectorEqual(oldLocation, GetLocation()) ||
-	//	!RoboMath::Is2DVectorEqual(oldVelocity, GetVelocity()) ||
-	//	oldRotation != GetRotation())
-	//{
-	//	NetworkManagerServer::sInstance->SetStateDirty(GetNetworkId(), ECRS_Pose);
-	//}
+	if (!RoboMath::Is2DVectorEqual(oldLocation, GetLocation()) ||
+		!RoboMath::Is2DVectorEqual(oldVelocity, GetVelocity()) ||
+		oldRotation != GetRotation())
+	{
+		NetworkManagerServer::sInstance->SetStateDirty(GetNetworkId(), ECRS_Pose);
+	}
 
-	NetworkManagerServer::sInstance->SetStateDirty(
-		GetNetworkId(),
-		ECRS_Pose
-	);
 }
 
 void PlayerCarServer::HandleShooting()
