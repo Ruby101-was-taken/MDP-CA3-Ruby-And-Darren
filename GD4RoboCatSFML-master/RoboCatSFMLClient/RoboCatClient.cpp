@@ -304,3 +304,12 @@ void PlayerCarClient::DoClientSidePredictionAfterReplicationForRemoteCat(uint32_
 	}
 }
 
+void PlayerCarClient::OnCompleteLap() {
+	PlayerCar::OnCompleteLap();
+	SoundManager::sInstance->Play("Lap");
+}
+
+void PlayerCarClient::OnCompleteRace() {
+	SoundManager::sInstance->Play("Finish");
+}
+

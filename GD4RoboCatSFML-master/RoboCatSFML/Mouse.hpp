@@ -1,4 +1,4 @@
-class Mouse : public GameObject
+class Star : public GameObject
 {
 public:
 	CLASS_IDENTIFICATION('MOUS', GameObject)
@@ -12,7 +12,7 @@ public:
 		EMRS_AllState = EMRS_Pose | EMRS_Color | EMRS_Active
 	};
 
-	static	GameObject* StaticCreate() { return new Mouse(); }
+	static	GameObject* StaticCreate() { return new Star(); }
 
 	virtual uint32_t	GetAllStateMask()	const override { return EMRS_AllState; }
 
@@ -29,7 +29,7 @@ public:
 	void ResetTimer();
 
 protected:
-	Mouse();
+	Star();
 
 	void SetOldXPosition();
 
