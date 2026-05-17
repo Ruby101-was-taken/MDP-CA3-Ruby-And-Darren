@@ -42,6 +42,9 @@ void NetworkManagerClient::ProcessPacket(InputMemoryBitStream& inInputStream, co
 	case kWelcomeCC:
 		HandleWelcomePacket(inInputStream);
 		break;
+	case kLobbyStateCC:
+		HandleLobbyStatePacket(inInputStream);
+		break;
 	case kStateCC:
 		if (mDeliveryNotificationManager.ReadAndProcessState(inInputStream))
 		{
@@ -116,16 +119,23 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 	{
 		ReadLastMoveProcessedOnServerTimestamp(inInputStream);
 
-		// Read lobby flag (server writes this after timestamp)
-		bool lobbyOpen = false;
-		inInputStream.Read(lobbyOpen);
-		mIsLobbyOpen = lobbyOpen;
-
 		// Scoreboard and rest
 		HandleScoreBoardState(inInputStream);
 
 		//tell the replication manager to handle the rest...
 		mReplicationManagerClient.Read(inInputStream);
+	}
+}
+// Darren Meidl - D00255479 - Handle lobby state packet (sent in Server::HandlePacketFromNewClient)
+void NetworkManagerClient::HandleLobbyStatePacket(InputMemoryBitStream& inInputStream)
+{
+	if (mState == NCS_Welcomed)
+	{
+		bool lobbyOpen = false;
+		inInputStream.Read(lobbyOpen);
+		mIsLobbyOpen = lobbyOpen;
+		Logging::Log("NetworkManagerClient::HandleLobbyStatePacket", std::string("Received lobby state = ") + (mIsLobbyOpen ? "true" : "false"));
+
 	}
 }
 

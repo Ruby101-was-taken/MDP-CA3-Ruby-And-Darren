@@ -32,6 +32,7 @@ private:
 	void SendHelloPacket();
 
 	void HandleWelcomePacket(InputMemoryBitStream& inInputStream);
+	void HandleLobbyStatePacket(InputMemoryBitStream& inInputStream); // Darren Meidl - D00255479 - Handle lobby state packet
 	void HandleStatePacket(InputMemoryBitStream& inInputStream);
 	void ReadLastMoveProcessedOnServerTimestamp(InputMemoryBitStream& inInputStream);
 
