@@ -84,6 +84,11 @@ void NetworkManagerServer::ProcessPacket(ClientProxyPtr inClientProxy, InputMemo
 				{
 					RaceManager::sInstance->Reset();
 				}
+				// Broadcast the lobby-state update to all clients so they know the lobby is now closed
+				for (const auto& pair : mAddressToClientMap)
+				{
+					SendLobbyStatePacket(pair.second);
+				}
 			}
 		}
 		else
@@ -129,6 +134,9 @@ void NetworkManagerServer::HandlePacketFromNewClient(InputMemoryBitStream& inInp
 		//and welcome the client...
 		SendWelcomePacket(newClientProxy);
 
+		// Send the small lobby-state packet immediately so the client knows whether they joined the lobby
+		SendLobbyStatePacket(newClientProxy);
+
 		//and now init the replication manager with everything we know about!
 		for (const auto& pair : m_network_id_to_game_object_map)
 		{
@@ -152,6 +160,14 @@ void NetworkManagerServer::SendWelcomePacket(ClientProxyPtr inClientProxy)
 	LOG("Server Welcoming, new client '%s' as player %d", inClientProxy->GetName().c_str(), inClientProxy->GetPlayerId());
 
 	SendPacket(welcomePacket, inClientProxy->GetSocketAddress());
+}
+// Darren Meidl - D00255479 - Lobby state packet
+void NetworkManagerServer::SendLobbyStatePacket(ClientProxyPtr inClientProxy)
+{
+	OutputMemoryBitStream lobbyPacket;
+	lobbyPacket.Write(kLobbyStateCC);
+	lobbyPacket.Write(mIsInLobby);
+	SendPacket(lobbyPacket, inClientProxy->GetSocketAddress());
 }
 
 void NetworkManagerServer::RespawnCats()

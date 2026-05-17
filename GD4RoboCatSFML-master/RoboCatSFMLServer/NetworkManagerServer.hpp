@@ -34,6 +34,7 @@ private:
 	void ProcessPacket(ClientProxyPtr inClientProxy, InputMemoryBitStream& inInputStream);
 
 	void SendWelcomePacket(ClientProxyPtr inClientProxy);
+	void SendLobbyStatePacket(ClientProxyPtr inClientProxy); // Darren Meidl - D00255479 - Lobby state packet
 	void HandleClientDisconnected(ClientProxyPtr inClientProxy);
 
 	void AddWorldStateToPacket(OutputMemoryBitStream& inOutputStream);
