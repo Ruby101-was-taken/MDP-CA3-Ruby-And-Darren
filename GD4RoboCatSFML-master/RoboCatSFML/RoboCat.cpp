@@ -42,6 +42,7 @@ PlayerCar::PlayerCar() :
 	SetCollisionRadius(widthBasedRadius);
 }
 
+
 void PlayerCar::ProcessInput(float inDeltaTime, const InputState& inInputState) {
 	// Turning:
 	// Keep rotation very responsive (small, quick car). We rotate the car sprite immediately,
@@ -193,10 +194,12 @@ void PlayerCar::ProcessCollisions() {
 					Vector3 relVel = velocity_;
 
 					//if other object is a cat, it might have velocity, so there might be relative velocity...
-					PlayerCar* targetCat = target->GetAsCar();
-					if (targetCat)
+					PlayerCar* target_car = target->GetAsCar();
+					if (target_car)
 					{
-						relVel -= targetCat->velocity_;
+						relVel -= target_car->velocity_;
+
+						OnCollideWithOtherCar(target_car);
 					}
 
 					//got vel with dir between objects to figure out if they're moving towards each other
@@ -207,7 +210,7 @@ void PlayerCar::ProcessCollisions() {
 					{
 						Vector3 impulse = relVelDotDir * dirToTarget;
 
-						if (targetCat)
+						if (target_car)
 						{
 							velocity_ -= impulse;
 							velocity_ *= mCarRestitution;
@@ -224,6 +227,10 @@ void PlayerCar::ProcessCollisions() {
 		}
 	}
 
+}
+
+// Ruby White - D00255322
+void PlayerCar::OnCollideWithOtherCar(PlayerCar* target_car) {
 }
 
 // Ruby White - D00255322
@@ -259,10 +266,11 @@ void PlayerCar::ProcessCollisionsWithLevel(float vx, float vy) {
 	}
 
 	if (LevelManager::sInstance->IsCollidingWithOffRoad(rect)) {
-		velocity_ *= 0.75;
+		velocity_ *= 0.9;
 	}
 }
 
+// Ruby White - D00255322
 void PlayerCar::MoveOutOfWall(Vector3 direction) {
 	sf::FloatRect rect;
 	do {

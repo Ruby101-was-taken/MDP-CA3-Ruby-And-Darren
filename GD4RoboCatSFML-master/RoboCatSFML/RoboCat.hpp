@@ -30,6 +30,7 @@ public:
 	void SimulateMovement(float inDeltaTime);
 
 	void ProcessCollisions();
+	// Ruby White - D00255322
 	void ProcessCollisionsWithLevel(float vx, float vy);
 
 	void		SetPlayerId(uint32_t inPlayerId) { mPlayerId = inPlayerId; }
@@ -56,8 +57,12 @@ public:
 protected:
 	PlayerCar();
 
+	// Ruby White - D00255322
+	virtual void OnCollideWithOtherCar(PlayerCar* target_car);
+
 private:
 
+	// Ruby White - D00255322
 	void MoveCar(float inDeltaTime);
 	void MoveOutOfWall(Vector3 direction);
 
