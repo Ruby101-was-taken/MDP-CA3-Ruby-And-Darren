@@ -257,40 +257,35 @@ void PlayerCar::ProcessCollisionsWithLevel()
 
 	float radius = GetCollisionRadius();
 
-	sf::FloatRect rect({ x, y }, { radius * 2.f , radius * 2.f });
+	sf::FloatRect rect({ x-radius, y - radius }, { radius * 2.f , radius * 2.f });
 
 	
 	float recoil_strength = 0.1;
 
-	////if the cat collides against a wall, the quick solution is to push it off
-	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy > 0)
-	{
+	////if the car collides against a wall, the quick solution is to push it off
+	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy > 0)	{
 		location.mY -= vy * recoil_strength;
 		mVelocity.mY = -vy * recoil_strength;
 		SetLocation(location);
 	}
-	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy < 0)
-	{
+	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vy < 0)	{
 		location.mY -= vy * recoil_strength;
 		mVelocity.mY = -vy * recoil_strength;
 		SetLocation(location);
 	}
 
-	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx > 0)
-	{
+	if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx > 0)	{
 		location.mX -= vx * recoil_strength;
 		mVelocity.mX = -vx * recoil_strength;
 		SetLocation(location);
 	}
-	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx < 0)
-	{
+	else if (LevelManager::sInstance->IsCollidingWithWalls(rect) && vx < 0)	{
 		location.mX -= vx * recoil_strength;
 		mVelocity.mX = -vx* recoil_strength;
 		SetLocation(location);
 	}
 
-	if (LevelManager::sInstance->IsCollidingWithOffRoad(rect))
-	{
+	if (LevelManager::sInstance->IsCollidingWithOffRoad(rect))	{
 		mVelocity *= 0.9;
 	}
 }
