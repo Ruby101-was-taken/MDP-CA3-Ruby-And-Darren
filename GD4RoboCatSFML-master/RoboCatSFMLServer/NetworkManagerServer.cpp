@@ -248,8 +248,8 @@ int NetworkManagerServer::GetNewNetworkId()
 
 void NetworkManagerServer::HandleInputPacket(ClientProxyPtr inClientProxy, InputMemoryBitStream& inInputStream)
 {
-	// Darren Meidl - D00255479 - If we're in the lobby, ignore movement input from non-host clients
-	if (mIsInLobby && inClientProxy->GetPlayerId() != 1)
+	// Darren Meidl - D00255479 - If we're in the lobby, ignore movement input from clients
+	if (mIsInLobby)
 	{
 		InputState defaultState;
 		float timestamp = Timing::sInstance.GetFrameStartTime();
