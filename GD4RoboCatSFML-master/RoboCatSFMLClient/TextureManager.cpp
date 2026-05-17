@@ -12,6 +12,7 @@ TextureManager::TextureManager()
 	CacheTexture("car", "../Assets/Textures/Player/Car.png"); // Ruby White - D00255322 Darren Meidl - D00255479 - New car sprite
 	CacheTexture("checkpoint", "../Assets/Textures/Checkpoint/checkpoint.png"); // Darren Meidl - D00255479 - New checkpoint sprite
 	CacheTexture("star", "../Assets/Textures/Item/Star.png");  // Ruby White - D00255322 - new collectable sprite
+	CacheTexture("flag", "../Assets/Textures/Item/Flag.png");  // Ruby White - D00255322 - icon for laps
 	CacheTexture("track", "../Assets/Textures/Track.png");  // Ruby White - D00255322 - sprite for the track visuals
 	
 }

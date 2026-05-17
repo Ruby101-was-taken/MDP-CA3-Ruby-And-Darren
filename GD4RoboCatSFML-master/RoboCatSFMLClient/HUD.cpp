@@ -453,8 +453,10 @@ void HUD::RenderHUD()
 	float lapTextW = lapBounds.width;
 	float lapTextH = lapBounds.height;
 
-	// Load star texture (use as placeholder for both icons)
+	// Load star texture 
 	auto starTex = TextureManager::sInstance->GetTexture("star");
+	// Load flag texture 
+	auto flagTex = TextureManager::sInstance->GetTexture("flag");
 	float iconW = 0.f, iconH = 0.f;
 	sf::Sprite starSprite;
 	if (starTex)
