@@ -27,6 +27,7 @@ private:
 	void RenderScoreBoard();
 	void RenderHUD();
 	void RenderRaceOver();
+	void RenderClientWaitingScreen();
 
 	void RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
 
