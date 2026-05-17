@@ -1,10 +1,15 @@
 #include "RoboCatClientPCH.hpp"
-#include <filesystem>
+#include <windows.h>
+#include <shellapi.h>
 
 bool Client::StaticInit()
 {
+	AskUserInput();
+
 	// Create the Client pointer first because it initializes SDL
 	Client* client = new Client();
+
+
 	InputManager::StaticInit();
 
 	WindowManager::StaticInit();
@@ -30,6 +35,7 @@ bool Client::StaticInit()
 	Logging::LogInit();
 	Logging::Log("Client", "Log Initialised");
 
+
 	return true;
 }
 
@@ -41,10 +47,6 @@ Client::Client()
 	GameObjectRegistry::sInstance->RegisterCreationFunction('CHKP', CheckpointClient::StaticCreate);
 	GameObjectRegistry::sInstance->RegisterCreationFunction('TRCK', ClientTrack::StaticCreate);
 
-	if (not SaveFileUtilities::CheckIfFolderExists("Data")) {
-		std::filesystem::create_directories("Data");
-	}
-
 	string destination = SaveFileUtilities::GetAddressFromFile() + ":" + SaveFileUtilities::GetPortFromFile();
 	string name = SaveFileUtilities::GetUserNameFromFile();
 
@@ -55,8 +57,20 @@ Client::Client()
 	NetworkManagerClient::StaticInit(*serverAddress, name);
 	LevelManager::StaticInit();
 
+}
 
-	//NetworkManagerClient::sInstance->SetSimulatedLatency(0.0f);
+void Client::AskUserInput() {
+
+	SaveFileUtilities::MakeNeededFiles();
+
+
+	ShellExecute(0, "open", SaveFileUtilities::sUsernamePath.c_str(), NULL, 0, SW_SHOW);
+
+	MessageBox(NULL, "Enter your username into this textfile and then press OK", "Enter Info", MB_OK);
+
+	ShellExecute(0, "open", SaveFileUtilities::sIPPath.c_str(), NULL, 0, SW_SHOW);
+
+	MessageBox(NULL, "Enter the IP into this textfile and then press OK", "Enter Info", MB_OK);
 }
 
 

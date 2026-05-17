@@ -66,7 +66,7 @@ uint8_t ColourUtilities::HexToInt(std::string hex) {
 
 sf::Color ColourUtilities::GetUserColourFromFile() {
 	//Try to open existing file
-	std::ifstream input_file("Data/Colour.txt");
+	std::ifstream input_file("../Data/Colour.txt");
 	std::string hexcode;
 	if (input_file >> hexcode) {
 		if (hexcode.length() == 6)
@@ -74,7 +74,7 @@ sf::Color ColourUtilities::GetUserColourFromFile() {
 	}
 
 	//If the open/read failed, create a new file and a random colour
-	std::ofstream output_file("Data/Colour.txt");
+	std::ofstream output_file("../Data/Colour.txt");
 	sf::Color new_colour = RandomHSVColour();
 	output_file << RGBToHex(new_colour);
 	return new_colour;
