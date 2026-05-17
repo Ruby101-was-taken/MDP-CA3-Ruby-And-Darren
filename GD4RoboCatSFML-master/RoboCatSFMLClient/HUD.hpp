@@ -19,14 +19,13 @@ private:
 
 	HUD();
 
-	void RenderHostStartPrompt();
-	void RenderLobbyWaitingScreen(); 
+	void RenderLobbyWaitingScreen();
 	void RenderRaceInProgressJoinScreen();
 	void RenderRaceFinishedWaitingScreen();
 	void RenderBandWidth();
 	void RenderRoundTripTime();
 	void RenderScoreBoard();
-	void RenderRaceInfo();
+	void RenderHUD();
 	void RenderRaceOver();
 
 	void RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);

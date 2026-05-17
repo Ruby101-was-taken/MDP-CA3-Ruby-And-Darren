@@ -39,6 +39,8 @@ public:
 	void	AddEntry(uint32_t inPlayerId, const string& inPlayerName);
 	void	IncScore(uint32_t inPlayerId, int inAmount);
 
+	void ResetScores();
+
 	// Darren Meidl - D00255479 - Game over / winners support
 	void	SetRaceWinners(int inTopN);
 	void	SetGameOver(bool inGameOver) { mGameOver = inGameOver; if (!mGameOver) mFinishers.clear(); }

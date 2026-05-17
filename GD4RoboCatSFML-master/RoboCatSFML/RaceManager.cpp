@@ -71,5 +71,6 @@ void RaceManager::Reset()
     if (ScoreBoardManager::sInstance)
     {
         ScoreBoardManager::sInstance->SetGameOver(false);
+        ScoreBoardManager::sInstance->ResetScores();
     }
 }
