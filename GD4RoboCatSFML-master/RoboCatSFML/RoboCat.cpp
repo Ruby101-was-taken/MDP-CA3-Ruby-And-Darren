@@ -5,7 +5,7 @@ const float WORLD_HEIGHT = 2160.f;
 const float WORLD_WIDTH = 3840.f;
 
 bool PlayerCar::OnFinalLap() {
-	return mCurrentLap == mLapsToWin-1;
+	return mCurrentLap >= mLapsToWin-1;
 }
 
 PlayerCar::PlayerCar() :
@@ -16,7 +16,7 @@ PlayerCar::PlayerCar() :
 	mAcceleration(500.f),		// acceleration
 	mReverseAccelScale(0.5f), // brake
 	mLinearDrag(4.5f),
-	mGrip(20.f),
+	mGrip(3.f),
 
 	velocity_(Vector3::Zero),
 	mCurrentSteer(0.f),

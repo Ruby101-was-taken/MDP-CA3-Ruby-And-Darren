@@ -6,9 +6,6 @@
  <tileset firstgid="1" source="../../../../../CA2/Code/Media/Textures/Level/YYGITITD_Tiles.tsx"/>
  <tileset firstgid="13" source="../../../../../MDP-CA1-Ruby-And-Darren/gd4_sfml_tcp_game/Media/Textures/Level/YYGITITD_Tiles.tsx"/>
  <tileset firstgid="18" source="circuit.tsx"/>
- <imagelayer id="2" name="Image Layer 1">
-  <image source="../Textures/Track.png" width="1024" height="1024"/>
- </imagelayer>
  <layer id="1" name="Tile Layer 1" width="40" height="23">
   <data encoding="csv">
    <chunk x="0" y="0" width="16" height="16">
@@ -301,4 +298,7 @@
 </chunk>
   </data>
  </layer>
+ <imagelayer id="2" name="Image Layer 1" opacity="0.2">
+  <image source="../Textures/Track.png" width="1024" height="1024"/>
+ </imagelayer>
 </map>
