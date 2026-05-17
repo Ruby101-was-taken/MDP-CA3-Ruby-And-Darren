@@ -180,7 +180,7 @@ void Server::DoFrame()
 
 	NetworkManagerServer::sInstance->CheckForDisconnects();
 
-	//NetworkManagerServer::sInstance->RespawnCats(); // TODO: Check how this affects performance
+	NetworkManagerServer::sInstance->RespawnCats();
 
 	Engine::DoFrame();
 

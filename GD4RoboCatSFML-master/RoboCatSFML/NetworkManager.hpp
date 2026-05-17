@@ -7,7 +7,9 @@ public:
 	static const uint32_t kWelcomeCC = 'WLCM';
 	static const uint32_t kStateCC = 'STAT';
 	static const uint32_t kInputCC = 'INPT';
-	static const uint32_t kStartRaceCC = 'STRT'; // Start race request from host
+	// TODO: Do these HAVE to be uint32_t? Can we go smaller?
+	static const uint32_t kStartRaceCC = 'STRT'; // Darren Meidl - D00255479
+	static const uint32_t kLobbyStateCC = 'LBST'; // Darren Meidl - D00255479
 
 	static const int kMaxPacketsPerFrameCount = 10;
 
