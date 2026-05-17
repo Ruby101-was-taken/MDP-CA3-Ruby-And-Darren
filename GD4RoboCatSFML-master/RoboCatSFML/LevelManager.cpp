@@ -50,7 +50,8 @@ LevelManager::LevelManager() {
                 wall_tiles_.emplace_back(sf::FloatRect({ ((x * 80) - 2560) * 1.f, ((y * 80) - 2560) * 1.f }, { 80.f, 80.f }));
             }
             if (std::stoi(cell) == 1) {
-                grass_tiles_.emplace_back(sf::FloatRect({ (((x * 80) - 2560) * 1.f) + 20, (((y * 80) - 2560) * 1.f)+20 }, { 20.f, 20.f }));
+                // I love hardcoded values mmmmmmmm
+                grass_tiles_.emplace_back(sf::FloatRect({ (((x * 80) - 2560) * 1.f) + 30, (((y * 80) - 2560) * 1.f) + 30 }, { 20.f, 20.f }));
             }
         }
     }
